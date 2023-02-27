@@ -14,10 +14,29 @@
     <name>jm</name>
     <description>Stack JM</description>
     <properties>
-        <java.version>1.11</java.version>
+        <java.version>11</java.version>
         <swagger2.version>2.9.2</swagger2.version>
         <org.mapstruct.version>1.4.1.Final</org.mapstruct.version>
     </properties>
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <build.profile.id>dev</build.profile.id>
+                <profileActive>dev</profileActive>
+            </properties>
+        </profile>
+        <profile>
+            <id>local</id>
+            <properties>
+                <build.profile.id>local</build.profile.id>
+                <profileActive>local</profileActive>
+            </properties>
+        </profile>
+    </profiles>
     <dependencies>
         <dependency>
             <groupId>org.mapstruct</groupId>
