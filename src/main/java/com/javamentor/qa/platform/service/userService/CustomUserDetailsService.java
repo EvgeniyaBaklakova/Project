@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.service.userService.Perso;
+package com.javamentor.qa.platform.service.userService;
 
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.repository.UserRepository;
