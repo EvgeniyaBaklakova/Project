@@ -131,4 +131,5 @@ public class User implements UserDetails {
     public int hashCode() {
         return Objects.hash(id, email, password, fullName);
     }
+
 }
