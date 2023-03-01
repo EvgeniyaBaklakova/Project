@@ -50,6 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         http
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers( "/css/**", "/js/**").permitAll()
                 .antMatchers("/**").permitAll()
                 .and()
                 .sessionManagement()
