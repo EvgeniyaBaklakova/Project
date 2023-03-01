@@ -1,8 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
 import com.javamentor.qa.platform.models.dto.AuthenticationDTO;
-import com.javamentor.qa.platform.models.dto.UserDTO;
-import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.util.JWTUtil;
 import com.javamentor.qa.platform.service.userService.CustomUserDetailsService;
 import com.javamentor.qa.platform.service.userService.RegistrationService;
@@ -24,16 +22,14 @@ public class AuthenticationResourceController {
 
     private final CustomUserDetailsService userDetailsService;
     private final JWTUtil jwtUtil;
-    private final ModelMapper modelMapper;
-    private final RegistrationService registrationService;
     private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthenticationResourceController(CustomUserDetailsService userDetailsService, JWTUtil jwtUtil, ModelMapper modelMapper, RegistrationService registrationService, AuthenticationManager authenticationManager) {
+    public AuthenticationResourceController(CustomUserDetailsService userDetailsService,
+                                            JWTUtil jwtUtil,
+                                            AuthenticationManager authenticationManager) {
         this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
-        this.modelMapper = modelMapper;
-        this.registrationService = registrationService;
         this.authenticationManager = authenticationManager;
     }
 
