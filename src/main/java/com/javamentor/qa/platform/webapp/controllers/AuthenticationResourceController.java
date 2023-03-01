@@ -52,8 +52,4 @@ public class AuthenticationResourceController {
         String token = jwtUtil.generateToken(authenticationDTO.getLogin());
         return Map.of("jwt-token", token);
     }
-
-    public User convertToPerson(UserDTO userDTO) {
-        return this.modelMapper.map(userDTO, User.class);
-    }
 }
