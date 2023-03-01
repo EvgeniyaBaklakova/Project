@@ -14,20 +14,78 @@ public class TestDataInitService {
 
     private final RoleService roleService;
 
+    private final Role ROLE_USER = new Role("ROLE_USER");
+    private final Role ROLE_ADMIN = new Role("ROLE_ADMIN");
+
     @Autowired
     public TestDataInitService(UserService userService, RoleService roleService) {
         this.roleService = roleService;
         this.userService = userService;
     }
 
-    public void init(){
-        Role role1 = new Role("Role_Test_1");
-        Role role2 = new Role("Role_Test_2");
-        roleService.persistAll(role1, role2);
-        userService.persist(new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", role1));
-        userService.persist(new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", role1));
-        userService.persist(new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", role2));
-        userService.persist(new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", role1));
-        userService.persist(new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", role2));
+    public void initRoles() {
+        roleService.persistAll(ROLE_USER, ROLE_ADMIN);
     }
+
+    public void initUsers() {
+        userService.persistAll(
+                new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_ADMIN)
+                ,new User(null, "email", "password", "name", null, true, false, "city", "link_site", "link_github", "link_vk", "about", "image_link", null, "nick", ROLE_USER)
+        );
+    }
+
 }

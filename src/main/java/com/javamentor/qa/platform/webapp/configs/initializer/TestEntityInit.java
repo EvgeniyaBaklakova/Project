@@ -20,6 +20,7 @@ public class TestEntityInit implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        testDataInitService.init();
+        testDataInitService.initRoles();
+        testDataInitService.initUsers();
     }
 }
