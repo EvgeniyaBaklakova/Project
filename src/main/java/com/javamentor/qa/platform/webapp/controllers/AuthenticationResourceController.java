@@ -8,15 +8,14 @@ import com.javamentor.qa.platform.service.userService.CustomUserDetailsService;
 import com.javamentor.qa.platform.service.userService.RegistrationService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
@@ -27,13 +26,15 @@ public class AuthenticationResourceController {
     private final JWTUtil jwtUtil;
     private final ModelMapper modelMapper;
     private final RegistrationService registrationService;
+    private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthenticationResourceController(CustomUserDetailsService userDetailsService, JWTUtil jwtUtil, ModelMapper modelMapper, RegistrationService registrationService) {
+    public AuthenticationResourceController(CustomUserDetailsService userDetailsService, JWTUtil jwtUtil, ModelMapper modelMapper, RegistrationService registrationService, AuthenticationManager authenticationManager) {
         this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
         this.modelMapper = modelMapper;
         this.registrationService = registrationService;
+        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping
