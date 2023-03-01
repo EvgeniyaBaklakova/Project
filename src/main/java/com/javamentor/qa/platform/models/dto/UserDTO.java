@@ -10,11 +10,9 @@ import javax.persistence.Column;
 @Setter
 public class UserDTO {
 
-    @Column
     @NonNull
     private String email;
 
-    @Column
     @NonNull
     private String password;
 }
