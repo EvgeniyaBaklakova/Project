@@ -1,15 +1,15 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
-import org.junit.Test;
+import org.hamcrest.core.Is;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 public class TestUserResourceController extends AbstractTestApi {
@@ -22,7 +22,12 @@ public class TestUserResourceController extends AbstractTestApi {
     public void getUserDto() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/100"))
                 .andExpect(status().isOk())
-                .andExpect(content().string("{\"id\":100,\"email\":\"test100@mail.ru\",\"fullName\":\"Alex Vasiliev\",\"imageLink\",\"No link\",\"city\":\"Saint-Petersburg\",\"reputation\":666"))
+                .andExpect(jsonPath("$.id", Is.is(100)))
+                .andExpect(jsonPath("$.email", Is.is("test100@mail.ru")))
+                .andExpect(jsonPath("$.fullName", Is.is("Alex Vasiliev")))
+                .andExpect(jsonPath("$.imageLink", Is.is("No link")))
+                .andExpect(jsonPath("$.city", Is.is("Saint-Petersburg")))
+                .andExpect(jsonPath("$.reputation", Is.is(666666)))
                 .andDo(print());
     }
 
@@ -34,7 +39,8 @@ public class TestUserResourceController extends AbstractTestApi {
     public void getUserDtoNotFound() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/33"))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("{\"statusCode\":404,\"message\":\"User with id 33 not found\""))
+                .andExpect(jsonPath("$.statusCode", Is.is(404)))
+                .andExpect(jsonPath("$.message", Is.is("User with this id not found")))
                 .andDo(print());
     }
 }

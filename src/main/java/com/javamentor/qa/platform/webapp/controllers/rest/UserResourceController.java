@@ -22,13 +22,8 @@ public class UserResourceController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<?> getUserDto(@PathVariable("userId") long id) {
-        try {
-            UserDto userDto = userDtoService.getById(id).orElseThrow();
-            return new ResponseEntity<>(userDto, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new UserNotFound(HttpStatus.NOT_FOUND.value(),
-                    "User with id " + id + " not found"), HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<UserDto> getUserDto(@PathVariable("userId") long id) {
+        return new ResponseEntity<>(userDtoService.getById(id), HttpStatus.OK);
+
     }
 }
