@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.user.UserDto;
 import com.javamentor.qa.platform.service.impl.dto.UserDtoService;
-import com.javamentor.qa.platform.webapp.controllers.util.UserNotFound;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

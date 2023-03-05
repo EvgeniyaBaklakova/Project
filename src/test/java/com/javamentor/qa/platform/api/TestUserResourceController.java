@@ -20,15 +20,15 @@ public class TestUserResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestUserResourceController/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void getUserDto() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/100"))
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/101"))
+                .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", Is.is(100)))
-                .andExpect(jsonPath("$.email", Is.is("test100@mail.ru")))
+                .andExpect(jsonPath("$.id", Is.is(101)))
+                .andExpect(jsonPath("$.email", Is.is("test101@mail.ru")))
                 .andExpect(jsonPath("$.fullName", Is.is("Alex Vasiliev")))
                 .andExpect(jsonPath("$.imageLink", Is.is("No link")))
                 .andExpect(jsonPath("$.city", Is.is("Saint-Petersburg")))
-                .andExpect(jsonPath("$.reputation", Is.is(666666)))
-                .andDo(print());
+                .andExpect(jsonPath("$.reputation", Is.is(20)));
     }
 
     @Test
@@ -37,10 +37,10 @@ public class TestUserResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestUserResourceController/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void getUserDtoNotFound() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/33"))
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/999"))
+                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.statusCode", Is.is(404)))
-                .andExpect(jsonPath("$.message", Is.is("User with this id not found")))
-                .andDo(print());
+                .andExpect(jsonPath("$.message", Is.is("User with this id not found")));
     }
 }
