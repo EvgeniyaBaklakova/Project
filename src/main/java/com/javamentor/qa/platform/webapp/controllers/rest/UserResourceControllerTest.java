@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/test")
-public class UserResourceController {
+public class UserResourceControllerTest {
 
 private final UserDtoTestService userDtoTestService;
 
-    public UserResourceController(UserDtoTestService userDtoTestService) {
+    public UserResourceControllerTest(UserDtoTestService userDtoTestService) {
         this.userDtoTestService = userDtoTestService;
     }
 
