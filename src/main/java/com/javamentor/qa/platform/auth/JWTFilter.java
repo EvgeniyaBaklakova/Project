@@ -38,8 +38,6 @@ public class JWTFilter extends OncePerRequestFilter {
             } else {
                 try {
                     String username = jwtUtil.validateTokenAndRetrieveClaim(jwt);
-//                    UserDetails userDetails = personDetailsService.loadUserByUsername(username);
-//                    UserDetails userDetails = this.user.getUsername();
 
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(user,
