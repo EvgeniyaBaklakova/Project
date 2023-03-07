@@ -6,13 +6,14 @@ import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
-
+@Component
 @ToString
 @Entity
 @Getter
@@ -131,4 +132,5 @@ public class User implements UserDetails {
     public int hashCode() {
         return Objects.hash(id, email, password, fullName);
     }
+
 }
