@@ -1,13 +1,14 @@
 package com.javamentor.qa.platform.security;
 
-import com.javamentor.qa.platform.auth.JWTFilter;
-import com.javamentor.qa.platform.auth.JWTUtil;
+import com.javamentor.qa.platform.security.util.JWTFilter;
+import com.javamentor.qa.platform.service.userService.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -23,13 +24,20 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
 
+    private final CustomUserDetailsService userDetailsService;
     private final JWTFilter jwtFilter;
-    private final JWTUtil jwtUtil;
 
     @Autowired
-    public SecurityConfig(JWTFilter jwtFilter, JWTUtil jwtUtil) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService, JWTFilter jwtFilter) {
+        this.userDetailsService = userDetailsService;
         this.jwtFilter = jwtFilter;
-        this.jwtUtil = jwtUtil;
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web
+                .ignoring()
+                .antMatchers("/js/**");
     }
 
     @Override
@@ -42,8 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/css/**", "/js/**").permitAll()
+                .antMatchers( "/css/**", "/js/**").permitAll()
                 .antMatchers("/api/user/**").hasRole("USER")
+                .antMatchers("/**").permitAll()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -64,7 +73,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
     }
-
     @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
