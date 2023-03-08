@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.security;
 
-import com.javamentor.qa.platform.security.util.JWTFilter;
-import com.javamentor.qa.platform.service.userService.CustomUserDetailsService;
+import com.javamentor.qa.platform.auth.JWTFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,12 +23,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
 
-    private final CustomUserDetailsService userDetailsService;
     private final JWTFilter jwtFilter;
 
     @Autowired
-    public SecurityConfig(CustomUserDetailsService userDetailsService, JWTFilter jwtFilter) {
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(JWTFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
     }
 
