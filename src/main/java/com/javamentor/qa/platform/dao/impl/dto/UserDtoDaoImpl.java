@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.dao.impl.dto;
 
+import com.javamentor.qa.platform.dao.abstracts.dto.UserDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
 import org.springframework.stereotype.Repository;
@@ -10,12 +11,13 @@ import javax.persistence.TypedQuery;
 import java.util.Optional;
 
 @Repository
-public class UserDtoDao {
+public class UserDtoDaoImpl implements UserDtoDao<UserDto, Long> {
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public Optional<UserDto> getById(long id) {
+    @Override
+    public Optional<UserDto> getById(Long id) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.user.UserDto(u.id, u.email, u.fullName, u.imageLink, u.city," +
                 "(SELECT CAST(SUM(r.count) AS int) FROM Reputation r WHERE r.author.id = :id)) FROM User u WHERE u.id = :id";
         TypedQuery<UserDto> query = (TypedQuery<UserDto>) entityManager.createQuery(hql).setParameter("id", id);
