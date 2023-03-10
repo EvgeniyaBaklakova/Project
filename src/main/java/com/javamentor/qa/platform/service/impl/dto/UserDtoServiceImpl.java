@@ -7,7 +7,7 @@ import com.javamentor.qa.platform.webapp.controllers.util.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserDtoServiceImpl implements UserDtoService<UserDto, Long> {
+public class UserDtoServiceImpl implements UserDtoService {
 
     private final UserDtoDaoImpl userDtoDaoImpl;
 
@@ -16,7 +16,7 @@ public class UserDtoServiceImpl implements UserDtoService<UserDto, Long> {
     }
 
     @Override
-    public UserDto getById(Long id) {
+    public UserDto getById(long id) {
         return userDtoDaoImpl.getById(id).orElseThrow(UserNotFoundException::new);
     }
 }
