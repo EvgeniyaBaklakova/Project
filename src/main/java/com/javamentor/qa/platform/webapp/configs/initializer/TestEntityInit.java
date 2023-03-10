@@ -22,6 +22,5 @@ public class TestEntityInit implements CommandLineRunner {
     public void run(String... args) {
         testDataInitService.initRoles();
         testDataInitService.initUsers();
-        System.out.println("Hello");
     }
 }
