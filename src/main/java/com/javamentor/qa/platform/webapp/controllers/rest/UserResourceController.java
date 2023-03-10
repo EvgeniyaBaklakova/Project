@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.user.UserDto;
-import com.javamentor.qa.platform.service.impl.dto.UserDtoServiceImpl;
+import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,15 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/user")
 public class UserResourceController {
 
-    private final UserDtoServiceImpl userDtoServiceImpl;
+    private final UserDtoService userDtoService;
 
-    public UserResourceController(UserDtoServiceImpl userDtoServiceImpl) {
-        this.userDtoServiceImpl = userDtoServiceImpl;
+    public UserResourceController(UserDtoService userDtoService) {
+        this.userDtoService = userDtoService;
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUserDto(@PathVariable("userId") long id) {
-        return new ResponseEntity<>(userDtoServiceImpl.getById(id), HttpStatus.OK);
+        return new ResponseEntity<>(userDtoService.getById(id), HttpStatus.OK);
 
     }
 }

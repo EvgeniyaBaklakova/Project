@@ -4,6 +4,6 @@ import com.javamentor.qa.platform.models.dto.user.UserDto;
 
 import java.util.Optional;
 
-public interface UserDtoDao<E, K> {
-    Optional<E> getById(K id);
+public interface UserDtoDao {
+    Optional<UserDto> getById(long id);
 }
