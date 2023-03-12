@@ -14,20 +14,18 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-    @Value("${jwt_secret}")
-    private String secret;
 
     public String generateToken(String email) throws IllegalArgumentException, JWTCreationException {
         return JWT.create()
                 .withSubject("User Details")
                 .withClaim("email", email)
                 .withIssuedAt(new Date())
-                .withIssuer("YOUR APPLICATION/PROJECT/COMPANY NAME")
-                .sign(Algorithm.HMAC256(secret));
+                .withIssuer("some issue")
+                .sign(Algorithm.HMAC256("secret"));
     }
 
     public String validateTokenAndRetrieveSubject(String token)throws JWTVerificationException {
-        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256("secret"))
                 .withSubject("User Details")
                 .withIssuer("YOUR APPLICATION/PROJECT/COMPANY NAME")
                 .build();
