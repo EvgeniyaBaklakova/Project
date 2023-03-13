@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.security.util;
 
+import com.javamentor.qa.platform.models.entity.user.User;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -13,15 +14,16 @@ public class JwtProvider {
 
     private String jwtSecret = "secret";
 
-    private int jwtExpirationInMs = 60 *60 * 24;
+    private int jwtExpirationInMs = 60 * 60 * 24;
 
     public String generateToken(Authentication authentication) {
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+        User user = (User) authentication.getPrincipal();
+
 
         return Jwts.builder()
-                .setSubject(userPrincipal.getUsername())
+                .setSubject(user.getUsername())
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
