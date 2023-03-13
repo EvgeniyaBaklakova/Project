@@ -2,13 +2,14 @@ package com.javamentor.qa.platform.repository;
 
 
 import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
-@Service
+@Repository
 public class UserRepositoryImpl implements UserRepository {
 
     @PersistenceContext
