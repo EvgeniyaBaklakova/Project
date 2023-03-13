@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.security.auth;
 
+import com.javamentor.qa.platform.models.dto.UserDTO;
 import com.javamentor.qa.platform.security.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

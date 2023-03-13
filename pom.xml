@@ -184,11 +184,11 @@
             <optional>true</optional>
         </dependency>
 
-        <!--FLYWAY-->
-        <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-        </dependency>
+<!--        &lt;!&ndash;FLYWAY&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.flywaydb</groupId>-->
+<!--            <artifactId>flyway-core</artifactId>-->
+<!--        </dependency>-->
 
     </dependencies>
 
