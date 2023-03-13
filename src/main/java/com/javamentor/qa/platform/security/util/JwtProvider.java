@@ -9,42 +9,44 @@ import java.security.SignatureException;
 import java.util.Date;
 
 @Component
-        public class JwtProvider {
+public class JwtProvider {
 
-            private String jwtSecret = "secret";
+    private String jwtSecret = "secret";
 
-            private int jwtExpirationInMs;
+    private int jwtExpirationInMs = 60 *60 * 24;
 
-            public String generateToken(Authentication authentication) {
-                UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-                Date now = new Date();
-                Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+    public String generateToken(Authentication authentication) {
+        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
-                return Jwts.builder()
-                    .setSubject(userPrincipal.getUsername())
-                    .setIssuedAt(new Date())
-                    .setExpiration(expiryDate)
-                    .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                    .compact();
-            }
-            public String getUserUsernameFromJWT(String token) {
-                Claims claims = Jwts.parser()
+        return Jwts.builder()
+                .setSubject(userPrincipal.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
+
+    public String getUserUsernameFromJWT(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
+    }
+
+    public boolean validateToken(String authToken) {
+        try {
+            Jwts.parser()
                     .setSigningKey(jwtSecret)
-                    .parseClaimsJws(token)
-                    .getBody();
-                return claims.getSubject();
-            }
-            public boolean validateToken(String authToken) {
-                try {
-                    Jwts.parser()
-                        .setSigningKey(jwtSecret)
-                        .parseClaimsJws(authToken);
-                    return true;
-                } catch (MalformedJwtException ex) {
-                } catch (ExpiredJwtException ex) {
-                } catch (UnsupportedJwtException ex) {
-                } catch (IllegalArgumentException ex) {
-                }
-                return false;
-            }
+                    .parseClaimsJws(authToken);
+            return true;
+        } catch (MalformedJwtException ex) {
+        } catch (ExpiredJwtException ex) {
+        } catch (UnsupportedJwtException ex) {
+        } catch (IllegalArgumentException ex) {
         }
+        return false;
+    }
+}
