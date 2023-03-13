@@ -1,6 +1,11 @@
 package com.javamentor.qa.platform.models.dto;
 
-import lombok.*;
+
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.List;
@@ -8,7 +13,6 @@ import java.util.List;
 @Data
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class PageDto<T> implements Serializable {
     private int currentPageNumber;
