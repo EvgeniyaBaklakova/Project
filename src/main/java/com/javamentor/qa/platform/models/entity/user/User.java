@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
+@NamedQuery(name = "getUserByEmail",
+query = "select u from User u where u.email = :email")
 @ToString
 @Entity
 @Getter
