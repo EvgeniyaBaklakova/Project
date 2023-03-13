@@ -19,4 +19,5 @@ public class UserRepositoryImpl implements UserRepository {
         return Optional.ofNullable(entityManager.createQuery("select u from User u where u.email =: email", User.class)
                 .setParameter("email", login).getSingleResult());
     }
+
 }
