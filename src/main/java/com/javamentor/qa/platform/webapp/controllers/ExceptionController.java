@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.webapp.controllers.util.UserNotFound;
 import com.javamentor.qa.platform.webapp.controllers.util.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +29,9 @@ public class ExceptionController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<UserNotFound> handleNotFoundException(UserNotFoundException exception){
-        return new ResponseEntity<>(new UserNotFound(HttpStatus.NOT_FOUND.value(),
-                "User with this id not found"), HttpStatus.NOT_FOUND);
+    public ResponseEntity<String> handleNotFoundException(UserNotFoundException exception){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("User with this id not found");
     }
 
 }

@@ -40,7 +40,6 @@ public class TestUserResourceController extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/999"))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.statusCode", Is.is(404)))
-                .andExpect(jsonPath("$.message", Is.is("User with this id not found")));
+                .andExpect(content().string("User with this id not found"));
     }
 }
