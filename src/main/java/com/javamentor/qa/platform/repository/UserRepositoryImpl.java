@@ -16,9 +16,9 @@ public class UserRepositoryImpl implements UserRepository {
     private EntityManager entityManager;
 
     @Override
-    public Optional<User> getUserByLogin(String login) {
+    public Optional<User> getUserByLogin(String email) {
         return Optional.ofNullable(entityManager.createQuery("select u from User u where u.email =: email", User.class)
-                .setParameter("email", login).getSingleResult());
+                .setParameter("email", email).getSingleResult());
 
     }
 
