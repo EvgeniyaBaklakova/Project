@@ -15,11 +15,11 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 public class PageDto<T> implements Serializable {
-    private int currentPageNumber;
-    private int totalPageCount;
-    private int totalResultCount;
+    private Long currentPageNumber;
+    private Long totalPageCount;
+    private Long totalResultCount;
     private List<T> items;
-    private int itemsOnPage;
+    private Long itemsOnPage;
 
 
     public PageDto() {

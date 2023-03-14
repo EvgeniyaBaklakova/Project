@@ -1,10 +1,10 @@
 package com.javamentor.qa.platform.models.dto;
 
-public class UserDto {
+public class SwaggerDto {
     private String name;
     private String surName;
 
-    public UserDto(String name, String surName) {
+    public SwaggerDto(String name, String surName) {
         this.name = name;
         this.surName = surName;
     }

@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
-import com.javamentor.qa.platform.models.dto.UserDto;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -20,7 +19,7 @@ public abstract class ReadOnlyDaoImpl<E, K> {
             .getActualTypeArguments()[0];
 
 
-    public List<E> getAll(UserDto userDto) {
+    public List<E> getAll() {
         return entityManager.createQuery("from " + clazz.getName()).getResultList();
     }
 
