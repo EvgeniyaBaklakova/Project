@@ -22,4 +22,7 @@ public class PageDto<T> implements Serializable {
     private int itemsOnPage;
 
 
+    public PageDto() {
+
+    }
 }
