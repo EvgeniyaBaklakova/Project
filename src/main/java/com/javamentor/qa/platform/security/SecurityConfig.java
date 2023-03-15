@@ -1,11 +1,10 @@
 package com.javamentor.qa.platform.security;
 
-import com.javamentor.qa.platform.security.util.JwtAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.javamentor.qa.platform.security.util.JWTAuthenticationFilter;
+import com.javamentor.qa.platform.security.util.JWTTokenHelper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,12 +23,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
 
-    private final JwtAuthenticationFilter jwtFilter;
+    private final JWTTokenHelper jwtTokenHelper;
+    private final JWTAuthenticationFilter jwtAuthenticationFilter;
 
-    @Autowired
-    public SecurityConfig(JwtAuthenticationFilter jwtFilter) {
-        this.jwtFilter = jwtFilter;
+    public SecurityConfig(JWTTokenHelper jwtTokenHelper, JWTTokenHelper jwtAuthenticationFilter, JWTAuthenticationFilter jwtAuthenticationFilter1) {
+        this.jwtTokenHelper = jwtTokenHelper;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter1;
     }
+
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -44,18 +45,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         filter.setEncoding("UTF-8");
         filter.setForceEncoding(true);
         http.csrf().disable();
-        http.cors();
+        http.cors().disable();
         http
-                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers( "/css/**", "/js/**").permitAll()
+                .antMatchers("/css/**", "/js/**").permitAll()
                 .antMatchers("/api/user/**").hasRole("USER")
                 .antMatchers("/**").permitAll()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
 
     }
@@ -69,8 +69,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return  NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder(12);
     }
+
+//            @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return  NoOpPasswordEncoder.getInstance();
+//    }
     @Bean
     @Override
     public AuthenticationManager authenticationManager() throws Exception {
