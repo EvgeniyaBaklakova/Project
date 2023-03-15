@@ -2,15 +2,14 @@ package com.javamentor.qa.platform.repository;
 
 
 import com.javamentor.qa.platform.models.entity.user.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.Optional;
 
 @Repository
-public class UserRepositoryImpl implements UserRepository {
+public class UserRepositoryImpl implements UserRepository, UserDetailsService {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -18,10 +17,12 @@ public class UserRepositoryImpl implements UserRepository {
 
 
     @Override
-    public Optional<User> getUserByLogin(String email) {
+    public User loadUserByUsername(String email) {
         User user  = entityManager.createQuery("select u from User u where u.email =: email", User.class)
                 .setParameter("email", email).getSingleResult();
 
-        return Optional.ofNullable(user);
+        return user;
     }
+
+
 }
