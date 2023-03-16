@@ -6,7 +6,7 @@ import com.javamentor.qa.platform.models.dto.user.UserDtoExample;
 import java.util.List;
 import java.util.Map;
 
-public interface ExamplePaginationDtoUser extends PageDtoDao <UserDtoExample> {
+public interface ExamplePaginationDtoDao extends PageDtoDao <UserDtoExample> {
     @Override
     default List<UserDtoExample> getItems(Integer currentPage, Integer itemsOnPage, Map<String, Object> parameters) {
         return null;

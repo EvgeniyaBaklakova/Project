@@ -9,25 +9,29 @@ import java.util.Map;
 
 public class PaginationServiceAbstract<T> implements PaginationService<T> {
 
-    private final PageDtoDao paginationDtoDao;
 
-    public PaginationServiceAbstract(PageDtoDao paginationDtoDao) {
-        this.paginationDtoDao = paginationDtoDao;
+    private final Map<String, PageDtoDao<T>> mapDao;
+
+    public PaginationServiceAbstract(Map<String, PageDtoDao<T>> mapDao) {
+        this.mapDao = mapDao;
     }
 
 
     @Override
-    public PageDto<T> getPageDto(Integer currentPage, Integer itemsOnPage) {
-        return getPageDtoWithParameters(currentPage, itemsOnPage, new HashMap<>());
+    public PageDto<T> getPageDto(String maneClass, Integer currentPage, Integer itemsOnPage) {
+        return getPageDtoWithParameters(maneClass, currentPage, itemsOnPage, new HashMap<>());
     }
 
     @Override
-    public PageDto<T> getPageDtoWithParameters(Integer currentPage, Integer itemsOnPage, Map<String, Object> parameters) {
+    public PageDto<T> getPageDtoWithParameters(String nameClass, Integer currentPage, Integer itemsOnPage, Map<String, Object> parameters) {
+        PageDtoDao<T> dtoDao = mapDao.get(nameClass);
+
         PageDto<T> pageDto = new PageDto<>();
         pageDto.setCurrentPageNumber(Long.valueOf(currentPage));
         pageDto.setItemsOnPage(Long.valueOf(itemsOnPage));
-        pageDto.setTotalPageCount(paginationDtoDao.getTotalResultCount(parameters));
-        pageDto.setItems(paginationDtoDao.getItems(currentPage, itemsOnPage, parameters));
+        pageDto.setTotalPageCount((long) Math.ceil(itemsOnPage)) ;  // высчитать нужно из Map ы посмотреть
+        pageDto.setItems(dtoDao.getItems(currentPage, itemsOnPage, parameters));
+        pageDto.setTotalResultCount(dtoDao.getTotalResultCount(parameters));
 
         return pageDto;
     }

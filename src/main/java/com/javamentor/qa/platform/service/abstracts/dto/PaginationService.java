@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface PaginationService <T>{
-    PageDto<T> getPageDto(Integer currentPage, Integer itemsOnPage);
 
-    PageDto<T> getPageDtoWithParameters(Integer currentPage, Integer itemsOnPage, Map<String, Object> parameters);
+
+    PageDto<T> getPageDtoWithParameters(String nameClass, Integer currentPage, Integer itemsOnPage, Map<String, Object> parameters);
+
+    PageDto<T> getPageDto(String maneClass, Integer currentPage, Integer itemsOnPage);
 }
