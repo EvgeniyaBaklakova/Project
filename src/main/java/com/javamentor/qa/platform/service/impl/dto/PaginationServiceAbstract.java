@@ -29,9 +29,14 @@ public class PaginationServiceAbstract<T> implements PaginationService<T> {
         PageDto<T> pageDto = new PageDto<>();
         pageDto.setCurrentPageNumber(Long.valueOf(currentPage));
         pageDto.setItemsOnPage(Long.valueOf(itemsOnPage));
-        pageDto.setTotalPageCount((long) Math.ceil(itemsOnPage)) ;
-        pageDto.setItems(dtoDao.getItems(currentPage, itemsOnPage, parameters));
-        pageDto.setTotalResultCount(dtoDao.getTotalResultCount(parameters));
+        if (pageDto.getItemsOnPage() > pageDto.getTotalResultCount()) {
+            pageDto.setItemsOnPage(pageDto.getTotalResultCount());
+            pageDto.setTotalPageCount((pageDto.getTotalResultCount() + pageDto.getItemsOnPage() - 1) / pageDto.getItemsOnPage());
+            pageDto.setItems(dtoDao.getItems(currentPage, itemsOnPage, parameters));
+            pageDto.setTotalResultCount(dtoDao.getTotalResultCount(parameters));
+
+            return pageDto;
+        }
 
         return pageDto;
     }
