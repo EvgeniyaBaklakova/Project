@@ -29,7 +29,7 @@ public class PaginationServiceAbstract<T> implements PaginationService<T> {
         PageDto<T> pageDto = new PageDto<>();
         pageDto.setCurrentPageNumber(Long.valueOf(currentPage));
         pageDto.setItemsOnPage(Long.valueOf(itemsOnPage));
-        pageDto.setTotalPageCount((long) Math.ceil(itemsOnPage)) ;  // высчитать нужно из Map ы посмотреть
+        pageDto.setTotalPageCount((long) Math.ceil(itemsOnPage)) ;
         pageDto.setItems(dtoDao.getItems(currentPage, itemsOnPage, parameters));
         pageDto.setTotalResultCount(dtoDao.getTotalResultCount(parameters));
 
