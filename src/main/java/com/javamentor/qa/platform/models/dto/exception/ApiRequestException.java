@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.exception;
+package com.javamentor.qa.platform.models.dto.exception;
 
 public class ApiRequestException extends RuntimeException {
 
