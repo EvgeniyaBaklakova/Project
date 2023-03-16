@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.security;
 
-import com.javamentor.qa.platform.security.util.JWTAuthenticationFilter;
-import com.javamentor.qa.platform.security.util.JWTTokenHelper;
+import com.javamentor.qa.platform.security.util.JwtFilter;
+import com.javamentor.qa.platform.security.util.JwtProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -23,12 +22,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
 
-    private final JWTTokenHelper jwtTokenHelper;
-    private final JWTAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtProvider jwtProvider;
+    private final JwtFilter jwtFilter;
 
-    public SecurityConfig(JWTTokenHelper jwtTokenHelper, JWTTokenHelper jwtAuthenticationFilter, JWTAuthenticationFilter jwtAuthenticationFilter1) {
-        this.jwtTokenHelper = jwtTokenHelper;
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter1;
+    public SecurityConfig(JwtProvider jwtProvider, JwtProvider jwtAuthenticationFilter, JwtFilter jwtFilter1) {
+        this.jwtProvider = jwtProvider;
+        this.jwtFilter = jwtFilter1;
     }
 
 
@@ -48,14 +47,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         http.cors().disable();
         http
                 .authorizeRequests()
-                .antMatchers("/css/**", "/js/**").permitAll()
+                .antMatchers("/css/**", "/js/**", "/html/**").permitAll()
                 .antMatchers("/api/user/**").hasRole("USER")
                 .antMatchers("/**").permitAll()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 
     }
@@ -72,10 +71,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         return new BCryptPasswordEncoder(12);
     }
 
-//            @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return  NoOpPasswordEncoder.getInstance();
-//    }
     @Bean
     @Override
     public AuthenticationManager authenticationManager() throws Exception {

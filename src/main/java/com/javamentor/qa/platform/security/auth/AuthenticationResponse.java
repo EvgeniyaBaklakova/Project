@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.security.util;
+package com.javamentor.qa.platform.security.auth;
 
 public class AuthenticationResponse {
     private String jwtToken;    

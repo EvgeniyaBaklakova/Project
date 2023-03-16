@@ -6,7 +6,6 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -15,24 +14,24 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @Component
-public class JWTTokenHelper {
+public class JwtProvider {
 
     private String appName = "mine";
 
-    private String secretKey = "secretKeyHelloeverybodyIjsutGetTiredFromThisBullshitPleaseLetMeIn";
+    private String secretKey = "secretKeyHelloEverybodyIJsutGetTiredFromThisBullshitPleaseLetMeIn";
 
     private int expiresIn = 1000;
 
     private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
 
-    public JWTTokenHelper(String appName, String secretKey, int expiresIn, SignatureAlgorithm SIGNATURE_ALGORITHM) {
+    public JwtProvider(String appName, String secretKey, int expiresIn, SignatureAlgorithm SIGNATURE_ALGORITHM) {
         this.appName = appName;
         this.secretKey = secretKey;
         this.expiresIn = expiresIn;
         this.SIGNATURE_ALGORITHM = SIGNATURE_ALGORITHM;
     }
 
-    public JWTTokenHelper() { }
+    public JwtProvider() { }
 
     private Claims getAllClaimsFromToken(String token) {
         Claims claims;

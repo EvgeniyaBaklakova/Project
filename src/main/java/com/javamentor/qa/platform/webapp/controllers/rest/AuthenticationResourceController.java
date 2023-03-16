@@ -1,8 +1,8 @@
-package com.javamentor.qa.platform.security.auth;
+package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.UserDTO;
+import com.javamentor.qa.platform.security.auth.AuthenticationResponse;
 import com.javamentor.qa.platform.security.util.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -10,9 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,17 +24,17 @@ import java.security.spec.InvalidKeySpecException;
 public class AuthenticationResourceController {
 
     final AuthenticationManager authenticationManager;
-    final JWTTokenHelper tokenProvider;
+    final JwtProvider tokenProvider;
 
-    public AuthenticationResourceController(AuthenticationManager authenticationManager, JWTTokenHelper tokenProvider) {
+    public AuthenticationResourceController(AuthenticationManager authenticationManager, JwtProvider tokenProvider) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
     }
 
     @PostMapping("/token")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody UserDTO loginRequest) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        String username = loginRequest.getEmail();
-        String password = loginRequest.getPassword();
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody UserDTO userDTO) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        String username = userDTO.getEmail();
+        String password = userDTO.getPassword();
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(

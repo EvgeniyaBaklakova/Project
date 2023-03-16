@@ -15,26 +15,26 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 @Component
-public class JWTAuthenticationFilter extends OncePerRequestFilter {
+public class JwtFilter extends OncePerRequestFilter {
 
     private UserDetailsService userDetailsService;
-    private JWTTokenHelper jwtTokenHelper;
+    private JwtProvider jwtProvider;
 
-    public JWTAuthenticationFilter(UserDetailsService userDetailsService, JWTTokenHelper jwtTokenHelper) {
+    public JwtFilter(UserDetailsService userDetailsService, JwtProvider jwtProvider) {
         this.userDetailsService = userDetailsService;
-        this.jwtTokenHelper = jwtTokenHelper;
+        this.jwtProvider = jwtProvider;
 
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException, java.io.IOException {
-        String authToken = jwtTokenHelper.getToken(request);
+        String authToken = jwtProvider.getToken(request);
         if (null != authToken) { // fails this check
-            String userName = jwtTokenHelper.getUsernameFromToken(authToken);
+            String userName = jwtProvider.getUsernameFromToken(authToken);
             if (null != userName) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
-                if (jwtTokenHelper.validateToken(authToken, userDetails)) {
+                if (jwtProvider.validateToken(authToken, userDetails)) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetails(request));
 
