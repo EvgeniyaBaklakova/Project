@@ -10,5 +10,5 @@ public interface PaginationService <T>{
 
     PageDto<T> getPageDtoWithParameters(String nameClass, Integer currentPage, Integer itemsOnPage, Map<String, Object> parameters);
 
-    PageDto<T> getPageDto(String maneClass, Integer currentPage, Integer itemsOnPage);
+    PageDto<T> getPageDto(String nameClass, Integer currentPage, Integer itemsOnPage);
 }

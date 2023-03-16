@@ -18,8 +18,8 @@ public class PaginationServiceAbstract<T> implements PaginationService<T> {
 
 
     @Override
-    public PageDto<T> getPageDto(String maneClass, Integer currentPage, Integer itemsOnPage) {
-        return getPageDtoWithParameters(maneClass, currentPage, itemsOnPage, new HashMap<>());
+    public PageDto<T> getPageDto(String nameClass, Integer currentPage, Integer itemsOnPage) {
+        return getPageDtoWithParameters(nameClass, currentPage, itemsOnPage, new HashMap<>());
     }
 
     @Override
