@@ -4,11 +4,12 @@ package com.javamentor.qa.platform.repository;
 import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-@Repository
+@Service
 public class UserRepositoryImpl implements UserRepository, UserDetailsService {
 
     @PersistenceContext
