@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.models.dto.UserDTO;
+import com.javamentor.qa.platform.models.dto.user.UserDto;
 import com.javamentor.qa.platform.security.auth.AuthenticationResponse;
 import com.javamentor.qa.platform.security.util.*;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,7 @@ public class AuthenticationResourceController {
     }
 
     @PostMapping("/token")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody UserDTO userDTO) throws InvalidKeySpecException, NoSuchAlgorithmException {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody UserDto userDTO) throws InvalidKeySpecException, NoSuchAlgorithmException {
         String username = userDTO.getEmail();
         String password = userDTO.getPassword();
         Authentication authentication;
