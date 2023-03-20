@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -16,22 +17,21 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JwtProvider {
 
-    private String appName = "mine";
-
-    private String secretKey = "secretKeyHelloEverybodyIJsutGetTiredFromThisBullshitPleaseLetMeIn";
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     private int expiresIn = 1000;
 
     private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
 
-    public JwtProvider(String appName, String secretKey, int expiresIn, SignatureAlgorithm SIGNATURE_ALGORITHM) {
-        this.appName = appName;
+    public JwtProvider(String secretKey, int expiresIn, SignatureAlgorithm SIGNATURE_ALGORITHM) {
         this.secretKey = secretKey;
         this.expiresIn = expiresIn;
         this.SIGNATURE_ALGORITHM = SIGNATURE_ALGORITHM;
     }
 
-    public JwtProvider() { }
+    public JwtProvider() {
+    }
 
     private Claims getAllClaimsFromToken(String token) {
         Claims claims;
@@ -59,11 +59,10 @@ public class JwtProvider {
 
     public String generateToken(String username) throws InvalidKeySpecException, NoSuchAlgorithmException {
         return Jwts.builder()
-                .setIssuer( appName )
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(generateExpirationDate())
-                .signWith( SIGNATURE_ALGORITHM, secretKey )
+                .signWith(SIGNATURE_ALGORITHM, secretKey)
                 .compact();
     }
 
@@ -81,7 +80,7 @@ public class JwtProvider {
     }
 
     public boolean isTokenExpired(String token) {
-        Date expireDate=getExpirationDate(token);
+        Date expireDate = getExpirationDate(token);
         return expireDate.before(new Date());
     }
 
@@ -109,16 +108,16 @@ public class JwtProvider {
         return issueAt;
     }
 
-    public String getToken( HttpServletRequest request ) {
-        String authHeader = getAuthHeaderFromHeader( request );
-        if ( authHeader != null && authHeader.startsWith("Bearer ")) {
+    public String getToken(HttpServletRequest request) {
+        String authHeader = getAuthHeaderFromHeader(request);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
 
         return null;
     }
 
-    public String getAuthHeaderFromHeader( HttpServletRequest request ) {
+    public String getAuthHeaderFromHeader(HttpServletRequest request) {
         return request.getHeader("Authorization");
     }
 }
