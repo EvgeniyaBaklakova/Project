@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class QuestionViewedServiceImpl extends ReadWriteServiceImpl<QuestionViewed, Long> implements QuestionViewedService {
 
-    QuestionViewedDao questionViewedDao;
+    private final QuestionViewedDao questionViewedDao;
 
     @Autowired
     public QuestionViewedServiceImpl(QuestionViewedDao questionViewedDao) {
@@ -19,7 +19,7 @@ public class QuestionViewedServiceImpl extends ReadWriteServiceImpl<QuestionView
     }
 
     @Override
-    @Cacheable("viewed")
+    @Cacheable(value = "viewed", unless = "#result == false")
     public boolean isViewed(Long userId, Long questionId) {
         return questionViewedDao.isViewed(userId, questionId);
     }
