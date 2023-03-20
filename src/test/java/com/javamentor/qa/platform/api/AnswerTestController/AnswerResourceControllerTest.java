@@ -1,11 +1,15 @@
 package com.javamentor.qa.platform.api.AnswerTestController;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,7 +41,8 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
                         .delete("/api/user/question/102/answer/102"))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());
-                 assertFalse(answerDeleteIdTest(102L),()-> "isDeleted = false! ответ не удален.");
+                 assertTrue (answerDeleteIdTest(102L));
+
     }
 
     @Test
@@ -54,10 +59,11 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
 
     }
 
-    public boolean answerDeleteIdTest(Long answerId) {
-        long count = (long) em.createQuery("SELECT Count(DISTINCT a) FROM Answer a WHERE a.id =: id")
+      private boolean answerDeleteIdTest(Long answerId) {
+        long count = (long) em.createQuery("SELECT Count(a) FROM Answer a  WHERE a.id =: id")
                 .setParameter("id", answerId)
                 .getSingleResult();
+
         return count > 0;
     }
 }

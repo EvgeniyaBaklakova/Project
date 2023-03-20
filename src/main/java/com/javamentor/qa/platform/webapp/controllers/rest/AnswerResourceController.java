@@ -33,8 +33,9 @@ public class AnswerResourceController {
     @ApiOperation(value = "Удаление ответа на вопрос", tags = "Answer Delete")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Answer успешно удален!"),
-            @ApiResponse(code = 400, message = "Answer с таким ID не существует")})
-
+            @ApiResponse(code = 400, message = "Answer с таким ID не существует"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
     public ResponseEntity<?> answerDelete(@PathVariable("answerId") Long answerId) {
         Optional<Answer> answer = answerService.getById(answerId);
         if (answer.isEmpty()) {

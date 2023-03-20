@@ -8,17 +8,17 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 @Repository
-public class AnswerDaoImp extends ReadWriteDaoImpl<Answer, Long> implements AnswerDao {
+public class AnswerDaoImp extends ReadWriteDaoImpl<Answer,Long> implements AnswerDao {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public void answerDeleteId(Long answerId) {
+    public void  answerDeleteId(Long answerId) {
 
-        entityManager.createQuery("delete Answer a where a.isDeleted = true and a.id = :id")
-                .setParameter("id", answerId)
-                .executeUpdate();
+           entityManager.createQuery("UPDATE Answer a SET a.isDeleted = true WHERE a.id = :id")
+                   .setParameter("id",answerId)
+                   .executeUpdate();
 
 
     }
