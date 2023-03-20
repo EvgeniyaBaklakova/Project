@@ -35,7 +35,6 @@ public class QuestionResourceController {
         if (!questionViewedService.isViewed(user.getId(), id)) {
             if (question != null) {
                 questionViewedService.persist(new QuestionViewed(null, user, question, null));
-                System.out.println("acacia");
                 return new ResponseEntity<>("View was saved", HttpStatus.OK);
             }
             return new ResponseEntity<>("Incorrect question id", HttpStatus.NOT_FOUND);
