@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 @RestController
 public class QuestionResourceController {
 
@@ -30,15 +33,17 @@ public class QuestionResourceController {
 
     @PostMapping("api/user/question/{id}/view")
     public ResponseEntity addView(@PathVariable("id") long id, @RequestBody Long userId) {
-        User user  = userService.getById(userId).orElse(null);
-        Question question = questionService.getById(id).orElse(null);
-        if (!questionViewedService.isViewed(user.getId(), id)) {
-            if (question != null) {
-                questionViewedService.persist(new QuestionViewed(null, user, question, null));
-                return new ResponseEntity<>("View was saved", HttpStatus.OK);
-            }
-            return new ResponseEntity<>("Incorrect question id", HttpStatus.NOT_FOUND);
+        Optional<User> user  = userService.getById(userId);
+        Optional<Question> question = questionService.getById(id);
+        if(question.isPresent()) {
+            if(user.isPresent()) {
+                if (!questionViewedService.isViewed(user.get().getId(), id)) {
+                    questionViewedService.persist(new QuestionViewed(null, user.get(), question.get(), LocalDateTime.now()));
+                    return new ResponseEntity<>("View was saved", HttpStatus.OK);
+                }
+                return new ResponseEntity<>("Already viewed", HttpStatus.OK);
+            } else return new ResponseEntity("Incorrect user id", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>("Already viewed", HttpStatus.OK);
+        return new ResponseEntity<>("Incorrect question id", HttpStatus.NOT_FOUND);
     }
 }
