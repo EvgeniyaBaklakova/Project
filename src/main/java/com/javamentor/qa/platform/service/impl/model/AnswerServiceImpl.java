@@ -9,19 +9,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-public class AnswerServiceImp extends ReadWriteServiceImpl<Answer, Long> implements AnswerService {
+public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implements AnswerService {
     private final AnswerDao answerDao;
 
     @Autowired
-    public AnswerServiceImp(AnswerDao answerDao) {
+    public AnswerServiceImpl(AnswerDao answerDao) {
         super(answerDao);
         this.answerDao = answerDao;
     }
 
     @Override
     @Transactional
-    public void answerDelete(Long answerId) {
-        answerDao.answerDeleteId(answerId);
+    public void deleteById(Long answerId) {
+        answerDao.deleteById(answerId);
     }
 
 }

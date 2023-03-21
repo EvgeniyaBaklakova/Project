@@ -42,7 +42,7 @@ public class AnswerResourceController {
             return new ResponseEntity<>("Answer с таким ID не существует!",
                     HttpStatus.BAD_REQUEST);
         }
-        answerService.answerDelete(answerId);
+        answerService.deleteById(answerId);
         return new ResponseEntity<>("Answer с ID " + answerId + " успешно удален", HttpStatus.OK);
     }
 
