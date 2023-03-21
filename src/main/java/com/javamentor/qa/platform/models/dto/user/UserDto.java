@@ -9,7 +9,6 @@ public class UserDto {
     private Long id;
 
     private String email;
-    private String password;
     private String fullName;
     private String imageLink;
     private String city;
