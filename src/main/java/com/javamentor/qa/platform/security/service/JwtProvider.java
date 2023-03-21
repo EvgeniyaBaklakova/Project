@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.security.util;
+package com.javamentor.qa.platform.security.service;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;

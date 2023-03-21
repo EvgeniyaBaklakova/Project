@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.security.util;
+package com.javamentor.qa.platform.security.service;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
