@@ -1,7 +1,9 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+
 import com.javamentor.qa.platform.security.auth.AuthenticationResponse;
-import com.javamentor.qa.platform.security.util.*;
+import com.javamentor.qa.platform.security.util.AuthDTO;
+import com.javamentor.qa.platform.security.util.JwtProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
