@@ -13,13 +13,11 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
     @PersistenceContext
     private EntityManager entityManager;
 
-
-
     @Override
     public User loadUserByUsername(String email) {
-        User user  = entityManager.createQuery("select u from User u where u.email =: email", User.class)
+        User user  = entityManager.createQuery("select u from User u" +
+                        " join fetch u.role where u.email =: email", User.class)
                 .setParameter("email", email).getSingleResult();
-
         return user;
     }
 }
