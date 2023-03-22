@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.models.entity.user;
 
+import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
@@ -20,7 +21,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_entity")
-public class User implements UserDetails {
+public class User extends SingleResultUtil implements UserDetails {
 
     private static final long serialVersionUID = 8086496705293852501L;
 

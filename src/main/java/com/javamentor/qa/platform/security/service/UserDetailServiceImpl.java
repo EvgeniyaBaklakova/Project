@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.security.service;
 
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
-import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,10 +19,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userDao.loadUserByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException(username);
-        }
-        return user;
+        SingleResultUtil user = userDao.loadUserByUsername(username);
+
+        return (UserDetails) user;
     }
 }
