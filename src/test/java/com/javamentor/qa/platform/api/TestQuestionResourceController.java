@@ -3,7 +3,6 @@ package com.javamentor.qa.platform.api;
 import com.javamentor.qa.platform.AbstractTestApi;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -19,9 +18,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void viewAtFirstTime() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/1/view")
-                        .content(objectMapper.writeValueAsString(1L))
-                        .contentType(MediaType.APPLICATION_JSON))
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/1/view"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -32,9 +29,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void wasAlreadyViewed() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/1/view")
-                        .content(objectMapper.writeValueAsString(1L))
-                        .contentType(MediaType.APPLICATION_JSON))
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/1/view"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -45,9 +40,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void questionNotFound() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/2/view")
-                        .content(objectMapper.writeValueAsString(1L))
-                        .contentType(MediaType.APPLICATION_JSON))
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/2/view"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
