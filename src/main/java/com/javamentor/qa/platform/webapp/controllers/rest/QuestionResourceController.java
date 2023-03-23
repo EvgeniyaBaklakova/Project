@@ -19,9 +19,10 @@ import java.util.Optional;
 @RequestMapping("api/user/question")
 public class QuestionResourceController {
 
-    QuestionService questionService;
-    QuestionViewedService questionViewedService;
-    UserService userService;
+    private final QuestionService questionService;
+    private final QuestionViewedService questionViewedService;
+    private final UserService userService;
+
     @Autowired
     public QuestionResourceController(QuestionViewedService questionViewedService, QuestionService questionService, UserService userService) {
         this.questionService = questionService;
@@ -32,17 +33,15 @@ public class QuestionResourceController {
 
     @PostMapping("/{id}/view")
     public ResponseEntity addView(@PathVariable("id") long id) {
-        Optional<User> user  = userService.getById(1L);
+        User user  = userService.getById(1L).get();
         Optional<Question> question = questionService.getById(id);
-        if(question.isPresent()) {
-            if(user.isPresent()) {
-                if (!questionViewedService.isViewed(user.get().getId(), id)) {
-                    questionViewedService.persist(new QuestionViewed(user.get(), question.get(), LocalDateTime.now()));
-                    return new ResponseEntity<>("View was saved", HttpStatus.OK);
-                }
-                return new ResponseEntity<>("Already viewed", HttpStatus.OK);
-            } else return new ResponseEntity("Incorrect user id", HttpStatus.NOT_FOUND);
+        if(question.isEmpty()) {
+            return new ResponseEntity<>("Incorrect question id", HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>("Incorrect question id", HttpStatus.NOT_FOUND);
+        if (!questionViewedService.isViewed(user.getId(), id)) {
+            questionViewedService.persist(new QuestionViewed(user, question.get(), LocalDateTime.now()));
+            return new ResponseEntity<>("View was saved", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("Already viewed", HttpStatus.OK);
     }
 }
