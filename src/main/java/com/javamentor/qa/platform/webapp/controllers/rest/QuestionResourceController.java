@@ -10,7 +10,10 @@ import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -18,26 +21,27 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/user/question")
 public class QuestionResourceController {
-
     private final QuestionService questionService;
+
     private final QuestionViewedService questionViewedService;
+
     private final UserService userService;
 
     @Autowired
-    public QuestionResourceController(QuestionViewedService questionViewedService, QuestionService questionService, UserService userService) {
+    public QuestionResourceController(QuestionViewedService questionViewedService,
+                                      QuestionService questionService, UserService userService) {
         this.questionService = questionService;
         this.questionViewedService = questionViewedService;
         this.userService = userService;
     }
 
-
     @PostMapping("/{id}/view")
     public ResponseEntity addView(@PathVariable("id") long id) {
-        User user  = userService.getById(1L).get();
         Optional<Question> question = questionService.getById(id);
-        if(question.isEmpty()) {
+        if (question.isEmpty()) {
             return new ResponseEntity<>("Incorrect question id", HttpStatus.NOT_FOUND);
         }
+        User user = userService.getById(1L).get();
         if (!questionViewedService.isViewed(user.getId(), id)) {
             questionViewedService.persist(new QuestionViewed(user, question.get(), LocalDateTime.now()));
             return new ResponseEntity<>("View was saved", HttpStatus.OK);
