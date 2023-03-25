@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.dto.Pagination.ExampleDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.user.UserDtoExample;
 import com.javamentor.qa.platform.service.abstracts.dto.Pagination.PaginationService;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +28,7 @@ public class ExampleControllerPaginationUser {
             @ApiResponse(code = 403, message = "Недостаточно прав доступа"),
             @ApiResponse(code = 200, message = "Страница успешно найдена")
     })
-    public ResponseEntity<PageDto<UserDtoExample>> getPageOfUsers(
+    public ResponseEntity<PageDto> getPageOfUsers(
             @ApiParam(value = "номер страницы") @PathVariable Integer pageNumber,
             @ApiParam(value = "количество юзеров") @RequestParam(value = "itemsOnPage", required = false, defaultValue = "1") Integer itemsOnPage) {
         Map<String, Object> params = new HashMap<>();

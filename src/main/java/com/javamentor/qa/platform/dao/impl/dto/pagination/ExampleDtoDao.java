@@ -15,7 +15,6 @@ public class ExampleDtoDao implements PageDtoDao<UserDtoExample> {
     protected EntityManager entityManager;
 
 
-
     @Override
     public List<UserDtoExample> getItems(Integer currentPage, Integer itemsOnPage, Map<String, Object> parameters) {
         return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.user.UserDtoExample(" +
