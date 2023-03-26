@@ -15,8 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class TestDataInitService {
@@ -46,7 +45,7 @@ public class TestDataInitService {
     }
 
     public void initUsers() {
-        for(int i = 1; i <= 100; i = i + 2) {
+        for (int i = 1; i <= 100; i = i + 2) {
             userService.persistAll(new User(null, "email" + i + "@mail.com", "password", "name",
                             null, true, false, "city", "link_site", "link_github",
                             "link_vk", "about", "image_link", null, "nick", ROLE_USER),
@@ -79,7 +78,7 @@ public class TestDataInitService {
         question.setTags(tagList);
         questionService.persistAll(question);
 
-        //10 tags
+        //5 tags
         Question question2 = new Question();
         question2.setTitle("Title2");
         question2.setDescription("Description2");
@@ -87,46 +86,60 @@ public class TestDataInitService {
         question2.setUser(userService.getAll().get(5));
         question2.setIsDeleted(false);
         List<Tag> tagList2 = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             tagList2.add(tagService.getAll().get(i));
         }
         question2.setTags(tagList2);
         questionService.persistAll(question2);
 
-        //40 tags
-        Question question3 = new Question();
-        question3.setTitle("Title3");
-        question3.setDescription("Description3");
-        question3.setLastUpdateDateTime(LocalDateTime.now(Clock.systemDefaultZone()));
-        question3.setUser(userService.getAll().get(10));
-        question3.setIsDeleted(false);
-        List<Tag> tagList3 = new ArrayList<>();
-        for (int i = 0; i < 40; i++) {
-            tagList2.add(tagService.getAll().get(i));
+        //random tags
+        for (int i = 3; i <= 5; i++) {
+            int rand = (int) Math.random() * 7;
+            Question question3 = new Question();
+            question3.setTitle("Title" + i);
+            question3.setDescription("Decription" + i);
+            question3.setLastUpdateDateTime(LocalDateTime.now(Clock.systemDefaultZone()));
+            question3.setIsDeleted(false);
+
+            Set<Tag> tagSet = new HashSet<>();
+            for (int k = 0; k <= rand; k++) {
+                tagSet.add(tagService.getAll().get((int) Math.random() * 5));
+            }
+            List<Tag> tagList3 = new ArrayList<>(tagSet);
+
+            question3.setTags(tagList3);
+            question3.setUser(userService.getAll().get(i));
+            questionService.persistAll(question3);
         }
-        question3.setTags(tagList3);
-        questionService.persistAll(question3);
     }
 
     public void initAnswer() {
         List<Question> questionList = questionService.getAll();
-        //у первых двух вопросов нет ответа
-        for (int i = 2; i < questionList.size(); i++) {
-            int rand = (int) Math.random() * 3;
-            for (int k = 0; k <= rand; k++) {
-                Answer answer = new Answer();
-                answer.setDateAcceptTime(LocalDateTime.now(Clock.systemDefaultZone()));
-                answer.setHtmlBody("html body" + k);
-                answer.setIsDeleted(false);
-                answer.setIsDeletedByModerator(false);
-                answer.setIsHelpful(true);
-                answer.setPersistDateTime(LocalDateTime.now(Clock.systemDefaultZone()));
-                answer.setUpdateDateTime(LocalDateTime.now(Clock.systemDefaultZone()));
-                answer.setQuestion(questionList.get(i));
-                answer.setUser(userService.getAll().get(7));
-                answerService.persistAll(answer);
-            }
+        //У первых трех вопросов нет ответа
+        for (int i = 3; i < questionList.size(); i++) {
+            Answer answer = new Answer();
+            answer.setDateAcceptTime(LocalDateTime.now(Clock.systemDefaultZone()));
+            answer.setHtmlBody("Html body" + i);
+            answer.setIsDeleted(false);
+            answer.setIsDeletedByModerator(false);
+            answer.setIsHelpful(true);
+            answer.setUpdateDateTime(LocalDateTime.now(Clock.systemDefaultZone()));
+            answer.setPersistDateTime(LocalDateTime.now(Clock.systemDefaultZone()));
+            answer.setUser(userService.getAll().get(i));
+            answer.setQuestion(questionList.get(i));
+            answerService.persistAll(answer);
         }
+        //У четвертого вопроса 2 ответа
+        Answer answer2 = new Answer();
+        answer2.setDateAcceptTime(LocalDateTime.now(Clock.systemDefaultZone()));
+        answer2.setHtmlBody("Html body1");
+        answer2.setIsDeleted(false);
+        answer2.setIsDeletedByModerator(false);
+        answer2.setIsHelpful(true);
+        answer2.setUpdateDateTime(LocalDateTime.now(Clock.systemDefaultZone()));
+        answer2.setPersistDateTime(LocalDateTime.now(Clock.systemDefaultZone()));
+        answer2.setUser(userService.getAll().get(1));
+        answer2.setQuestion(questionList.get(3));
+        answerService.persistAll(answer2);
     }
-
 }
