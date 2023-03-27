@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add question</title>
+
+    <!--bootstrap-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!--JS-->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+</head>
+
+<body class="bg-light">
+
+<!--ЗАГОЛОВОК-->
+<div class="container">
+    <div class="row">
+        <div class="pt-5 pb-4 text-left col-md-8">
+            <h2>Задать публичный вопрос</h2>
+        </div>
+        <div class="text-right col-md-4">
+            <img class="my-4" src="../static/images/questionAddHttp/question.png" width="100" height="100">
+        </div>
+    </div>
+    <div class="table pt-3 pb-1 mb-2 px-4 small table-info table-bordered border-primary rounded">
+        <h5>Чтобы написать хороший вопрос, воспользуйтесь подсказками:</h5>
+        <p class="mb-1"><em>Шаг 1: Кратко изложите свою проблему в поле "Заголовке";</em></p>
+        <p class="mb-1"><em>Шаг 2: Опишите вашу проблему подробнее. Что Вы пробовали, и что ожидали получить;</em></p>
+        <p class="mb-3"><em>Шаг 3: Добавьте «Теги», которые помогут донести ваш вопрос до членов сообщества.</em></p>
+    </div>
+
+<!--ДАННЫЕ ДЛЯ ВОПРОСА-->
+    <div class="row">
+        <form class="needs-validation" novalidate="">
+            <div class="col-md-12">
+
+<!--            ЗАГОЛОВОК ВОПРОСА-->
+                <div class="table table-Light table-bordered border-secondary rounded px-3 pb-4 pt-2">
+                    <div>
+                        <label class="font-weight-bold mb-0" for="title">Заголовок</label>
+                        <p class="mb-1 text-muted small">Будьте конкретны и представьте, что вы задаете вопрос другому
+                            человеку.</p>
+                        <input type="text" class="form-control" id="title"
+                               placeholder="Например, есть ли функция для нахождения суммы элементов массива?">
+                        <div class="invalid-feedback">
+                            Valid first name is required.
+                        </div>
+                    </div>
+                </div>
+
+<!--            ОПИСАНИЕ ВОПРОСА-->
+                <div class="table table-Light table-bordered border-secondary rounded px-3 pb-4 pt-2">
+                    <div>
+                        <label class="font-weight-bold mb-0" for="description">Опишите в подробностях вашу
+                            проблему</label>
+                        <p class="mb-1 text-muted small">Предоставьте развернутую информацию о проблеме.</p>
+                        <input type="text" class="form-control" id="description">
+                        <div class="invalid-feedback">
+                            Valid first name is required.
+                        </div>
+                    </div>
+                </div>
+
+<!--            ТЭГИ ВОПРОСА-->
+                <div class="table table-Light table-bordered border-secondary rounded px-3 pb-4 pt-2">
+                    <div>
+                        <label class="font-weight-bold mb-0" for="tags">Тэги</label>
+                        <p class="mb-1 text-muted small">Добавьте до 5 тегов, описывающих тематику вашего вопроса.
+                            Начните печатать, чтобы увидеть предложения.</p>
+                        <input type="text" class="form-control" id="tags" placeholder="Например, Java">
+                        <div class="invalid-feedback">
+                            Valid first name is required.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+<!--    ПОЯСНЕНИЕ К ПОЛЯМ-->
+        <div class="text-left col-md-4">
+
+<!--        ПОЯСНЕНИЕ К ЗАГОЛОВКУ ВОПРОСА-->
+            <div class="table table-Light table-bordered border-secondary rounded px-0 pb-0 pt-2">
+                <thead>
+                <p class="font-weight-bold text-center mb-0 pb-2 border-bottom border-secondary" for="tags">Хороший заголовок</p>
+                </thead>
+                <div class="row">
+                    <div class="text-center col-md-4 px-0">
+                        <img class="mt-3" src="../static/images/questionAddHttp/pen.png" width="70" height="55">
+                    </div>
+                    <div class="col-md-8 mt-1 pl-0">
+                        <p class="mb-1 text-muted small">Ваш заголовок должен обобщать проблему.</p>
+                        <p class="mb-1 text-muted small">Возможно, у Вас появится лучшее представление заголовка после
+                            того, как Вы детально опишите проблему.</p>
+                    </div>
+                </div>
+            </div>
+
+<!--        ПОЯСНЕНИЕ К ОПИСАНИЮ ВОПРОСА-->
+            <div class="table table-Light table-bordered border-secondary rounded px-0 pb-0 pt-2">
+                <thead>
+                <p class="font-weight-bold text-center mb-0 pb-2 border-bottom border-secondary" for="tags">Опишите проблему</p>
+                </thead>
+                <div class="row">
+                    <div class="text-center col-md-4 px-0">
+                        <img class="mt-3" src="../static/images/questionAddHttp/pen.png" width="70" height="55">
+                    </div>
+                    <div class="col-md-8 mt-1 pl-0">
+                        <p class="mb-1 text-muted small">Объясните, как Вы столкнулись с проблемой, которую пытаетесь
+                            решить, и какие трудности помешали Вам решить ее самостоятельно.</p>
+                        <p class="mb-1 text-muted small">Расскажите, что получилось и почему это не удовлетворило Вас.</p>
+                    </div>
+                </div>
+            </div>
+
+<!--        ПОСНЕНИЕ К ТЭГАМ ВОПРОСА-->
+            <div class="table table-Light table-bordered border-secondary rounded px-0 pb-0 pt-2">
+                <thead>
+                <p class="font-weight-bold text-center mb-0 pb-2 border-bottom border-secondary" for="tags">Добавьте тэги</p>
+                </thead>
+                <div class="row">
+                    <div class="text-center col-md-4 px-0">
+                        <img class="mt-3" src="../static/images/questionAddHttp/pen.png" width="70" height="55">
+                    </div>
+                    <div class="col-md-8 mt-1 pl-0">
+                        <p class="mb-1 text-muted small">Теги помогают привлечь внимание нужных людей.</p>
+                        <p class="mb-1 text-muted small">Добавляйте теги для языка программирования, базы данных, команд и конкретных используемых технологий.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn btn-primary btn-lg btn-block" type="submit">Опубликовать вопрос</button>
+
+    </div>
+</div>
+</div>
+</body>
+</html>
