@@ -11,8 +11,8 @@ function footer() {
       <div class="offset-2 col-md-4 mt-md-0 mt-3">
         <a style="float: left;
                   width: 120px;"
-                  href="https://stackoverflow.com//" class="logo" id="logo">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/Stack_Overflow_logo.svg" height="30px" alt=""/>
+                  href="https://kata.academy/" class="logo" id="logo">
+          <img src="https://squidex.jugru.team/api/assets/sites/wsKh6rMCJn2nc6hsUqufj/kata-academy.png" height="170px" alt=""/>
         </a>
       </div>
 
@@ -20,43 +20,43 @@ function footer() {
          
           <hr class="clearfix w-100 d-md-none pb-3">
           <div class="col-md-3 mb-md-0 mb-3">
-            <h5 class="text-uppercase">Products</h5>
+            <h5 class="text-uppercase">Главная</h5>
             <ul class="list-unstyled">
               <li>
-                <a href="https://stackoverflow.co/teams/"> Teams</a>
+                <a href="#"> Команды</a>
               </li>
               <li>
-                <a href="https://stackoverflow.co/advertising/"> Advertising</a>
+                <a href="#"> Реклама</a>
               </li>
               <li>
-                <a href="https://stackoverflow.co/collectives/">Collectives </a>
+                <a href="#">Коллективы </a>
               </li>
               <li>
-                <a href="https://stackoverflow.co/talent/"> Talent</a>
+                <a href="#"> Талант</a>
               </li>
             </ul>
           </div>
           <div class="col-md-3 mb-md-0 mb-3">
-            <h5 class="text-uppercase">Contact</h5>
+            <h5 class="text-uppercase">Сообщество</h5>
             <ul class="list-unstyled">
               <li>
-                <a href="https://stackoverflow.blog/?blb=1&_ga=2.33845729.1752627041.1679862728-1158825143.1673627734">Blog</a>
+                <a href="https://vk.com/kataacademy">ВК</a>
               </li>
               <li>
-                <a href="https://www.facebook.com/officialstackoverflow/"> Facebook</a>
+                <a href="https://www.youtube.com/channel/UCsmPQu0jnkNugG6WXmxC6kw/featured">YouTube</a>
               </li>
               <li>
-                <a href="https://twitter.com/stackoverflow">Twitter</a>
+                <a href="https://t.me/kata_academy">Telegram</a>
               </li>
               <li>
-                <a href="https://www.instagram.com/thestackoverflow">Instagram</a>
+                <a href="https://api.whatsapp.com/send/?phone=79959968596&text=Привет%21+Отправь%2C+пожалуйста%2C+нам+это+сообщение+с+номером+285728.+Мы+зарегистрируем+твое+обращение%2C+и+в+следующем+сообщении+ты+можешь+задать+свой+вопрос%21+Тебе+скоро+ответит+первый+свободный+координатор+%3D%29&app_absent=0">WhatsApp</a>
               </li>
             </ul>
           </div>
         </div>
       </div>
       <div class="footer-copyright text-center py-lg-3">
-        © 2023 Stack Exchange Inc; user contributions
+        © 2023 KATA Programming Academy
       </div>
     </footer>
   `

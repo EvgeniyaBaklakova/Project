@@ -11,12 +11,12 @@ function sidebar() {
             <div class="row">
               <div class="col-lg-8">
                 <nav class="nav flex-column">
-                  <a href="#" class="nav-link active font-weight-bold pl-0 text-dark">Home</a>
-                  <a class="nav-link text-uppercase font-weight-100 mt-1 pl-0 text-dark">Public</a>
-                  <a href="#" class="nav-link font-weight-100 text-dark">Questions</a>
-                  <a href="#" class="nav-link font-weight-100 text-dark">Tags</a>
-                  <a href="#" class="nav-link font-weight-100 text-dark">Users</a>
-                  <a href="#" class="nav-link font-weight-100 text-dark">Companies</a>
+                  <a href="#" class="nav-link active font-weight-bold pl-0 text-dark">Главная</a>
+                  <a class="nav-link text-uppercase font-weight-100 mt-1 pl-0 text-dark">Паблик</a>
+                  <a href="#" class="nav-link font-weight-100 text-dark">Вопросы</a>
+                  <a href="#" class="nav-link font-weight-100 text-dark">Теги</a>
+                  <a href="#" class="nav-link font-weight-100 text-dark">Участники</a>
+                  <a href="#" class="nav-link font-weight-100 text-dark">Без ответа</a>
                              
                 </nav>                
               </div>

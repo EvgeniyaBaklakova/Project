@@ -1,7 +1,7 @@
 const model = [
     {
         type: 'logo',
-        value: 'stack',
+        value: 'Kata',
         imageStyles: {
             width: '120px',
             height: '40px'
@@ -9,9 +9,9 @@ const model = [
     },
     {
         type: 'topnav', value: [
-            'About',
-            'Products',
-            'For Teams'
+            'Проект',
+            'Задача',
+            'Сообщения'
         ]
     },
     {type: 'search'},
@@ -68,11 +68,11 @@ h.className = "container-fluid fixed-top bg-light";
 function logo(block) {
     return `
   
-      <div class="col-lg-2">
+      <div class="col-lg-4">
         <a style="float: left;
                   width: 120px;"
-                  href="https://stackoverflow.com//" class="logo" id="logo">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/0/02/Stack_Overflow_logo.svg" height="30px" alt=""/>
+                  href="https://kata.academy/" class="logo" id="logo">
+          <img src="https://eto-razvod.ru/wp-content/uploads/2021/01/java-mentor-logo-2.png" height="41px" alt=""/>
         </a>
       </div>
     `
