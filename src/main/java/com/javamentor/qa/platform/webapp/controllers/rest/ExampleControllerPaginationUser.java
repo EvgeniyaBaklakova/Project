@@ -29,7 +29,7 @@ public class ExampleControllerPaginationUser {
     })
     public ResponseEntity<?> getPageOfUsers(
             @RequestParam(defaultValue = "1") int currentPage,
-             @RequestParam( defaultValue = "10") int items) {
+            @RequestParam(defaultValue = "10") int items) {
         PaginationData data = new PaginationData(currentPage,
                 items,
                 ExampleDtoDao.class.getSimpleName());
