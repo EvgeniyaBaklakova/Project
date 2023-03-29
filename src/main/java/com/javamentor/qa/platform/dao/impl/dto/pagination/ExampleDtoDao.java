@@ -17,12 +17,10 @@ public class ExampleDtoDao implements PageDtoDao<UserDtoExample> {
     protected EntityManager entityManager;
 
 
-
-
     @Override
     public List<UserDtoExample> getItems(PaginationData properties) {
-        int itemsOnPage= (properties.getItemsOnPage());
-        int firstResultOffset = (properties.getCurrentPage()-1) * itemsOnPage;
+        int itemsOnPage = (properties.getItemsOnPage());
+        int firstResultOffset = (properties.getCurrentPage() - 1) * itemsOnPage;
 
         return entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.user.UserDtoExample(" +
                         "u.id, u.email, u.fullName, u.imageLink, u.city) from User u", UserDtoExample.class)
