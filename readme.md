@@ -564,7 +564,10 @@ Swagger имеет также и другие полезные аннотаци�
 **После того как был получен JWT токен, для авторизации в системе, необходимо отправлять его в Header'e http запроса
 в виде ключ-значение, где ключем является Authorization, а значением наш ключ с префиксом "Bearer "**
 
-![](src/main/resources/static/images/git_tutor/jwt.png)
+![](src/main/resources/static/images/jwt/jwt.png)
 
-![](src/main/resources/static/images/git_tutor/postman.png)
+![](src/main/resources/static/images/jwt/postman.png)
 
+![](src/main/resources/static/images/jwt/jh.png)
+
+![](src/main/resources/static/images/jwt/j2.png)
