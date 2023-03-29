@@ -45,7 +45,7 @@ public class AuthenticationResourceController {
                     )
             );
         } catch (AuthenticationException e) {
-            throw new BadCredentialsException("Invalid username/password supplied");
+            throw new BadCredentialsException(String.format("User with email: \"%s\" is not found", username));
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
