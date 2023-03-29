@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.configs.initializer;
 
 import com.javamentor.qa.platform.service.impl.TestDataInitService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,9 @@ public class TestEntityInit implements CommandLineRunner {
     public void run(String... args) {
         testDataInitService.initRoles();
         testDataInitService.initUsers();
-
+        testDataInitService.initTag();
+        testDataInitService.initQuestion();
+        testDataInitService.initAnswer();
+        System.out.println("Hello");
     }
 }
