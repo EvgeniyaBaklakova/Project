@@ -21,7 +21,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_entity")
-public class User extends SingleResultUtil implements UserDetails {
+public class User implements UserDetails {
 
     private static final long serialVersionUID = 8086496705293852501L;
 
