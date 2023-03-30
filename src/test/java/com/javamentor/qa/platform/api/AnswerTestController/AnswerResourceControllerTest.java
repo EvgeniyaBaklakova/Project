@@ -1,14 +1,11 @@
 package com.javamentor.qa.platform.api.AnswerTestController;
 
 import com.javamentor.qa.platform.AbstractTestApi;
-import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -57,6 +54,18 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
                 .andExpect(status().isBadRequest())
                 .andDo(MockMvcResultHandlers.print());
 
+    }
+
+    @Test
+    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getAllAnswersTest() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/question/102/answer/"))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print());
     }
 
       private boolean answerDeleteIdTest(Long answerId) {
