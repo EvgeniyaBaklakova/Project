@@ -78,5 +78,8 @@ VALUES (444, 10, now(), 1, 101, 101, 102, 102);
 INSERT INTO reputation (id, count, persist_date, type, answer_id, author_id, question_id, sender_id)
 VALUES (555, 10, now(), 1, 101, 101, 102, 102);
 
+INSERT INTO reputation (id, count, persist_date, type, answer_id, author_id, question_id, sender_id)
+VALUES (666, 10, now(), 1, 102, 101, 102, 102);
+
 INSERT INTO votes_on_answers (id, persist_date, vote, answer_id, user_id)
 VALUES (1, now(), 'UP_VOTE', 102, 102), (2, now(), 'DOWN_VOTE', 102, 102)

@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.api.AnswerTestController;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -8,6 +9,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -65,6 +67,12 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders
                         .get("/api/user/question/102/answer/"))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", Is.is(101)))
+                .andExpect(jsonPath("$[1].id", Is.is(102)))
+                .andExpect(jsonPath("$[0].userReputation", Is.is(20)))
+                .andExpect(jsonPath("$[1].userReputation", Is.is(10)))
+                .andExpect(jsonPath("$[0].countValuable", Is.is(0)))
+                .andExpect(jsonPath("$[1].countValuable", Is.is(1)))
                 .andDo(MockMvcResultHandlers.print());
     }
 
