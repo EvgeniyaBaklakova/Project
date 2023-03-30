@@ -1,11 +1,10 @@
 package com.javamentor.qa.platform.service.impl.dto;
 
-import com.javamentor.qa.platform.Exeption.NoSuchDaoException;
-import com.javamentor.qa.platform.Exeption.PageException;
+import com.javamentor.qa.platform.exception.NoSuchDaoException;
+import com.javamentor.qa.platform.exception.PageException;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 

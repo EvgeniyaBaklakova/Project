@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.Exeption;
+package com.javamentor.qa.platform.exception;
 
 public class PageException extends RuntimeException {
     public PageException() {
