@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.models.entity.question;
 
-import com.javamentor.qa.platform.models.dto.exception.ApiRequestException;
+import com.javamentor.qa.platform.exception.exception.ApiRequestException;
 import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.CommentType;
 import com.javamentor.qa.platform.models.entity.user.User;
