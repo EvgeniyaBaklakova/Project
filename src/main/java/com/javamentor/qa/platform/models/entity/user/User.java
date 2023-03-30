@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.models.entity.user;
 
+import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
