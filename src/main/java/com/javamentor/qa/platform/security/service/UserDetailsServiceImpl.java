@@ -25,11 +25,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         Optional<User> user = userDao.getUserByEmail(email);
+        return user.orElseThrow();
 
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-            throw new UsernameNotFoundException("not found");
-        }
     }
 }
