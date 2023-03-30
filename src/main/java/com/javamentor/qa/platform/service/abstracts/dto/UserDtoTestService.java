@@ -4,8 +4,6 @@ import com.javamentor.qa.platform.dao.impl.dto.UserDtoDaoTest;
 import com.javamentor.qa.platform.models.dto.UserDtoTest;
 import org.springframework.stereotype.Service;
 
-
-import java.util.Optional;
 @Service
 public class UserDtoTestService  {
 
