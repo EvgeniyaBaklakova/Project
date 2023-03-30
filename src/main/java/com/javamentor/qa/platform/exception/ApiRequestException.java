@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.exception.exception;
+package com.javamentor.qa.platform.exception;
 
 public class ApiRequestException extends RuntimeException {
 
