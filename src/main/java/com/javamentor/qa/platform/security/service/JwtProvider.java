@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.security.service;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,7 +21,7 @@ public class JwtProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private int expiresIn = 1000;
+    private int expiresIn = 10 * 60 * 1000 * 6 * 24;
 
     private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
 
@@ -67,7 +68,7 @@ public class JwtProvider {
     }
 
     private Date generateExpirationDate() {
-        return new Date(new Date().getTime() + expiresIn * 1000);
+        return new Date(3000, 1, 1);
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
