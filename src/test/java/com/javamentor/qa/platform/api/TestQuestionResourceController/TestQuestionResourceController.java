@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.api;
+package com.javamentor.qa.platform.api.TestQuestionResourceController;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import org.junit.jupiter.api.Test;
