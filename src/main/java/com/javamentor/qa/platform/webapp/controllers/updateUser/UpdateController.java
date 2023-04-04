@@ -3,6 +3,8 @@ package com.javamentor.qa.platform.webapp.controllers.updateUser;
 
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,8 +19,9 @@ public class UpdateController {
     }
 
     @PatchMapping ("/blockUser/{email}")
-    public void blockUser(@PathVariable String email) {
+    public ResponseEntity<?> blockUser(@PathVariable String email) {
 
         userDao.blockUser(email);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
