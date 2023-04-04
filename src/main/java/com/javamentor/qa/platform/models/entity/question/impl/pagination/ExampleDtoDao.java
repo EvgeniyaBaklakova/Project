@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.dao.impl.pagination;
+package com.javamentor.qa.platform.models.entity.question.impl.pagination;
 
 
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;

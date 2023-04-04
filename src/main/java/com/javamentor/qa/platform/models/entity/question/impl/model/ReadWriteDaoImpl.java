@@ -1,6 +1,5 @@
-package com.javamentor.qa.platform.dao.impl.model;
+package com.javamentor.qa.platform.models.entity.question.impl.model;
 
-import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.EntityManager;

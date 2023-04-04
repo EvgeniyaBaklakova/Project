@@ -1,16 +1,18 @@
-package com.javamentor.qa.platform.dao.impl.model;
+package com.javamentor.qa.platform.models.entity.question.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.webapp.controllers.util.UserNotFoundException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
 @Repository
+@Transactional
 public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao {
 
     @PersistenceContext
@@ -21,6 +23,13 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
 
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("select u from User u " +
                 "join fetch u.role where u.email =: email", User.class).setParameter("email", email));
+    }
 
+    @Override
+    public void blockUser(String email) {
+
+        Optional<User> user = getUserByEmail(email);
+        user.get().setIsEnabled(Boolean.valueOf("false"));
+        user.orElseThrow();
     }
 }
