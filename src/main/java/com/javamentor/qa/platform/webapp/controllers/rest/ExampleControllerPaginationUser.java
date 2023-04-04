@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
-import com.javamentor.qa.platform.models.entity.question.impl.pagination.ExampleDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.impl.pagination.ExampleDtoDao;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.service.abstracts.dto.ExamplePaginationDtoService;
 

@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.service.abstracts.dto;
 
-import com.javamentor.qa.platform.models.entity.question.impl.dto.UserDtoDaoTest;
+import com.javamentor.qa.platform.dao.abstracts.impl.dto.UserDtoDaoTest;
 import com.javamentor.qa.platform.models.dto.UserDtoTest;
 import org.springframework.stereotype.Service;
 

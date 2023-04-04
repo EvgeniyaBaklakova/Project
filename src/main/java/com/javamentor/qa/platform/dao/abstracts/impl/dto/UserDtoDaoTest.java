@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.models.entity.question.impl.dto;
+package com.javamentor.qa.platform.dao.abstracts.impl.dto;
 
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.UserDtoTest;

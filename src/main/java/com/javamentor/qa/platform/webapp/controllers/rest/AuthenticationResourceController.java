@@ -2,10 +2,10 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
-import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.auth.AuthenticationResponse;
 import com.javamentor.qa.platform.security.service.AuthDTO;
 import com.javamentor.qa.platform.security.service.JwtProvider;
+import com.javamentor.qa.platform.webapp.controllers.updateUser.UpdateUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -28,12 +27,14 @@ public class AuthenticationResourceController {
     final AuthenticationManager authenticationManager;
     final JwtProvider tokenProvider;
     private final UserDao userDao;
+    private final UpdateUser updateUser;
 
     @Autowired
-    public AuthenticationResourceController(AuthenticationManager authenticationManager, JwtProvider tokenProvider, UserDao userDao) {
+    public AuthenticationResourceController(AuthenticationManager authenticationManager, JwtProvider tokenProvider, UserDao userDao, UpdateUser updateUser) {
         this.authenticationManager = authenticationManager;
         this.tokenProvider = tokenProvider;
         this.userDao = userDao;
+        this.updateUser = updateUser;
     }
 
     @PostMapping("/token")
@@ -55,5 +56,11 @@ public class AuthenticationResourceController {
 
         String jwt = tokenProvider.generateToken((String) authentication.getCredentials());
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
+    }
+
+    @PatchMapping("/update/blockUser/{id}")
+    public void blockingUser(@PathVariable Long id) {
+
+        updateUser.blockUser(id);
     }
 }
