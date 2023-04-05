@@ -55,7 +55,7 @@ public class QuestionResourceController {
     }
 
     @ApiOperation(value = "Добавляет новый Question и возвращает QuestionDto")
-    @PostMapping("/user/question")
+    @PostMapping
     public ResponseEntity<QuestionDto> addQuestion(@RequestBody @Valid QuestionCreateDto questionToCreate) {
         User user = userService.getById(1L).orElse(null); //TODO security
         Question questionEntity = QuestionConverter.INSTANCE.questionCreateDtoToQuestion(questionToCreate, user);
