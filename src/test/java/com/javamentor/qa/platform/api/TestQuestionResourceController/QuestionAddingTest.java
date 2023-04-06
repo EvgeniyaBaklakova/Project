@@ -25,8 +25,7 @@ public class QuestionAddingTest extends AbstractTestApi {
                         .andExpect(status().isOk()).andReturn();
 
         String response = result.getResponse().getContentAsString();
-        response = response.replace("{\"jwtToken\": \"", "");
-        String token = response.replace("\"}", "");
+        String token = response.replace(" {\"jwtToken\":\"} ", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders
                         .post("/api/user/question")
