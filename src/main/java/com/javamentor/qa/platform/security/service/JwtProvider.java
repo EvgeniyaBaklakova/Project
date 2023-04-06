@@ -21,13 +21,11 @@ public class JwtProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private int expiresIn = 10 * 60 * 1000 * 6 * 24;
 
     private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS256;
 
-    public JwtProvider(String secretKey, int expiresIn, SignatureAlgorithm SIGNATURE_ALGORITHM) {
+    public JwtProvider(String secretKey, SignatureAlgorithm SIGNATURE_ALGORITHM) {
         this.secretKey = secretKey;
-        this.expiresIn = expiresIn;
         this.SIGNATURE_ALGORITHM = SIGNATURE_ALGORITHM;
     }
 
