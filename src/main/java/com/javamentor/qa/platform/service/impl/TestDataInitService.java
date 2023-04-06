@@ -46,10 +46,10 @@ public class TestDataInitService {
 
     public void initUsers() {
         for (int i = 1; i <= 100; i = i + 2) {
-            userService.persistAll(new User(null, "email" + i + "@mail.com", "password", "name",
+            userService.persistAll(new User(null, "email" + i + "@mail.com", "$2a$12$Cv2R8HH/Vnn73Kr7d7zkXOY1dlytTsi/r8wO3PFii7aLrtMQw6JX2", "name",
                             null, true, false, "city", "link_site", "link_github",
                             "link_vk", "about", "image_link", null, "nick", ROLE_USER),
-                    new User(null, "email" + (i + 1) + "@mail.com", "password", "name", null,
+                    new User(null, "email" + (i + 1) + "@mail.com", "$2a$12$Cv2R8HH/Vnn73Kr7d7zkXOY1dlytTsi/r8wO3PFii7aLrtMQw6JX2", "name", null,
                             true, false, "city", "link_site", "link_github", "link_vk",
                             "about", "image_link", null, "nick", ROLE_ADMIN));
         }
