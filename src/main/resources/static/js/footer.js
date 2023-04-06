@@ -15,8 +15,6 @@ function footer() {
           <img src="https://squidex.jugru.team/api/assets/sites/wsKh6rMCJn2nc6hsUqufj/kata-academy.png" height="170px" alt=""/>
         </a>
       </div>
-
-         
          
           <hr class="clearfix w-100 d-md-none pb-3">
           <div class="col-md-3 mb-md-0 mb-3">
