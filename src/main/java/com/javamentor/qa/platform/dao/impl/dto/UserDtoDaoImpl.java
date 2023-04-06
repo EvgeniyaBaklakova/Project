@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.dao.abstracts.impl.dto;
+package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.UserDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;

@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.dao.abstracts.impl.model;
+package com.javamentor.qa.platform.dao.impl.model;
 
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 
