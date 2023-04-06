@@ -8,10 +8,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,10 +53,15 @@ public class AnswerResourceController {
         return new ResponseEntity<>("Answer с ID " + answerId + " успешно удален", HttpStatus.OK);
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<AnswerDto>> getUserList(@PathVariable("questionId") Long questionId) {
+    @ApiOperation(value = "Получение всех ответов на вопрос", tags = "Answer Delete")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Список Answer успешно получен!"),
+            @ApiResponse(code = 400, message = ""),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
+    @GetMapping("")
+    public ResponseEntity<List<AnswerDto>> getAllAnswers(@PathVariable("questionId") Long questionId) {
         return new ResponseEntity<>(answerDtoService.getAllAnswers(questionId), HttpStatus.OK);
     }
-
 }
 

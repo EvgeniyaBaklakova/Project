@@ -17,7 +17,7 @@ VALUES (101,
         'No link',
         'No link',
         'Dragonfly',
-        '$2a$12$axPyq0kTyPAYggs3zdoAQePKfcErnvZrwqPR.3ijEqj8qukox8Zly',
+        '$2y$12$Nkswy9kzGNJlhxscP8O1sefMN3xYUwoAJ/ynqRudb3YPSx/dFM9v6',
         DATE(now()),
         101);
 
@@ -35,7 +35,7 @@ VALUES (102,
         'No link',
         'No link',
         'NeDragonfly',
-        '$2a$12$axPyq0kTyPAYggs3zdoAQePKfcErnvZrwqPR.3ijEqj8qukox8Zly',
+        '$2y$12$Nkswy9kzGNJlhxscP8O1sefMN3xYUwoAJ/ynqRudb3YPSx/dFM9v6',
         DATE(now()),
         101);
 

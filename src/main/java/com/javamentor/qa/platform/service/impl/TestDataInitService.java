@@ -44,12 +44,13 @@ public class TestDataInitService {
         roleService.persistAll(ROLE_USER, ROLE_ADMIN);
     }
 
+    //Пароль юзеров password
     public void initUsers() {
         for (int i = 1; i <= 100; i = i + 2) {
-            userService.persistAll(new User(null, "email" + i + "@mail.com", "password", "name",
+            userService.persistAll(new User(null, "email" + i + "@mail.com", "$2y$12$Nkswy9kzGNJlhxscP8O1sefMN3xYUwoAJ/ynqRudb3YPSx/dFM9v6", "name",
                             null, true, false, "city", "link_site", "link_github",
                             "link_vk", "about", "image_link", null, "nick", ROLE_USER),
-                    new User(null, "email" + (i + 1) + "@mail.com", "password", "name", null,
+                    new User(null, "email" + (i + 1) + "@mail.com", "$2y$12$Nkswy9kzGNJlhxscP8O1sefMN3xYUwoAJ/ynqRudb3YPSx/dFM9v6", "name", null,
                             true, false, "city", "link_site", "link_github", "link_vk",
                             "about", "image_link", null, "nick", ROLE_ADMIN));
         }
