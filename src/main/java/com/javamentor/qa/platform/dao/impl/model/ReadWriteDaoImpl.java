@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.models.entity.question.impl.model;
+package com.javamentor.qa.platform.dao.impl.model;
 
 import org.springframework.beans.factory.annotation.Value;
 
