@@ -24,12 +24,4 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("select u from User u " +
                 "join fetch u.role where u.email =: email", User.class).setParameter("email", email));
     }
-
-    @Override
-    public void blockUser(String email) {
-
-        Optional<User> user = getUserByEmail(email);
-        user.get().setIsEnabled(Boolean.valueOf("false"));
-        user.orElseThrow();
-    }
 }
