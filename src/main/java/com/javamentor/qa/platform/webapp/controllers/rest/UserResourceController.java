@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/user")
+
 public class UserResourceController {
 
     private final UserDtoService userDtoService;
@@ -38,9 +39,9 @@ public class UserResourceController {
             @ApiResponse(code = 400, message = "Неверная нумерация страниц")
     })
     @GetMapping( "/vote")
-    public ResponseEntity<PageDto<UserDto>> getUsersByVoteAsc(@RequestParam(defaultValue = "1") Integer page,
-                                                              @RequestParam(required = false, defaultValue = "10") Integer items,
-                                                              @RequestParam(required = false) String filter) {
+    public ResponseEntity<PageDto<UserDto>> getUsersByVoteAnswer(@RequestParam(defaultValue = "1") Integer page,
+                                                                 @RequestParam(required = false, defaultValue = "10") Integer items,
+                                                                 @RequestParam(required = false) String filter) {
         PaginationData data = new PaginationData(page, items,
                 UserPageDtoDaoByVoteImpl.class.getSimpleName(), filter);
         return new ResponseEntity<>(userDtoService.getPageDto(data), HttpStatus.OK);
