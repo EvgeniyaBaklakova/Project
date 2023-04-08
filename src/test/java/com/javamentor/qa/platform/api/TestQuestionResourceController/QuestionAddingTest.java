@@ -17,11 +17,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class QuestionAddingTest extends AbstractTestApi {
 
     @Test
-    @Sql(scripts = "script/TestQuestionResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
+    @Sql(scripts = "src/test/resources/script/TestQuestionResourceController/QuestionAddingApiTest/Before.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "src/test/resources/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void allOkTest() throws Exception {
         MvcResult result = this.mvc.perform(MockMvcRequestBuilders
                         .post("/api/auth/token")
-                        .content("{\"email\" : \"email1@mail.com\", \"password\" : \"password\"}"))
+                        .content("{\"email\" : \"email@mail.com\", \"password\" : \"aaa\"}"))
                         .andExpect(status().isOk()).andReturn();
 
         String response = result.getResponse().getContentAsString();

@@ -1,0 +1,1 @@
+insert into user_entity (id, email, password, role_id) values (101, 'email101@mail.com', 'aaa', 1)
