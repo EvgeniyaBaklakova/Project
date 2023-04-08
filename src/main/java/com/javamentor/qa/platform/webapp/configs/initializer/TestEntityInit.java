@@ -25,6 +25,5 @@ public class TestEntityInit implements CommandLineRunner {
         testDataInitService.initTag();
         testDataInitService.initQuestion();
         testDataInitService.initAnswer();
-        System.out.println("Hello");
     }
 }
