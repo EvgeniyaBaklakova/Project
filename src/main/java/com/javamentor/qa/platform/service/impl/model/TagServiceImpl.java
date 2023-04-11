@@ -24,9 +24,8 @@ public class TagServiceImpl extends ReadWriteServiceImpl<Tag, Long> implements T
         List<String> names = new ArrayList<>();
         List<Tag> tags = new ArrayList<>();
 
-        for (Tag tag : questionTags) {
-            names.add(tag.getName());
-        }
+        questionTags.forEach(tag -> names.add(tag.getName()));
+
         List<Tag> tagsFromDb = tagDao.getTagsByNames(names);
         questionTags.forEach(questionTag -> {
             boolean isExist = tagsFromDb.stream().anyMatch(tag -> tag.getName().equals(questionTag.getName()));

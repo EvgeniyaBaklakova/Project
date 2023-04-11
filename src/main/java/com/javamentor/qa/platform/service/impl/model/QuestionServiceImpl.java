@@ -30,11 +30,9 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
 
         if (questionDao.isNotExistByTitle(questionEntity.getTitle())) {
             questionDao.persist(questionEntity);
-        } else {
-            throw new ApiRequestException("Вопрос с таким названием уже существует");
         }
 
-        return questionDao.getByTitle(questionEntity.getTitle());
+        return questionDao.getById(questionEntity.getId()).orElse(null);
         //достаём сохраненный вопрос из БД и возвращаем его
     }
 }

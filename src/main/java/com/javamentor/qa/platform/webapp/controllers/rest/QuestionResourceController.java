@@ -31,13 +31,17 @@ public class QuestionResourceController {
     private final QuestionViewedService questionViewedService;
 
     private final UserService userService;
+    private final QuestionConverter questionConverter;
+    private final QuestionDtoConverter questionDtoConverter;
 
     @Autowired
     public QuestionResourceController(QuestionViewedService questionViewedService,
-                                      QuestionService questionService, UserService userService) {
+                                      QuestionService questionService, UserService userService, QuestionConverter questionConverter, QuestionDtoConverter questionDtoConverter) {
         this.questionService = questionService;
         this.questionViewedService = questionViewedService;
         this.userService = userService;
+        this.questionConverter = questionConverter;
+        this.questionDtoConverter = questionDtoConverter;
     }
 
     @PostMapping("/{id}/view")
@@ -58,11 +62,11 @@ public class QuestionResourceController {
     @PostMapping
     public ResponseEntity<QuestionDto> addQuestion(@RequestBody @Valid QuestionCreateDto questionToCreate) {
         User user = userService.getById(1L).orElse(null); //TODO security
-        Question questionEntity = QuestionConverter.INSTANCE.questionCreateDtoToQuestion(questionToCreate, user);
+        Question questionEntity = questionConverter.questionCreateDtoToQuestion(questionToCreate, user);
 
-        Question questionFromDb = questionService.save(questionEntity);
+        Question question = questionService.save(questionEntity);
 
-        QuestionDto questionDto = QuestionDtoConverter.INSTANCE.questionToQuestionDto(questionFromDb, user);
+        QuestionDto questionDto = questionDtoConverter.questionToQuestionDto(question, user);
         return new ResponseEntity<>(questionDto, HttpStatus.OK);
     }
 }
