@@ -61,6 +61,6 @@ public class AuthenticationResourceController {
     @PatchMapping("/update/blockUser/{id}")
     public void blockingUser(@PathVariable Long id) {
 
-        updateUser.blockUser(id);
+        userDao.getById(id).get().setIsEnabled(false);
     }
 }
