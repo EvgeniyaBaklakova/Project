@@ -1,51 +1,56 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
-import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
+import com.javamentor.qa.platform.security.auth.AuthenticationResponse;
 import com.javamentor.qa.platform.security.service.AuthDTO;
-import com.javamentor.qa.platform.security.service.JWTUtil;
-import com.javamentor.qa.platform.service.abstracts.model.SecurityService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.security.service.JwtProvider;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
-import java.util.Map;
+import javax.validation.Valid;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationResourceController {
 
-    private final SecurityService securityService;
-    private final JWTUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
+    final AuthenticationManager authenticationManager;
+    final JwtProvider tokenProvider;
 
-    public AuthenticationResourceController(SecurityService securityService,
-                                            JWTUtil jwtUtil,
-                                            AuthenticationManager authenticationManager) {
-        this.securityService = securityService;
-        this.jwtUtil = jwtUtil;
+    public AuthenticationResourceController(AuthenticationManager authenticationManager, JwtProvider tokenProvider) {
         this.authenticationManager = authenticationManager;
+        this.tokenProvider = tokenProvider;
     }
 
     @PostMapping("/token")
-    public Map<String, Object> loginHandler(@RequestBody AuthDTO body) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody AuthDTO authDTO) throws InvalidKeySpecException, NoSuchAlgorithmException {
+        String username = authDTO.getEmail();
+        String password = authDTO.getPassword();
+        Authentication authentication;
         try {
-            UsernamePasswordAuthenticationToken authInputToken =
-                    new UsernamePasswordAuthenticationToken(body.getEmail(), body.getPassword());
-            authenticationManager.authenticate(authInputToken);
-            String token = jwtUtil.generateToken(body.getEmail());
-            return Collections.singletonMap("jwt-token", token);
-        } catch (AuthenticationException authExc) {
-            throw new RuntimeException("Invalid Login Credentials");
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            username,
+                            password
+                    )
+            );
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException(String.format("User with email: \"%s\" is not found", username));
         }
-    }
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
-    @PatchMapping("/update/blockUser/{id}")
-    public void blockingUser(@PathVariable Long id) {
+        String jwt = tokenProvider.generateToken(authentication.getName());
+        return ResponseEntity.ok(new AuthenticationResponse(jwt));
 
-        securityService.setIsEnableFalse(id);
     }
 }
