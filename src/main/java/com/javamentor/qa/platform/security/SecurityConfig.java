@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.security;
 
-import com.javamentor.qa.platform.security.service.JwtFilter;
-import com.javamentor.qa.platform.security.service.JwtProvider;
+import com.javamentor.qa.platform.security.service.JWTFilter;
+import com.javamentor.qa.platform.security.service.JWTUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,12 +22,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
 
-    private final JwtProvider jwtProvider;
-    private final JwtFilter jwtFilter;
+    private final JWTUtil jwtUtil;
+    private final JWTFilter jwtFilter;
 
-    public SecurityConfig(JwtProvider jwtProvider, JwtProvider jwtAuthenticationFilter, JwtFilter jwtFilter1) {
-        this.jwtProvider = jwtProvider;
-        this.jwtFilter = jwtFilter1;
+    public SecurityConfig(JWTUtil jwtUtil, JWTFilter jwtFilter) {
+        this.jwtUtil = jwtUtil;
+        this.jwtFilter = jwtFilter;
     }
 
 
@@ -48,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         http
                 .authorizeRequests()
                 .antMatchers("/css/**", "/js/**", "/html/**").permitAll()
+//                .antMatchers("/**").permitAll()
                 .antMatchers("/api/user/**").hasRole("USER")
                 .and()
                 .sessionManagement()
