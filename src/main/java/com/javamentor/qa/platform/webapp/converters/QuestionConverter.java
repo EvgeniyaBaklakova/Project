@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring", uses = QuestionConverter.class)
 public abstract class QuestionConverter {
     public static final QuestionConverter INSTANCE = Mappers.getMapper(QuestionConverter.class);
     @Mapping(source = "questionCreate.title", target = "title")

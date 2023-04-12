@@ -3,12 +3,11 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.QuestionDtoConverter;
 import io.swagger.annotations.Api;
@@ -20,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Api(value = "QuestionResource controller", tags = "Контроллер QuestionResource")
@@ -27,19 +28,23 @@ import java.util.Optional;
 @RequestMapping("api/user/question")
 public class QuestionResourceController {
     private final QuestionService questionService;
-
     private final QuestionViewedService questionViewedService;
-
     private final UserService userService;
+    private final CommentQuestionService commentQuestionService;
+    private final RoleService roleService;
     private final QuestionConverter questionConverter;
     private final QuestionDtoConverter questionDtoConverter;
 
     @Autowired
     public QuestionResourceController(QuestionViewedService questionViewedService,
-                                      QuestionService questionService, UserService userService, QuestionConverter questionConverter, QuestionDtoConverter questionDtoConverter) {
+                                      QuestionService questionService, UserService userService,
+                                      CommentQuestionService commentQuestionService, RoleService roleService,
+                                      QuestionConverter questionConverter, QuestionDtoConverter questionDtoConverter) {
         this.questionService = questionService;
         this.questionViewedService = questionViewedService;
         this.userService = userService;
+        this.commentQuestionService = commentQuestionService;
+        this.roleService = roleService;
         this.questionConverter = questionConverter;
         this.questionDtoConverter = questionDtoConverter;
     }
@@ -68,5 +73,20 @@ public class QuestionResourceController {
 
         QuestionDto questionDto = questionDtoConverter.questionToQuestionDto(question, user);
         return new ResponseEntity<>(questionDto, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Добавляет комментарий к вопросу")
+    @PostMapping("/{id}/comment")
+    public ResponseEntity<CommentQuestion> addComment(@PathVariable("id") long id, CommentQuestion comment) {
+        Question question = questionService.getById(id).get();
+        User user = userService.getById(1L).get();
+
+        List<CommentQuestion> commentQuestionList = new ArrayList<>();
+        commentQuestionList.add(comment);
+
+        question.setCommentQuestions(commentQuestionList);
+
+        commentQuestionService.persist(new CommentQuestion(comment.getComment().getText(), user));
+        return new ResponseEntity<>(comment, HttpStatus.OK);
     }
 }
