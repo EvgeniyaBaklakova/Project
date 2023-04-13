@@ -56,7 +56,7 @@ public class AnswerResourceController {
     @ApiOperation(value = "Получение всех ответов на вопрос", tags = "Answer Delete")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Список Answer успешно получен!"),
-            @ApiResponse(code = 400, message = ""),
+            @ApiResponse(code = 400, message = "Question с таким id не существует"),
             @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
     @GetMapping("")

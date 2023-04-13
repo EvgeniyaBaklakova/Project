@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.api.AnswerTestController;
 
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javamentor.qa.platform.AbstractTestApi;
 import org.hamcrest.core.Is;
@@ -69,15 +70,8 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
     @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getAllAnswersTest() throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String,String> map = new HashMap<>();
-        map.put("email","test102@mail.ru");
-        map.put("password", "password");
-        StringBuilder token = new StringBuilder(this.mvc.perform(MockMvcRequestBuilders
-                        .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
-                .andReturn().getResponse().getContentAsString());
         this.mvc.perform(MockMvcRequestBuilders
-                        .get("/api/user/question/102/answer/").header("Authorization","Bearer " + token.substring(13, 125)))
+                        .get("/api/user/question/102/answer/").header("Authorization","Bearer " + getToken("test102@mail.ru", "password").substring(13, 158)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", Is.is(101)))
                 .andExpect(jsonPath("$[1].id", Is.is(102)))
@@ -88,11 +82,39 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/Before2.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void getAllAnswersWOAnyTest() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/question/102/answer/").header("Authorization","Bearer " + getToken("test102@mail.ru", "password").substring(13, 158)))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
       private boolean answerDeleteIdTest(Long answerId) {
         long count = (long) em.createQuery("SELECT Count(a) FROM Answer a  WHERE a.id =: id")
                 .setParameter("id", answerId)
                 .getSingleResult();
 
         return count > 0;
+    }
+
+    private String getToken(String email, String password) {
+        StringBuilder token;
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String,String> map = new HashMap<>();
+        map.put("email", email);
+        map.put("password", password);
+        try {
+            token = new StringBuilder(this.mvc.perform(MockMvcRequestBuilders
+                            .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
+                    .andReturn().getResponse().getContentAsString());
+            return token.toString();
+        } catch (Exception e) {
+        }
+        return "";
     }
 }
