@@ -64,7 +64,7 @@ public class TagResourceController {
         Optional<Tag> tag= tagService.getById(id);
         if(tag.isPresent()) {
             ignoredTagService.persist(new IgnoredTag(tag.get(), user, LocalDateTime.now()));
-            return new ResponseEntity<>(ignoredTagService.getById(id).get(), HttpStatus.OK);
+            return new ResponseEntity<>(tag, HttpStatus.OK);
         }
         return new ResponseEntity<>( "Тэга с таким id не существует", HttpStatus.BAD_REQUEST);
     }
@@ -81,7 +81,7 @@ public class TagResourceController {
         Optional<Tag> tag= tagService.getById(id);
         if(tag.isPresent()) {
             trackedTagService.persist(new TrackedTag(tag.get(), user, LocalDateTime.now()));
-            return new ResponseEntity<>(trackedTagService.getById(id).get(), HttpStatus.OK);
+            return new ResponseEntity<>(tag, HttpStatus.OK);
         }
         return new ResponseEntity<>( "Тэга с таким id не существует", HttpStatus.BAD_REQUEST);
     }
