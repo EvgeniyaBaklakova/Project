@@ -69,7 +69,7 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getAllAnswersTest() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders
-                        .get("/api/user/question/102/answer/").header("Authorization","Bearer " + getToken("test102@mail.ru", "password").substring(13, 158)))
+                        .get("/api/user/question/102/answer/").header("Authorization","Bearer " + getToken("test102@mail.ru", "password")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", Is.is(101)))
                 .andExpect(jsonPath("$[1].id", Is.is(102)))
@@ -87,7 +87,7 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getAllAnswersWOAnyTest() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders
-                        .get("/api/user/question/102/answer/").header("Authorization","Bearer " + getToken("test102@mail.ru", "password").substring(13, 158)))
+                        .get("/api/user/question/102/answer/").header("Authorization","Bearer " + getToken("test102@mail.ru", "password")))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());
     }
@@ -106,9 +106,10 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
         map.put("email", email);
         map.put("password", password);
         try {
-            token = (this.mvc.perform(MockMvcRequestBuilders
+            String response = (this.mvc.perform(MockMvcRequestBuilders
                             .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
-                    .andReturn().getResponse().getContentAsString()).replace(" {\"jwtToken\":\"} ", "").replace("\"}", "");
+                    .andReturn().getResponse().getContentAsString());
+            token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
             return token;
         } catch (Exception e) {
         }
