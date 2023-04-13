@@ -71,9 +71,10 @@ public class TestTagResourceController extends AbstractTestApi {
         map.put("email", email);
         map.put("password", password);
         try {
-            token = (this.mvc.perform(MockMvcRequestBuilders
+            String response = (this.mvc.perform(MockMvcRequestBuilders
                             .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
-                    .andReturn().getResponse().getContentAsString()).replace(" {\"jwtToken\":\"} ", "").replace("\"}", "");
+                    .andReturn().getResponse().getContentAsString());
+            token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
             return token;
         } catch (Exception e) {
         }
