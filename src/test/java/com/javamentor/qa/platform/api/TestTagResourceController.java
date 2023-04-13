@@ -39,4 +39,26 @@ public class TestTagResourceController extends AbstractTestApi {
                 .andDo(print())
                 .andExpect(content().json(objectMapper.writeValueAsString(Arrays.asList(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10))));
     }
+
+    @Test
+    @Sql(scripts = "/script/TestTagResourceController/AddTrackedIgnoredTagsTest/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestTagResourceController/AddTrackedIgnoredTagsTest/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void saveAsTracked() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/301/tracked"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @Sql(scripts = "/script/TestTagResourceController/AddTrackedIgnoredTagsTest/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestTagResourceController/AddTrackedIgnoredTagsTest/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void saveAsIgnored() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/301/ignored"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 }
