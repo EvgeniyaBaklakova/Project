@@ -11,6 +11,8 @@ import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
@@ -28,29 +30,36 @@ public class TestDataInitService {
     private final TagService tagService;
     private final AnswerService answerService;
 
+    private final PasswordEncoder passwordEncoder;
+
     private final Role ROLE_USER = new Role("ROLE_USER");
     private final Role ROLE_ADMIN = new Role("ROLE_ADMIN");
 
+
     @Autowired
-    public TestDataInitService(UserService userService, RoleService roleService, QuestionService questionService, TagService tagService, AnswerService answerService) {
+    public TestDataInitService(UserService userService, RoleService roleService, QuestionService questionService, TagService tagService, AnswerService answerService, PasswordEncoder passwordEncoder) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
         this.tagService = tagService;
         this.answerService = answerService;
+        this.passwordEncoder = passwordEncoder;
+
     }
 
     public void initRoles() {
         roleService.persistAll(ROLE_USER, ROLE_ADMIN);
     }
 
-    //Пароль юзеров password
     public void initUsers() {
+
+        String pass = passwordEncoder.encode("password");
+
         for (int i = 1; i <= 100; i = i + 2) {
-            userService.persistAll(new User(null, "email" + i + "@mail.com", "$2y$12$Nkswy9kzGNJlhxscP8O1sefMN3xYUwoAJ/ynqRudb3YPSx/dFM9v6", "name",
+            userService.persistAll(new User(null, "email" + i + "@mail.com", pass, "name",
                             null, true, false, "city", "link_site", "link_github",
                             "link_vk", "about", "image_link", null, "nick", ROLE_USER),
-                    new User(null, "email" + (i + 1) + "@mail.com", "$2y$12$Nkswy9kzGNJlhxscP8O1sefMN3xYUwoAJ/ynqRudb3YPSx/dFM9v6", "name", null,
+                    new User(null, "email" + (i + 1) + "@mail.com", pass, "name", null,
                             true, false, "city", "link_site", "link_github", "link_vk",
                             "about", "image_link", null, "nick", ROLE_ADMIN));
         }
