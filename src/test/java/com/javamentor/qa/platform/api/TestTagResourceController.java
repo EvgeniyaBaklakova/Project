@@ -3,10 +3,13 @@ package com.javamentor.qa.platform.api;
 import com.javamentor.qa.platform.AbstractTestApi;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
@@ -60,5 +63,20 @@ public class TestTagResourceController extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/301/ignored"))
                 .andExpect(status().isOk())
                 .andDo(print());
+    }
+
+    private String getToken(String email, String password) {
+        String token;
+        Map<String,String> map = new HashMap<>();
+        map.put("email", email);
+        map.put("password", password);
+        try {
+            token = (this.mvc.perform(MockMvcRequestBuilders
+                            .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
+                    .andReturn().getResponse().getContentAsString()).replace(" {\"jwtToken\":\"} ", "").replace("\"}", "");
+            return token;
+        } catch (Exception e) {
+        }
+        return "";
     }
 }
