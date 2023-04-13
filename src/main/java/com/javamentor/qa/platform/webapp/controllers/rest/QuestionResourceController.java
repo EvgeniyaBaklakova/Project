@@ -7,11 +7,9 @@ import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
+import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.model.CommentService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
 import com.javamentor.qa.platform.webapp.converters.QuestionDtoConverter;
 import io.swagger.annotations.Api;
@@ -35,17 +33,19 @@ public class QuestionResourceController {
     private final QuestionViewedService questionViewedService;
     private final UserService userService;
     private final CommentService commentService;
+    private final RoleService roleService;
     private final QuestionConverter questionConverter;
     private final QuestionDtoConverter questionDtoConverter;
 
     @Autowired
     public QuestionResourceController(QuestionViewedService questionViewedService,
                                       QuestionService questionService, UserService userService, CommentService commentService,
-                                      QuestionConverter questionConverter, QuestionDtoConverter questionDtoConverter) {
+                                      RoleService roleService, QuestionConverter questionConverter, QuestionDtoConverter questionDtoConverter) {
         this.questionService = questionService;
         this.questionViewedService = questionViewedService;
         this.userService = userService;
         this.commentService = commentService;
+        this.roleService = roleService;
         this.questionConverter = questionConverter;
         this.questionDtoConverter = questionDtoConverter;
     }
@@ -78,14 +78,16 @@ public class QuestionResourceController {
 
     @ApiOperation(value = "Добавляет комментарий к вопросу")
     @PostMapping("/{id}/comment")
-    public ResponseEntity<Comment> addComment(@PathVariable("id") long id, @RequestBody @Valid Comment comment) {
+    public ResponseEntity<Comment> addComment(@PathVariable("id") long id, @RequestBody Comment comment) {
         Question question = questionService.getById(id).get();
-        User user = userService.getById(id).get();
+        User user = userService.getById(question.getUser().getId()).get();
+        Role role = roleService.getById(user.getRole().getId()).get();
+        user.setRole(role);
 
-        commentService.addComment(comment);
+        Comment savedComment = commentService.addComment(comment, user);
 
         List<CommentQuestion> commentQuestionList = new ArrayList<>();
-        commentQuestionList.add(new CommentQuestion(comment.getText(), user));
+        commentQuestionList.add(new CommentQuestion(savedComment.getText(), user));
 
         question.setCommentQuestions(commentQuestionList);
 
