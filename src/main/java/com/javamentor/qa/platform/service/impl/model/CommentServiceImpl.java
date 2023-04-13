@@ -27,7 +27,7 @@ public class CommentServiceImpl extends ReadWriteServiceImpl<Comment, Long> impl
             comment.setUser(user);
             comment.setPersistDateTime(LocalDateTime.now());
             commentDao.persist(comment);
-        } else throw new RuntimeException("null нельзя передавать");
+        }
         return comment;
     }
 }

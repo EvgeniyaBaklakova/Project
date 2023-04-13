@@ -27,4 +27,15 @@ public class CommentAddingTest extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.text", Is.is("test message")));
     }
+
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/CommentAddingApiTest/Before.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/CommentAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
+    public void nullTextTest() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders
+                        .post("/api/user/question/1/comment")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"text\": null}"))
+                .andExpect(status().is4xxClientError());
+    }
 }

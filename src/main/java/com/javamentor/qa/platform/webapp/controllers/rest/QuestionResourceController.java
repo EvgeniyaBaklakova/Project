@@ -78,7 +78,7 @@ public class QuestionResourceController {
 
     @ApiOperation(value = "Добавляет комментарий к вопросу")
     @PostMapping("/{id}/comment")
-    public ResponseEntity<Comment> addComment(@PathVariable("id") long id, @RequestBody Comment comment) {
+    public ResponseEntity<Comment> addComment(@PathVariable("id") long id, @RequestBody @Valid Comment comment) {
         Question question = questionService.getById(id).get();
         User user = userService.getById(question.getUser().getId()).get();
         Role role = roleService.getById(user.getRole().getId()).get();
