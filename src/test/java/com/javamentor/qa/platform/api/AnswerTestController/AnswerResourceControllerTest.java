@@ -1,7 +1,5 @@
 package com.javamentor.qa.platform.api.AnswerTestController;
 
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javamentor.qa.platform.AbstractTestApi;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
@@ -103,16 +101,15 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
     }
 
     private String getToken(String email, String password) {
-        StringBuilder token;
-        ObjectMapper objectMapper = new ObjectMapper();
+        String token;
         Map<String,String> map = new HashMap<>();
         map.put("email", email);
         map.put("password", password);
         try {
-            token = new StringBuilder(this.mvc.perform(MockMvcRequestBuilders
+            token = (this.mvc.perform(MockMvcRequestBuilders
                             .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
-                    .andReturn().getResponse().getContentAsString());
-            return token.toString();
+                    .andReturn().getResponse().getContentAsString()).replace(" {\"jwtToken\":\"} ", "").replace("\"}", "");
+            return token;
         } catch (Exception e) {
         }
         return "";
