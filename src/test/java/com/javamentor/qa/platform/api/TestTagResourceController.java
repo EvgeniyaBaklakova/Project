@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -37,7 +38,7 @@ public class TestTagResourceController extends AbstractTestApi {
         RelatedTagsDto t10 = new RelatedTagsDto(312L,"tag t12", 6L);
 
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/related"))
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/related").header("Authorization","Bearer " + getToken("test101@mail.ru", "test")))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().json(objectMapper.writeValueAsString(Arrays.asList(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10))));
@@ -49,9 +50,9 @@ public class TestTagResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestTagResourceController/AddTrackedIgnoredTagsTest/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void saveAsTracked() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/301/tracked"))
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/301/tracked").header("Authorization","Bearer " + getToken("test101@mail.ru", "test")))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(MockMvcResultHandlers.print());
     }
 
     @Test
@@ -60,9 +61,9 @@ public class TestTagResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestTagResourceController/AddTrackedIgnoredTagsTest/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void saveAsIgnored() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/301/ignored"))
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/301/ignored").header("Authorization","Bearer " + getToken("test101@mail.ru", "test")))
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(MockMvcResultHandlers.print());
     }
 
     private String getToken(String email, String password) {
