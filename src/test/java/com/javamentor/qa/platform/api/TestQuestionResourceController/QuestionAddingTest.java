@@ -3,8 +3,10 @@ package com.javamentor.qa.platform.api.TestQuestionResourceController;
 import com.javamentor.qa.platform.AbstractTestApi;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
@@ -18,19 +20,19 @@ public class QuestionAddingTest extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void allOkTest() throws Exception {
-//        MvcResult result = mvc.perform(MockMvcRequestBuilders
-//                        .post("/api/auth/token")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content("{\"email\" : \"email1@mail.com\", \"password\" : \"password\"}"))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//
-//        String response = result.getResponse().getContentAsString();
-//        String token = response.replace(" {\"jwtToken\":\"} ", "").replace("\"}", "");
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post("/api/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\" : \"email1@mail.com\", \"password\" : \"password\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        String token = response.replace("{\"jwtToken\":\"}", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders
                         .post("/api/user/question")
-                        //.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"title\": \"title\", \"description\": \"description\",\"tags\": [{\"name\": \"tag\"}]}"))
                 .andExpect(status().isOk())
@@ -49,7 +51,18 @@ public class QuestionAddingTest extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void emptyOrNullTitleTest() throws Exception {
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post("/api/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\" : \"email1@mail.com\", \"password\" : \"password\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        String token = response.replace("{\"jwtToken\":\"}", "").replace("\"}", "");
+
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": null, \"description\": \"description\",\"tags\": [{\"name\": \"tag\"}]}"))
                 .andExpect(status().isBadRequest());
@@ -59,7 +72,18 @@ public class QuestionAddingTest extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void emptyOrNullDescriptionTest() throws Exception {
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post("/api/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\" : \"email1@mail.com\", \"password\" : \"password\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        String token = response.replace("{\"jwtToken\":\"}", "").replace("\"}", "");
+
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"title\", \"description\": null,\"tags\": [{\"name\": \"tag\"}]}"))
                 .andExpect(status().isBadRequest());
@@ -69,7 +93,18 @@ public class QuestionAddingTest extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void noTagsTest() throws Exception {
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post("/api/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\" : \"email1@mail.com\", \"password\" : \"password\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        String token = response.replace("{\"jwtToken\":\"}", "").replace("\"}", "");
+
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"title\", \"description\": \"description\",\"tags\": []}"))
                 .andExpect(status().isBadRequest());
@@ -79,7 +114,18 @@ public class QuestionAddingTest extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before2.sql", executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void tagNotExistTest() throws Exception {
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post("/api/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\" : \"email1@mail.com\", \"password\" : \"password\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        String token = response.replace("{\"jwtToken\":\"}", "").replace("\"}", "");
+
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"title\", \"description\": \"description\",\"tags\": [{\"name\": \"tag 1\"}]}"))
                 .andExpect(status().isOk());
@@ -89,7 +135,18 @@ public class QuestionAddingTest extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before2.sql", executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void tagExistsTest() throws Exception {
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post("/api/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\" : \"email1@mail.com\", \"password\" : \"password\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        String token = response.replace("{\"jwtToken\":\"}", "").replace("\"}", "");
+
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"title\", \"description\": \"description\",\"tags\": [{\"name\": \"tag\"}]}"))
                 .andExpect(status().isOk());
@@ -98,7 +155,18 @@ public class QuestionAddingTest extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before2.sql", executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void tagExistsJoiningTest() throws Exception {
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post("/api/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\" : \"email1@mail.com\", \"password\" : \"password\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        String token = response.replace("{\"jwtToken\":\"}", "").replace("\"}", "");
+
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"title\", \"description\": \"description\",\"tags\": [{\"name\": \"tag\"}]}"))
                 .andExpect(status().isOk())
