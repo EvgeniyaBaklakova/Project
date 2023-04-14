@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
+import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
@@ -15,8 +16,7 @@ import java.util.Map;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class TestTagResourceController extends AbstractTestApi {
 
@@ -52,6 +52,8 @@ public class TestTagResourceController extends AbstractTestApi {
     public void saveAsTracked() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/301/tracked").header("Authorization","Bearer " + getToken("test101@mail.ru", "test")))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", Is.is(301)))
+                .andExpect(jsonPath("$.name", Is.is("tag t1")))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -63,6 +65,8 @@ public class TestTagResourceController extends AbstractTestApi {
     public void saveAsIgnored() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/301/ignored").header("Authorization","Bearer " + getToken("test101@mail.ru", "test")))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", Is.is(301)))
+                .andExpect(jsonPath("$.name", Is.is("tag t1")))
                 .andDo(MockMvcResultHandlers.print());
     }
 
