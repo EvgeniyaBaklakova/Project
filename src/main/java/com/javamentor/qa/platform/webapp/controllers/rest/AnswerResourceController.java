@@ -59,7 +59,7 @@ public class AnswerResourceController {
             @ApiResponse(code = 400, message = "Question с таким id не существует"),
             @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<List<AnswerDto>> getAllAnswers(@PathVariable("questionId") Long questionId) {
         return new ResponseEntity<>(answerDtoService.getAllAnswers(questionId), HttpStatus.OK);
     }

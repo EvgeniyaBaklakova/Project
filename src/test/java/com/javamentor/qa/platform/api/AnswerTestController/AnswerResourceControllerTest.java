@@ -81,11 +81,26 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
     }
 
     @Test
+    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/Before1.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void countValuableTest() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/question/102/answer/").header("Authorization","Bearer " + getToken("test101@mail.ru", "password")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", Is.is(101)))
+                .andExpect(jsonPath("$[0].userReputation", Is.is(30)))
+                .andExpect(jsonPath("$[0].countValuable", Is.is(2)))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
     @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/Before2.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void getAllAnswersWOAnyTest() throws Exception {
+    public void getAllAnswersWithoutAnyTest() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders
                         .get("/api/user/question/102/answer/").header("Authorization","Bearer " + getToken("test102@mail.ru", "password")))
                 .andExpect(status().isOk())

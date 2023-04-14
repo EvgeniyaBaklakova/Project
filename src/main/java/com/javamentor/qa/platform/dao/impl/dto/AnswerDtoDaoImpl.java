@@ -17,7 +17,7 @@ public class AnswerDtoDaoImpl implements AnswerDtoDao {
     public List<AnswerDto> getAllAnswers(Long questionId) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.AnswerDto(a.id, u.id, (SELECT CAST(SUM(r.count) AS long) FROM Reputation r WHERE r.answer.id = a.id)," +
                 "q.id, a.htmlBody, a.persistDateTime, a.isHelpful, a.dateAcceptTime, " +
-                "(SELECT CAST(COUNT(v) AS long) FROM VoteAnswer v WHERE v.vote = 'UP_VOTE' AND v.user = u.id), " +
+                "(SELECT CAST(COUNT(v) AS long) FROM VoteAnswer v WHERE v.vote = 'UP_VOTE' AND v.answer = a.id), " +
                 "u.imageLink, u.nickname) FROM Answer a JOIN a.user u JOIN a.question q WHERE q.id = :questionId";
         return entityManager.createQuery(hql, AnswerDto.class).setParameter("questionId", questionId).getResultList();
     }
