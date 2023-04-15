@@ -28,7 +28,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public Optional<TagDto> getIgnoredTag(Long userId, Long tagId) {
-        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.TagDto(i.id, i.name)" +
+        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.TagDto(i.id, i.name, i.description)" +
                 " FROM IgnoredTag t JOIN t.user u JOIN t.ignoredTag i WHERE u.id =:userId AND i.id = :tagId";
         TypedQuery<TagDto> quary = (TypedQuery<TagDto>) entityManager.createQuery(hql).setParameter("userId", userId).setParameter("tagId", tagId);
         return SingleResultUtil.getSingleResultOrNull(quary);
@@ -36,7 +36,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public Optional<TagDto> getTrackedTag(Long userId, Long tagId) {
-        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.TagDto(i.id, i.name)" +
+        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.TagDto(i.id, i.name, i.description)" +
                 " FROM TrackedTag t JOIN t.user u JOIN t.trackedTag i WHERE u.id =:userId AND i.id = :tagId";
         TypedQuery<TagDto> quary = (TypedQuery<TagDto>) entityManager.createQuery(hql).setParameter("userId", userId).setParameter("tagId", tagId);
         return SingleResultUtil.getSingleResultOrNull(quary);
