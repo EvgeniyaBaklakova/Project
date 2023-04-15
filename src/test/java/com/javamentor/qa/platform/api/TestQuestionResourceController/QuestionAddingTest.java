@@ -28,7 +28,7 @@ public class QuestionAddingTest extends AbstractTestApi {
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
-        String token = response.replace("{\"jwtToken\":\"}", "").replace("\"}", "");
+        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders
                         .post("/api/user/question")
@@ -59,7 +59,7 @@ public class QuestionAddingTest extends AbstractTestApi {
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
-        String token = response.replace("{\"jwtToken\":\"}", "").replace("\"}", "");
+        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -80,7 +80,7 @@ public class QuestionAddingTest extends AbstractTestApi {
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
-        String token = response.replace("{\"jwtToken\":\"}", "").replace("\"}", "");
+        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -101,7 +101,7 @@ public class QuestionAddingTest extends AbstractTestApi {
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
-        String token = response.replace("{\"jwtToken\":\"}", "").replace("\"}", "");
+        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -122,7 +122,7 @@ public class QuestionAddingTest extends AbstractTestApi {
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
-        String token = response.replace("{\"jwtToken\":\"}", "").replace("\"}", "");
+        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -143,7 +143,7 @@ public class QuestionAddingTest extends AbstractTestApi {
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
-        String token = response.replace("{\"jwtToken\":\"}", "").replace("\"}", "");
+        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -163,7 +163,7 @@ public class QuestionAddingTest extends AbstractTestApi {
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
-        String token = response.replace("{\"jwtToken\":\"}", "").replace("\"}", "");
+        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
