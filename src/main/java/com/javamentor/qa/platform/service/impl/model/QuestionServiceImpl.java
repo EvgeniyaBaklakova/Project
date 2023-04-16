@@ -24,7 +24,7 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
     @Override
     @Transactional
     public Question save(Question questionEntity) {
-        List<Tag> tagList = tagService.saveTags(questionEntity.getTags());
+        List<Tag> tagList = tagService.tagsToSet(questionEntity.getTags());
         questionEntity.setTags(tagList);
 
         if (questionDao.isNotExistByTitle(questionEntity.getTitle())) {

@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -60,8 +61,8 @@ public class QuestionResourceController {
 
     @ApiOperation(value = "Добавляет новый Question и возвращает QuestionDto")
     @PostMapping
-    public ResponseEntity<QuestionDto> addQuestion(@RequestBody @Valid QuestionCreateDto questionToCreate) {
-        User user = userService.getById(1L).orElse(null); //TODO security
+    public ResponseEntity<QuestionDto> addQuestion(@RequestBody @Valid QuestionCreateDto questionToCreate,
+                                                   @AuthenticationPrincipal User user) {
         Question questionEntity = questionConverter.questionCreateDtoToQuestion(questionToCreate, user);
 
         Question question = questionService.save(questionEntity);

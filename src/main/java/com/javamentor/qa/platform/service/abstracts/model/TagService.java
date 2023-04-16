@@ -5,5 +5,5 @@ import com.javamentor.qa.platform.models.entity.question.Tag;
 import java.util.List;
 
 public interface TagService extends ReadWriteService<Tag, Long> {
-    List<Tag> saveTags(List<Tag> questionTags);
+    List<Tag> tagsToSet(List<Tag> questionTags);
 }
