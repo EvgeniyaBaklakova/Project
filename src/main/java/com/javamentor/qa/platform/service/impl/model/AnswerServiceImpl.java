@@ -24,4 +24,9 @@ public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implem
         answerDao.deleteById(answerId);
     }
 
+    @Override
+    @Transactional
+    public Long countAnswerOfWeek(String email) {
+        return answerDao.countAnswerOfWeek(email);
+    }
 }
