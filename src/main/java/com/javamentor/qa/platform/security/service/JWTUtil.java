@@ -30,7 +30,6 @@ public class JWTUtil {
                 .sign(Algorithm.HMAC256(secret));
     }
 
-    // Method to verify the JWT and then decode and extract the user email stored in the payload of the token
     public String validateTokenAndRetrieveSubject(String token)throws JWTVerificationException {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
                 .withSubject("User Details")

@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.security;
 
 import com.javamentor.qa.platform.security.service.JWTFilter;
-import com.javamentor.qa.platform.security.service.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,9 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         http
                 .authorizeRequests()
                 .antMatchers("/css/**", "/js/**", "/html/**").permitAll()
-//                .antMatchers("/**").permitAll()
-//                .antMatchers("/api/user/**").hasRole("USER")
-                .antMatchers("/**").permitAll()
+                .antMatchers("/api/user/**").hasRole("USER")
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

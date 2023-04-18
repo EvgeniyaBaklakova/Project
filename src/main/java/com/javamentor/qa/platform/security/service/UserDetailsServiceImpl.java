@@ -26,26 +26,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        // Fetch User from the DB
         Optional<User> userRes = userDao.getUserByEmail(email);
-        // No user found
-        if(userRes.isEmpty())
+        if (userRes.isEmpty())
             throw new UsernameNotFoundException("Could not findUser with email = {}" + email);
-        // Return a User Details object using the fetched User information
         User user = userRes.get();
         return new org.springframework.security.core.userdetails.User(
                 email,
                 user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))); // Sets the role of the found user
-
-
-
-
-
-
-
-//        Optional<User> user = userDao.getUserByEmail(email);
-//        return user.orElseThrow();
-
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
     }
 }
