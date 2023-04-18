@@ -3,7 +3,8 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.security.auth.AuthenticationResponse;
 import com.javamentor.qa.platform.security.service.AuthDTO;
-import com.javamentor.qa.platform.security.service.JwtProvider;
+import com.javamentor.qa.platform.security.service.JWTUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,17 +21,13 @@ import javax.validation.Valid;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationResourceController {
 
     final AuthenticationManager authenticationManager;
-    final JwtProvider tokenProvider;
-
-    public AuthenticationResourceController(AuthenticationManager authenticationManager, JwtProvider tokenProvider) {
-        this.authenticationManager = authenticationManager;
-        this.tokenProvider = tokenProvider;
-    }
+    final JWTUtil tokenProvider;
 
     @PostMapping("/token")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody AuthDTO authDTO) throws InvalidKeySpecException, NoSuchAlgorithmException {

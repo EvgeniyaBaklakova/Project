@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.security;
 
 import com.javamentor.qa.platform.security.service.JWTFilter;
 import com.javamentor.qa.platform.security.service.JWTUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,19 +18,13 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
 
-    private final JWTUtil jwtUtil;
     private final JWTFilter jwtFilter;
-
-    public SecurityConfig(JWTUtil jwtUtil, JWTFilter jwtFilter) {
-        this.jwtUtil = jwtUtil;
-        this.jwtFilter = jwtFilter;
-    }
-
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -50,7 +45,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .antMatchers("/css/**", "/js/**", "/html/**").permitAll()
 //                .antMatchers("/**").permitAll()
 //                .antMatchers("/api/user/**").hasRole("USER")
-                .antMatchers("/**").hasRole("ADMIN")
+                .antMatchers("/**").permitAll()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
