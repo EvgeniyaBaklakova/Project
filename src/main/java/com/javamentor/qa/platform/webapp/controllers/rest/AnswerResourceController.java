@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.security.service.JwtProvider;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.webapp.controllers.util.DecodeJwtTokenUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -19,6 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -71,8 +73,8 @@ public class AnswerResourceController {
     }
     @GetMapping(value = "/profile/question/week")
     @ApiOperation(value = "Возвращает общее количество ответов за неделю которые написал аутентифицированный пользователь")
-    public ResponseEntity<Long> getCountAnswers(@NotNull @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(answerService.countAnswerOfWeek(userDetails.getUsername()));
+    public ResponseEntity<Long> getCountAnswers(@RequestHeader("Authorization") String token) {
+        return ResponseEntity.ok(answerService.countAnswerOfWeek(DecodeJwtTokenUtil.decodeJwtToken(token)));
     }
 
 }
