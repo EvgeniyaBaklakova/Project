@@ -7,6 +7,7 @@ import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.model.BookMarksService;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
@@ -18,12 +19,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import com.javamentor.qa.platform.webapp.controllers.util.DecodeJwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,11 +47,13 @@ public class QuestionResourceController {
     private final CommentQuestionService commentQuestionService;
     private final QuestionConverter questionConverter;
     private final QuestionDtoConverter questionDtoConverter;
+    private final BookMarksService bookMarksService;
 
     @Autowired
     public QuestionResourceController(QuestionViewedService questionViewedService,
                                       QuestionService questionService, UserService userService, CommentQuestionService commentQuestionService,
                                       QuestionConverter questionConverter, QuestionDtoConverter questionDtoConverter,QuestionDtoService questionDtoService) {
+                                      QuestionService questionService, UserService userService, BookMarksService bookMarksService) {
         this.questionService = questionService;
         this.questionDtoService = questionDtoService;
         this.questionViewedService = questionViewedService;
@@ -56,6 +61,7 @@ public class QuestionResourceController {
         this.commentQuestionService = commentQuestionService;
         this.questionConverter = questionConverter;
         this.questionDtoConverter = questionDtoConverter;
+        this.bookMarksService = bookMarksService;
     }
 
     @PostMapping("/{id}/view")
@@ -115,4 +121,11 @@ public class QuestionResourceController {
 
     }
 
+
+    @PostMapping("/{id}/bookmark")
+    public ResponseEntity<String> addQuestionToBookmarks(@PathVariable("id") Long id,
+                                                         @RequestHeader("Authorization") String token) {
+        bookMarksService.addBookMarks(DecodeJwtTokenUtil.decodeJwtToken(token),id);
+        return ResponseEntity.ok("Вопрос успешно добавлен в закладки");
+    }
 }
