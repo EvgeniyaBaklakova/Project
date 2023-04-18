@@ -25,8 +25,8 @@ public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, 
     }
 
     @Transactional
-    public void update(Optional<User> e) {
-        readWriteDao.update((E) e);
+    public void update(E e) {
+        readWriteDao.update( e);
     }
 
     @Transactional
