@@ -12,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/user")
@@ -29,20 +32,17 @@ public class UserResourceController {
         return new ResponseEntity<>(userDtoService.getById(id), HttpStatus.OK);
 
     }
-    @ApiOperation(value = "Постраничное получение списка пользователей отсортированных по сумме голосов", response = PageDto.class, responseContainer = "UserDto")
+    @GetMapping("/vote")
+    @ApiOperation(value = "Получение всех UserDTO с пагинацией отсортированные по голосам")
     @ApiResponses(value = {
-            @ApiResponse(
-                    code = 200,
-                    message = "Возвращает PageDto с вложенным массивом UserDto согласно текущей страницы" +
-                            "и количеству запрашиваемых пользователей"),
-            @ApiResponse(code = 403, message = "Доступ запрещён"),
-            @ApiResponse(code = 400, message = "Неверная нумерация страниц")
+            @ApiResponse(code = 200, message = "Success", response = PageDto.class),
+            @ApiResponse(code = 400, message = "UserDTO не найдены")
     })
-    @GetMapping( "/vote")
-    public ResponseEntity<PageDto<UserDto>> getUsersByVoteAnswer(@RequestParam(defaultValue = "1") Integer page,
-                                                                 @RequestParam(required = false, defaultValue = "10") Integer items,
+
+    public ResponseEntity<PageDto<UserDto>> getUsersByVoteAnswer(@RequestParam(defaultValue = "1") Integer itemsOnPage,
+                                                                 @RequestParam(required = false, defaultValue = "15") Integer items,
                                                                  @RequestParam(required = false) String filter) {
-        PaginationData data = new PaginationData(page, items,
+        PaginationData data = new PaginationData(itemsOnPage, items,
                 UserPageDtoDaoByVoteImpl.class.getSimpleName(), filter);
         return new ResponseEntity<>(userDtoService.getPageDto(data), HttpStatus.OK);
     }

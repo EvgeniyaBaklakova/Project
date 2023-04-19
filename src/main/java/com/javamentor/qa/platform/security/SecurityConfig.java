@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.security;
 
 import com.javamentor.qa.platform.security.service.JwtFilter;
 import com.javamentor.qa.platform.security.service.JwtProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,8 +25,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
 
     private final JwtProvider jwtProvider;
     private final JwtFilter jwtFilter;
-
-    public SecurityConfig(JwtProvider jwtProvider, JwtProvider jwtAuthenticationFilter, JwtFilter jwtFilter1) {
+@Autowired
+    public SecurityConfig(JwtProvider jwtProvider,  JwtFilter jwtFilter1) {
         this.jwtProvider = jwtProvider;
         this.jwtFilter = jwtFilter1;
     }
@@ -48,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         http
                 .authorizeRequests()
                 .antMatchers("/css/**", "/js/**", "/html/**").permitAll()
-                .antMatchers("/api/user/**").hasRole("USER")
+                .antMatchers("/api/user/**").permitAll()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);

@@ -7,4 +7,5 @@ public interface PageDtoService<T> {
 
     PageDto<T> getPageDto(PaginationData properties);
 
+
 }
