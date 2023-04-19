@@ -3,11 +3,9 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
-import com.javamentor.qa.platform.models.entity.Comment;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
-import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
@@ -78,19 +76,14 @@ public class QuestionResourceController {
 
     @ApiOperation(value = "Добавляет комментарий к вопросу")
     @PostMapping("/{id}/comment")
-    public ResponseEntity<Comment> addComment(@PathVariable("id") long id, @RequestBody @Valid Comment comment) {
+    public ResponseEntity<HttpStatus> addComment(@PathVariable("id") long id, @RequestBody @Valid String text) {
         Question question = questionService.getById(id).get();
         User user = userService.getById(question.getUser().getId()).get();
-        Role role = roleService.getById(user.getRole().getId()).get();
-        user.setRole(role);
-
-        Comment savedComment = commentService.addComment(comment, user);
 
         List<CommentQuestion> commentQuestionList = new ArrayList<>();
-        commentQuestionList.add(new CommentQuestion(savedComment.getText(), user));
-
+        commentQuestionList.add(new CommentQuestion(text, user));
         question.setCommentQuestions(commentQuestionList);
 
-        return new ResponseEntity<>(comment, HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
