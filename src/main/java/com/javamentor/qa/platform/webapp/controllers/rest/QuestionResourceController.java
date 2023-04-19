@@ -20,6 +20,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import com.javamentor.qa.platform.webapp.controllers.util.DecodeJwtTokenUtil;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -123,6 +124,7 @@ public class QuestionResourceController {
 
 
     @PostMapping("/{id}/bookmark")
+    @ApiOperation(value = "Добавление вопрома в закладки текущего аутентифицированного пользователя")
     public ResponseEntity<String> addQuestionToBookmarks(@PathVariable("id") Long id,
                                                          @RequestHeader("Authorization") String token) {
         bookMarksService.addBookMarks(DecodeJwtTokenUtil.decodeJwtToken(token),id);
