@@ -58,7 +58,7 @@ public class JwtProvider {
 
     public String generateToken(String username) throws InvalidKeySpecException, NoSuchAlgorithmException {
         return Jwts.builder()
-                .setSubject(username)
+                .setClaims(Jwts.claims().setSubject(username))
                 .setIssuedAt(new Date())
                 .setExpiration(generateExpirationDate())
                 .signWith(SIGNATURE_ALGORITHM, secretKey)

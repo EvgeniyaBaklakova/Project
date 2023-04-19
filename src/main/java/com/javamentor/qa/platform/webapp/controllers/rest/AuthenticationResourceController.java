@@ -49,7 +49,7 @@ public class AuthenticationResourceController {
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = tokenProvider.generateToken((String) authentication.getCredentials());
+        String jwt = tokenProvider.generateToken(authentication.getName());
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
 
     }
