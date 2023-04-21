@@ -16,7 +16,7 @@ public class AllQuestionDtoServiceImpl implements AllQuestionDtoService {
     }
 
     @Override
-    public AllQuestionDto getAllQuestions(String email, long id) {
-      return   allQuestionDtoDao.getAllQuestions(email,id).orElseThrow();
+    public AllQuestionDto getAllQuestions(String email) {
+      return   allQuestionDtoDao.getAllQuestions(email).orElseThrow();
     }
 }
