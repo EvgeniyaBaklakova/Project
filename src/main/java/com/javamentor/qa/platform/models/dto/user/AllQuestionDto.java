@@ -16,7 +16,5 @@ import java.util.List;
 public class AllQuestionDto {
     private Long questionId;
     private String questionTitle;
-    private List<TagDto> tagDtoList;
-    private Long countAnswer;
-    private LocalDateTime questionPersistDateTime;
+
 }
