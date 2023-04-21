@@ -6,5 +6,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AllQuestionDtoDao {
-    Optional<AllQuestionDto> getAllQuestions(String email, long id);
+    Optional<AllQuestionDto> getAllQuestions(String email);
 }

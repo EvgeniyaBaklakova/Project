@@ -20,7 +20,8 @@ public class AllQuestionDtoDaoImpl implements AllQuestionDtoDao {
 
 
     @Override
-    public Optional<AllQuestionDto> getAllQuestions(String email, long id) {
+    public Optional<AllQuestionDto> getAllQuestions(String email) {
+        Optional<User> = Us
       String hql = ("select question.id,question.title from question where user_id = :id");
         TypedQuery<AllQuestionDto> query = (TypedQuery<AllQuestionDto>) entityManager.createQuery(hql).setParameter("id", id);
         return SingleResultUtil.getSingleResultOrNull(query);
