@@ -15,7 +15,7 @@ public class  AllQuestionDto  {
     private Long questionId;
     private String questionTitle;
     private LocalDateTime answerPersistDateTime;
-//    private Long countAnswer;
+    private Long countAnswer;
 
 
 }
