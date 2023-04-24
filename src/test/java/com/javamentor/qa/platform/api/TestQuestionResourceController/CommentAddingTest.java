@@ -19,7 +19,6 @@ public class CommentAddingTest extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/CommentAddingApiTest/Before.sql", executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestQuestionResourceController/CommentAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void allOkTest() throws Exception {
-        String text = "test message";
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post("/api/auth/token")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -58,6 +57,28 @@ public class CommentAddingTest extends AbstractTestApi {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content((byte[]) null))
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/CommentAddingApiTest/Before.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/CommentAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
+    public void noQuestionTest() throws Exception {
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post("/api/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\" : \"email1@mail.com\", \"password\" : \"password\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
+
+        this.mvc.perform(MockMvcRequestBuilders
+                        .post("/api/user/question/1100/comment")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("\"test message\""))
                 .andExpect(status().is4xxClientError());
     }
 }

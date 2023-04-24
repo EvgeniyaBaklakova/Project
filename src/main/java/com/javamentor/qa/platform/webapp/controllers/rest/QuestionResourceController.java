@@ -22,8 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Api(value = "QuestionResource controller", tags = "Контроллер QuestionResource")
@@ -78,20 +76,14 @@ public class QuestionResourceController {
     @ApiOperation(value = "Добавляет комментарий к вопросу")
     @PostMapping("/{id}/comment")
     public ResponseEntity<HttpStatus> addComment(@PathVariable("id") long id, @RequestBody String text) {
-        Question question = questionService.getById(id).get();
-        User user = userService.getById(question.getUser().getId()).get();
-        List<CommentQuestion> commentQuestionList = new ArrayList<>();
-
-        if (text == null) {
+        Question question = questionService.getById(id).orElse(null);
+        if (question == null || text == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } else {
-            CommentQuestion comment = new CommentQuestion(text, user);
-            comment.setQuestion(question);
-            comment.setUser(user);
-            commentQuestionService.persist(comment);
-            commentQuestionList.add(comment);
-            question.setCommentQuestions(commentQuestionList);
         }
+        CommentQuestion comment = new CommentQuestion(text, question.getUser());
+        comment.setQuestion(question);
+        commentQuestionService.persist(comment);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
