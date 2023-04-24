@@ -1,8 +1,8 @@
 package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
-import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
+import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import org.springframework.stereotype.Repository;
@@ -45,7 +45,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public List<IgnoredTagsDto> getIgnoredTags(Long userId) {
-        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto(t.id, t.ignoredTag.name" +
+        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto(t.id, t.ignoredTag.name)" +
                 "FROM IgnoredTag t WHERE t.user.id = :userId";
         return entityManager.createQuery(hql).setParameter("userId", userId).getResultList();
     }

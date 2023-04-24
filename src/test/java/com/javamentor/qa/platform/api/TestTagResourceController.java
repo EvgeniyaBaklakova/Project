@@ -109,7 +109,7 @@ public class TestTagResourceController extends AbstractTestApi {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post("/api/auth/token")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\" : \"email1@mail.com\", \"password\" : \"password\"}"))
+                        .content("{\"email\" : \"test101@mail.ru\", \"password\" : \"test\"}"))
                 .andExpect(status().isOk())
                 .andReturn();
 
