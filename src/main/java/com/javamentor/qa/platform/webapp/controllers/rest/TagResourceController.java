@@ -85,7 +85,7 @@ public class TagResourceController {
     })
     @PostMapping("/{id}/tracked")
     public ResponseEntity<?> addTrackedTag(@AuthenticationPrincipal User user, @PathVariable("id") long id) {
-        Optional<Tag> tag= tagService.getById(id);
+        Optional<Tag> tag = tagService.getById(id);
         if(tag.isPresent()) {
             trackedTagService.persist(new TrackedTag(tag.get(), user, LocalDateTime.now()));
             return new ResponseEntity<>(tagDtoService.getTrackedTag(user.getId(), id).get(), HttpStatus.OK);
