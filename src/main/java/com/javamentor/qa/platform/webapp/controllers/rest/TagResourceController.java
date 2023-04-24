@@ -54,7 +54,7 @@ public class TagResourceController {
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен"),
             @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
     })
-    @GetMapping("related")
+    @GetMapping("/related")
     public List<RelatedTagsDto> getAllTenDto() {
         return tagDtoService.getAllTen();
     }
@@ -66,10 +66,10 @@ public class TagResourceController {
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен"),
             @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
     })
-    @PostMapping("{id}/ignored")
+    @PostMapping("/{id}/ignored")
     public ResponseEntity<?> addIgnoreTag(@AuthenticationPrincipal User user, @PathVariable("id") long id) {
-        Optional<Tag> tag= tagService.getById(id);
-        if(tag.isPresent()) {
+        Optional<Tag> tag = tagService.getById(id);
+        if (tag.isPresent()) {
             ignoredTagService.persist(new IgnoredTag(tag.get(), user, LocalDateTime.now()));
             return new ResponseEntity<>(tagDtoService.getIgnoredTag(user.getId(), id).get(), HttpStatus.OK);
         }
@@ -83,7 +83,7 @@ public class TagResourceController {
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен"),
             @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
     })
-    @PostMapping("{id}/tracked")
+    @PostMapping("/{id}/tracked")
     public ResponseEntity<?> addTrackedTag(@AuthenticationPrincipal User user, @PathVariable("id") long id) {
         Optional<Tag> tag= tagService.getById(id);
         if(tag.isPresent()) {
