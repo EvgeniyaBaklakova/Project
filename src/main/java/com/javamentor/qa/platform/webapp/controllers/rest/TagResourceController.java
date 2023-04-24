@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Tag;
@@ -17,8 +18,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -89,5 +91,19 @@ public class TagResourceController {
             return new ResponseEntity<>(tagDtoService.getTrackedTag(user.getId(), id).get(), HttpStatus.OK);
         }
         return new ResponseEntity<>( "Тэга с таким id не существует", HttpStatus.BAD_REQUEST);
+    }
+
+    @ApiOperation(value = "Возвращает список игнорируемых тэгов для пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Список успешно получен"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен"),
+            @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
+    })
+    @GetMapping("/ignored")
+    public ResponseEntity<List<IgnoredTagsDto>> getIgnoredTagsByUser() {
+        Long userId = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
+        List<IgnoredTagsDto> ignoredTagsDtos = tagDtoService.getIgnoredTags(userId);
+        return new ResponseEntity<>(ignoredTagsDtos, HttpStatus.OK);
     }
 }

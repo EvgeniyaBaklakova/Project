@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
+import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
@@ -40,5 +41,12 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 " FROM TrackedTag t JOIN t.user u JOIN t.trackedTag i WHERE u.id =:userId AND i.id = :tagId";
         TypedQuery<TagDto> quary = (TypedQuery<TagDto>) entityManager.createQuery(hql).setParameter("userId", userId).setParameter("tagId", tagId);
         return SingleResultUtil.getSingleResultOrNull(quary);
+    }
+
+    @Override
+    public List<IgnoredTagsDto> getIgnoredTags(Long userId) {
+        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto(t.id, t.ignoredTag.name" +
+                "FROM IgnoredTag t WHERE t.user.id = :userId";
+        return entityManager.createQuery(hql).setParameter("userId", userId).getResultList();
     }
 }
