@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.QuestionDao;
-import com.javamentor.qa.platform.exception.ApiRequestException;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
@@ -25,7 +24,7 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
     @Override
     @Transactional
     public Question save(Question questionEntity) {
-        List<Tag> tagList = tagService.saveTags(questionEntity.getTags());
+        List<Tag> tagList = tagService.tagsToSet(questionEntity.getTags());
         questionEntity.setTags(tagList);
 
         if (questionDao.isNotExistByTitle(questionEntity.getTitle())) {

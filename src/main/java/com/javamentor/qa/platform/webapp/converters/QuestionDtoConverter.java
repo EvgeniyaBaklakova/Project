@@ -5,11 +5,9 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.user.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring", uses = QuestionDtoConverter.class)
 public abstract class QuestionDtoConverter {
-    public static final QuestionDtoConverter INSTANCE = Mappers.getMapper(QuestionDtoConverter.class);
     @Mapping(source = "question.id", target = "id")
     @Mapping(source = "question.title", target = "title")
     @Mapping(source = "question.description", target = "description")

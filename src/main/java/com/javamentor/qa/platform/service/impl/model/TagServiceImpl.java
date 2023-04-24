@@ -20,18 +20,23 @@ public class TagServiceImpl extends ReadWriteServiceImpl<Tag, Long> implements T
 
     @Override
     @Transactional
-    public List<Tag> saveTags(List<Tag> questionTags) {
+    public List<Tag> tagsToSet(List<Tag> questionTags) {
         List<String> names = new ArrayList<>();
-        List<Tag> tags = new ArrayList<>();
 
         questionTags.forEach(tag -> names.add(tag.getName()));
 
         List<Tag> tagsFromDb = tagDao.getTagsByNames(names);
+        List<Tag> tags = new ArrayList<>(tagsFromDb);
+
+        return saveTags(questionTags, tagsFromDb, tags);
+    }
+
+    private List<Tag> saveTags(List<Tag> questionTags, List<Tag> tagsFromDb, List<Tag> tags) {
         questionTags.forEach(questionTag -> {
-            boolean isExist = tagsFromDb.stream().anyMatch(tag -> tag.getName().equals(questionTag.getName()));
-            if (isExist) {
-                tags.add(questionTag);
-            } else {
+            boolean isExist = tagsFromDb
+                    .stream()
+                    .anyMatch(tag -> tag.getName().equals(questionTag.getName()));
+            if (!isExist) {
                 tagDao.persist(questionTag);
                 tags.add(questionTag);
             }
