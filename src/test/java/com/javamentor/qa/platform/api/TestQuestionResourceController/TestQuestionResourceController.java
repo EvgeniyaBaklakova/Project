@@ -9,6 +9,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
@@ -57,9 +60,9 @@ public class TestQuestionResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionDtoGetById/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void questionGetById() throws Exception {
-        String USER_TOKEN = getToken("test100@mail.ru", "123");
+
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/100")
-                        .header(AUTHORIZATION, USER_TOKEN))
+                        .header(AUTHORIZATION,"Bearer " + getToken("test100@mail.ru","123")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -84,7 +87,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.listTagDto[1].description", Is.is("description2")));
 
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/104").header(AUTHORIZATION, USER_TOKEN))
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/104").header(AUTHORIZATION,"Bearer " + getToken("test100@mail.ru","123")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -111,11 +114,28 @@ public class TestQuestionResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionDtoGetById/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void noQuestionGetById() throws Exception {
-        String USER_TOKEN = getToken("test100@mail.ru", "123");
-        this.mvc.perform(get("/api/user/question/{id}", 111).header(AUTHORIZATION, USER_TOKEN))
+
+        this.mvc.perform(get("/api/user/question/{id}", 111).header(AUTHORIZATION,"Bearer " + getToken("test100@mail.ru","123") ))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
 
 
     }
+    private String getToken(String email, String password) {
+        String token;
+        Map<String,String> map = new HashMap<>();
+        map.put("email", email);
+        map.put("password", password);
+        try {
+            String response = (this.mvc.perform(MockMvcRequestBuilders
+                            .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
+                    .andReturn().getResponse().getContentAsString());
+            token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
+            return token;
+        } catch (Exception e) {
+        }
+        return "";
+    }
+
+
 }
