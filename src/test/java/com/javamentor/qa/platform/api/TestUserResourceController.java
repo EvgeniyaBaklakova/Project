@@ -94,43 +94,39 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[9].reputation", Is.is(100)));
 
 
-//        mvc.perform(get("/api/user/vote")
-//                        .header(AUTHORIZATION, USER_TOKEN)
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .param("currentPageNumber", "2")
-//                )
-//                .andDo(print())
-//                .andExpect(status().isOk())
-//                //.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.currentPageNumber").value("2"))
-//                .andExpect(jsonPath("$.totalPageCount").value("2"))
-//                .andExpect(jsonPath("$.totalResultCount").value("12"))
-//                .andExpect(jsonPath("$.items[0].id").value(103))
-//                .andExpect(jsonPath("$.items[0].email").value("user103@mail.ru"))
-//                .andExpect(jsonPath("$.items[1].id").value(110))
-//                .andExpect(jsonPath("$.items[1].email").value("user110@mail.ru"))
-//                .andExpect(jsonPath("$.itemsOnPage").value("10"));
-//
-//        mvc.perform(get("/api/user/vote")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .header(AUTHORIZATION, USER_TOKEN)
-//                        .param("currentPageNumber", "3")
-//                )
-//                .andDo(print())
-//                .andExpect(status().isOk())
-//                //.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.currentPageNumber").value("3"))
-//                .andExpect(jsonPath("$.totalPageCount").value("2"))
-//                .andExpect(jsonPath("$.totalResultCount").value("12"))
-//                .andExpect(jsonPath("$.items").isEmpty())
-//                .andExpect(jsonPath("$.itemsOnPage").value("10"));
-//
-//        mvc.perform(get("/api/user/vote")
-//                        .header(AUTHORIZATION, USER_TOKEN)
-//                )
-//                .andDo(print())
-//                .andExpect(status().isBadRequest())
-//                .andExpect(status().reason("Required int parameter 'currentPageNumber' is not present"));
+        mvc.perform(get("/api/user/vote")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("currentPageNumber", "2")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").value("1"))
+                .andExpect(jsonPath("$.totalPageCount").value("1"))
+                .andExpect(jsonPath("$.totalResultCount").value("10"))
+                .andExpect(jsonPath("$.items[0].id").value(101))
+                .andExpect(jsonPath("$.items[0].email").value("user101@mail.ru"))
+                .andExpect(jsonPath("$.items[1].id").value(102))
+                .andExpect(jsonPath("$.items[1].email").value("user102@mail.ru"))
+                .andExpect(jsonPath("$.itemsOnPage").value("10"));
+
+        mvc.perform(get("/api/user/vote")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .param("currentPageNumber", "2")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentPageNumber").value("1"))
+                .andExpect(jsonPath("$.totalPageCount").value("1"))
+                .andExpect(jsonPath("$.totalResultCount").value("10"))
+                .andExpect(jsonPath("$.itemsOnPage").value("10"));
+
+        mvc.perform(get("/api/user/vote")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
 
