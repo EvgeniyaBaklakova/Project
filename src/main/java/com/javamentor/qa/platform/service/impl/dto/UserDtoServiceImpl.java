@@ -30,9 +30,6 @@ public class UserDtoServiceImpl extends PageDtoServiceImpl<UserDto> implements U
     @Override
     public PageDto<UserDto> getPageDto(PaginationData properties) {
         var pageDto = super.getPageDto(properties);
-//        var usersIdList = pageDto.getItems().stream().map(UserDto::getId).collect(Collectors.toList());
-//        var map = usersIdList.stream().collect(Collectors.toMap(Function.identity(), tagDtoDao::getTop3TagsForUser));
-//        pageDto.getItems().forEach(u -> u.setListTagDto(map.get(u.getId())));
         return pageDto;
     }
 }
