@@ -6,7 +6,6 @@ import com.javamentor.qa.platform.security.auth.AuthenticationResponse;
 import com.javamentor.qa.platform.security.service.AuthDTO;
 import com.javamentor.qa.platform.security.service.JWTUtil;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.javamentor.qa.platform.webapp.controllers.util.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -60,5 +59,10 @@ public class AuthenticationResourceController {
                     userService.update(u);
                 }
         );
+    }
+
+    @GetMapping("/admin/{id}")
+    public Optional<User> get(@PathVariable Long id) {
+        return userService.getById(id);
     }
 }
