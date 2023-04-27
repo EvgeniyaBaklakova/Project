@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Optional;
@@ -49,4 +50,16 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 "FROM IgnoredTag t WHERE t.user.id = :userId";
         return entityManager.createQuery(hql).setParameter("userId", userId).getResultList();
     }
+
+    @Override
+    public List<TagDto> getTagsByQuestionId(Long id) {
+        Query query = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.tag.TagDto(" +
+                        "t.id, " +
+                        "t.name, " +
+                        "t.description) " +
+                        "from Tag t join t.questions as tq where tq.id = :id")
+                .setParameter("id", id);
+        return (List<TagDto>) query.getResultList();
+    }
+
 }
