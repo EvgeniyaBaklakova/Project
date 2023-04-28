@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javamentor.qa.platform.AbstractTestApi;
 import com.javamentor.qa.platform.security.auth.AuthenticationResponse;
 import com.javamentor.qa.platform.security.service.AuthDTO;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
@@ -19,13 +20,13 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 @Sql(value = "/script/AuthController/After.sql", executionPhase = AFTER_TEST_METHOD)
 public class AuthControllerTest extends AbstractTestApi {
 
-
+    @DisplayName("\uD83D\uDC80")
     @Test
     public void helloAuthenticated() throws Exception {
 
         String email = "test101@mail.ru";
         String password = "test";
-        
+
         AuthDTO authDTO = new AuthDTO();
         authDTO.setEmail(email);
         authDTO.setPassword(password);

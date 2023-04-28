@@ -1,7 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
-import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.security.auth.AuthenticationResponse;
 import com.javamentor.qa.platform.security.service.AuthDTO;
 import com.javamentor.qa.platform.security.service.JWTUtil;
@@ -14,12 +13,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -49,20 +50,5 @@ public class AuthenticationResourceController {
 
         String jwt = tokenProvider.generateToken(authentication.getName());
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
-    }
-
-    @PostMapping(value = "/admin/block")
-    public void blockUser(@RequestParam Long userId) {
-        Optional<User> user = userService.getById(userId);
-        user.ifPresent(u -> {
-                    u.setIsEnabled(false);
-                    userService.update(u);
-                }
-        );
-    }
-
-    @GetMapping("/user/{id}")
-    public Optional<User> hey(@PathVariable Long id) {
-        return userService.getById(id);
     }
 }
