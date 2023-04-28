@@ -61,8 +61,8 @@ public class AuthenticationResourceController {
         );
     }
 
-    @GetMapping("/admin/{id}")
-    public Optional<User> get(@PathVariable Long id) {
+    @GetMapping("/user/{id}")
+    public Optional<User> hey(@PathVariable Long id) {
         return userService.getById(id);
     }
 }
