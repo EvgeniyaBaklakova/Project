@@ -26,7 +26,7 @@ public class AllQuestionDtoDaoImpl implements AllQuestionDtoDao {
     @Override
     public List<AllQuestionDto> getAllQuestions(String email) {
         Optional<User> user = userDao.getUserByEmail(email);
-        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.AllQuestionDto(q.id, q.title, q.persistDateTime,(select count(a.id) as countAnswer from Answer a where a.question.id = q.id)) from Question q where user.id = :id";
+        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.AllQuestionDto(q.id, q.title, q.persistDateTime,(select count(a.id) as countAnswer from Answer a where a.question.id = q.id))  from Question q where user.id = :id";
         return entityManager.createQuery(hql, AllQuestionDto.class).setParameter("id", user.get().getId()).getResultList();
 
     }
