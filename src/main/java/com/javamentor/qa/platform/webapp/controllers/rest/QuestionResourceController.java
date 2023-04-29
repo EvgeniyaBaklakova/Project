@@ -21,13 +21,13 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import com.javamentor.qa.platform.webapp.controllers.util.DecodeJwtTokenUtil;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Optional;
-
+@RequiredArgsConstructor
 @Api(value = "QuestionResource controller", tags = "Контроллер QuestionResource")
 @RestController
 @RequestMapping("api/user/question")
@@ -50,20 +50,8 @@ public class QuestionResourceController {
     private final QuestionDtoConverter questionDtoConverter;
     private final BookMarksService bookMarksService;
 
-    @Autowired
-    public QuestionResourceController(QuestionViewedService questionViewedService,
-                                      QuestionService questionService, UserService userService, CommentQuestionService commentQuestionService,
-                                      QuestionConverter questionConverter, QuestionDtoConverter questionDtoConverter,QuestionDtoService questionDtoService) {
-                                      QuestionService questionService, UserService userService, BookMarksService bookMarksService) {
-        this.questionService = questionService;
-        this.questionDtoService = questionDtoService;
-        this.questionViewedService = questionViewedService;
-        this.userService = userService;
-        this.commentQuestionService = commentQuestionService;
-        this.questionConverter = questionConverter;
-        this.questionDtoConverter = questionDtoConverter;
-        this.bookMarksService = bookMarksService;
-    }
+
+
 
     @PostMapping("/{id}/view")
     public ResponseEntity addView(@PathVariable("id") long id) {
@@ -126,8 +114,9 @@ public class QuestionResourceController {
     @PostMapping("/{id}/bookmark")
     @ApiOperation(value = "Добавление вопрома в закладки текущего аутентифицированного пользователя")
     public ResponseEntity<String> addQuestionToBookmarks(@PathVariable("id") Long id,
-                                                         @RequestHeader("Authorization") String token) {
-        bookMarksService.addBookMarks(DecodeJwtTokenUtil.decodeJwtToken(token),id);
+                                                         @AuthenticationPrincipal User user) {
+        bookMarksService.addBookMarks(user, id);
         return ResponseEntity.ok("Вопрос успешно добавлен в закладки");
     }
 }
+
