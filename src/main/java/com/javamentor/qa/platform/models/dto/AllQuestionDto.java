@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,13 +14,26 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class  AllQuestionDto  {
+public class AllQuestionDto {
     private Long questionId;
     private String questionTitle;
     private LocalDateTime answerPersistDateTime;
-    private Long countAnswer;
-    private String nameTag;
+    private Integer countAnswer;
+    private List<TagDto> tagDtoList;
 
-
+    public AllQuestionDto(Long questionId,
+                          String questionTitle,
+                          LocalDateTime answerPersistDateTime,
+                          Integer countAnswer,
+                          Long tagId,
+                          String tagName,
+                          String tagDescription,
+                          LocalDateTime tagPersistDateTime) {
+        this.questionId = questionId;
+        this.questionTitle = questionTitle;
+        this.answerPersistDateTime = answerPersistDateTime;
+        this.countAnswer = countAnswer;
+        this.tagDtoList = List.of(new TagDto(tagId, tagName, tagDescription, tagPersistDateTime));
+    }
 
 }
