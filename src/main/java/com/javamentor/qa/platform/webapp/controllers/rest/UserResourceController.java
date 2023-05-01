@@ -15,19 +15,20 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import com.javamentor.qa.platform.webapp.controllers.util.DecodeJwtTokenUtil;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/user")
 
@@ -35,12 +36,14 @@ public class UserResourceController {
 
     private final UserDtoService userDtoService;
     private final AnswerService answerService;
+    private final QuestionService questionService;
 
     public UserResourceController(UserDtoService userDtoService, AnswerService answerService) {
         this.userDtoService = userDtoService;
 
         this.answerService = answerService;
     }
+
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUserDto(@PathVariable("userId") long id) {
@@ -70,7 +73,7 @@ public class UserResourceController {
 
     @GetMapping("/profile/questions")
     public ResponseEntity<List<AllQuestionDto>> getAllQuestion(@AuthenticationPrincipal User user){
-        return new  ResponseEntity<>(allQuestionDtoService.getAllQuestions(user), HttpStatus.OK);
+        return new  ResponseEntity<>(questionService.getAllQuestions(user), HttpStatus.OK);
     }
 
 }
