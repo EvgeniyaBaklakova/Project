@@ -4,12 +4,12 @@ import com.javamentor.qa.platform.dao.abstracts.model.QuestionDao;
 import com.javamentor.qa.platform.dao.abstracts.model.QuestionDao;
 import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.models.dto.AllQuestionDto;
-import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.webapp.converters.AllQuestionDtoMapper;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +21,13 @@ import java.util.stream.Collectors;
 public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> implements QuestionService {
     private final QuestionDao questionDao;
     private final TagService tagService;
+    private final AllQuestionDtoMapper allQuestionDtoMapper;
 
-    public QuestionServiceImpl(QuestionDao questionDao, TagService tagService) {
+    public QuestionServiceImpl(QuestionDao questionDao, TagService tagService, AllQuestionDtoMapper allQuestionDtoMapper) {
         super(questionDao);
         this.questionDao = questionDao;
         this.tagService = tagService;
+        this.allQuestionDtoMapper = allQuestionDtoMapper;
     }
 
     @Override
