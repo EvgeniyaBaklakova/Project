@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class GetAllQuestionTest  extends AbstractTestApi {
+public class GetAllQuestionTest extends AbstractTestApi {
 
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/GetAllQuestionApiTest/Before.sql",
@@ -60,7 +60,8 @@ public class GetAllQuestionTest  extends AbstractTestApi {
                 .andExpect(jsonPath("$[0].tagDtoList[2].id", Is.is(104)))
                 .andExpect(jsonPath("$[0].tagDtoList[2].name", Is.is("name5")))
                 .andExpect(jsonPath("$[0].tagDtoList[2].description", Is.is("description5")))
-                .andExpect(jsonPath("$[0].tagDtoList[2].persistDateTime", Is.is("2023-04-23T13:01:11.245126")));;
+                .andExpect(jsonPath("$[0].tagDtoList[2].persistDateTime", Is.is("2023-04-23T13:01:11.245126")));
+        ;
 
 
     }
