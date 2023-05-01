@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.security.auth.AuthenticationResponse;
 import com.javamentor.qa.platform.security.service.AuthDTO;
 import com.javamentor.qa.platform.security.service.JWTUtil;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,7 @@ import javax.validation.Valid;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+@Api(value = "login controller", tags = "получение jwt токена при попытке аутентификации")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
