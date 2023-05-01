@@ -7,19 +7,22 @@ import com.javamentor.qa.platform.service.abstracts.dto.AllQuestionDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class AllQuestionDtoServiceImpl implements AllQuestionDtoService {
     private final AllQuestionDtoDao allQuestionDtoDao;
-@Autowired
+
+    @Autowired
     public AllQuestionDtoServiceImpl(AllQuestionDtoDao allQuestionDtoDao) {
         this.allQuestionDtoDao = allQuestionDtoDao;
     }
 
+    @Transactional
     @Override
     public List<AllQuestionDto> getAllQuestions(@AuthenticationPrincipal User user) {
-      return allQuestionDtoDao.getAllQuestions(user);
+        return allQuestionDtoDao.getAllQuestions(user);
     }
 }

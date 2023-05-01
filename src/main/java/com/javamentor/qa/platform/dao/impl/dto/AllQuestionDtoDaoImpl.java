@@ -27,14 +27,12 @@ public class AllQuestionDtoDaoImpl implements AllQuestionDtoDao {
 
     @Override
     public List<AllQuestionDto> getAllQuestions(@AuthenticationPrincipal User user) {
-//        String hql = "SELECT  NEW com.javamentor.qa.platform.models.dto.AllQuestionDto(q.id, q.title, q.persistDateTime," +
-//                "SIZE(q.answers), t.id, t.name, t.description,t.persistDateTime)" +
-//                "FROM Question q JOIN  q.tags t\n" +
-//                "WHERE q.user.id = :id";
        List<Question> questions = questionDao.getQuestionsByUserId(user);
                return questions.stream().map(question -> {
                    AllQuestionDto allQuestionDto = new AllQuestionDto();
                    allQuestionDto.setQuestionId(question.getId());
+                   allQuestionDto.setAnswerPersistDateTime(question.getPersistDateTime());
+                   allQuestionDto.setCountAnswer(question.getAnswers().size());
                    allQuestionDto.setQuestionTitle(question.getTitle());
                    allQuestionDto.setTagDtoList(question.getTags().stream().map(tag -> {
                        TagDto tagDto = new TagDto(tag.getId(),tag.getName(),tag.getDescription(),tag.getPersistDateTime());
@@ -42,7 +40,6 @@ public class AllQuestionDtoDaoImpl implements AllQuestionDtoDao {
                    }).collect(Collectors.toList()));
                    return allQuestionDto;
                }).collect(Collectors.toList());
-//        return entityManager.createQuery(hql, AllQuestionDto.class).setParameter("id", user.getId()).getResultList();
 
     }
 

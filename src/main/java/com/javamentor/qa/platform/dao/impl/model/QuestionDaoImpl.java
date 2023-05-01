@@ -31,10 +31,15 @@ public class QuestionDaoImpl extends ReadWriteDaoImpl<Question, Long> implements
     @Override
     public List<Question> getQuestionsByUserId(User user) {
         String hql = "SELECT distinct q FROM Question q" +
-                "   JOIN fetch q.tags t \n" +
+                "  left JOIN fetch q.tags t \n" +
                 "WHERE q.user.id = :id";
-        return entityManager.createQuery(hql).setParameter("id",user.getId()).getResultList();
-    }
+        List<Question> questions = entityManager.createQuery(hql).setParameter("id",user.getId()).getResultList();
 
+        hql = "SELECT distinct q FROM Question q" +
+                "  left JOIN fetch q.answers a \n" +
+                "WHERE q.user.id = :id and q IN :questions";
+        return entityManager.createQuery(hql).setParameter("id",user.getId()).setParameter("questions",questions).getResultList();
+
+    }
 
 }
