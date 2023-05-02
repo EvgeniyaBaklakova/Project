@@ -3,8 +3,6 @@ package com.javamentor.qa.platform.dao.impl.model;
 import com.javamentor.qa.platform.dao.abstracts.model.AnswerDao;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.user.User;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -29,9 +27,9 @@ public class AnswerDaoImpl extends ReadWriteDaoImpl<Answer, Long> implements Ans
     }
 
     @Override
-    public Long countAnswerOfWeek(@AuthenticationPrincipal User user) {
-        return (long) entityManager.createQuery("SELECT COUNT(user_id) FROM Answer  WHERE user_id = :id " +
-                        "and persist_date > date(current_date - 7)")
-                .setParameter("id", user.getId()).getSingleResult();
+    public Long countAnswerOfWeek(Long id) {
+        return (long) entityManager.createQuery("SELECT COUNT(a.user.id) FROM Answer a  WHERE a.user.id = :id " +
+                        "and a.persistDateTime > date(current_date - 7)")
+                .setParameter("id", id).getSingleResult();
     }
 }

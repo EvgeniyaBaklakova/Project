@@ -54,7 +54,7 @@ public class UserResourceController {
     @GetMapping(value = "/profile/question/week")
     @ApiOperation(value = "Возвращает общее количество ответов за неделю которые написал аутентифицированный пользователь")
     public ResponseEntity<Long> getCountAnswers(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(answerService.countAnswerOfWeek(user));
+        return ResponseEntity.ok(answerService.countAnswerOfWeek(user.getId()));
     }
 
 }

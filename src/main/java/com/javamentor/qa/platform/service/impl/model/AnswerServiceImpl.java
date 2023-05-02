@@ -2,10 +2,8 @@ package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.AnswerDao;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
-import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +25,8 @@ public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implem
     }
 
     @Override
-    @Transactional
-    public Long countAnswerOfWeek(@AuthenticationPrincipal User user) {
-        return answerDao.countAnswerOfWeek(user);
+    public Long countAnswerOfWeek(Long id) {
+        return answerDao.countAnswerOfWeek(id);
     }
 
 }
