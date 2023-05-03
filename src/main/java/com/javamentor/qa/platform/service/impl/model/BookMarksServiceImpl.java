@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.BookMarksService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +20,7 @@ public class BookMarksServiceImpl extends ReadWriteServiceImpl<BookMarks, Long> 
 
     @Transactional
     @Override
-    public void addBookMarks(@AuthenticationPrincipal User user, Long questionId) {
+    public void addBookMarks(User user, Long questionId) {
         bookMarksDao.addBookmarks(user, questionId);
     }
 
