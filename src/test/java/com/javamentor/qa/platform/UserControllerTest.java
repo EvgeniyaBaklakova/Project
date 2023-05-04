@@ -8,6 +8,10 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
@@ -27,7 +31,7 @@ public class UserControllerTest extends AbstractTestApi {
 
         String USER_TOKEN = getToken("test101@mail.ru", "123");
         this.mvc.perform(MockMvcRequestBuilders.get("/api/test/101")
-                .header(AUTHORIZATION, USER_TOKEN))
+                        .header(AUTHORIZATION, USER_TOKEN))
 
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -44,31 +48,30 @@ public class UserControllerTest extends AbstractTestApi {
     @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
     public void getCountAnswers() throws Exception {
 
-        System.out.println("START TEST");
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/question/week").
+                        header("Authorization", "Bearer " + getToken("test100@mail.ru", "password")))
 
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post("/api/auth/token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\" : \"test100@mail.ru\", \"password\" : \"password\"}")) //тут вставляете ваши данные
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String response = result.getResponse().getContentAsString();
-        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
-        System.out.println(token);
-
-
-        this.mvc.perform(MockMvcRequestBuilders
-                        .get("/api/user/profile/question/week")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$",Is.is(2)));
+                .andExpect(jsonPath("$", Is.is(2)));
     }
 
 
-
-
+    public String getToken(String email, String password) {
+        String token;
+        Map<String, String> map = new HashMap<>();
+        map.put("email", email);
+        map.put("password", password);
+        try {
+            String response = (this.mvc.perform(MockMvcRequestBuilders
+                            .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
+                    .andReturn().getResponse().getContentAsString());
+            token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
+            return token;
+        } catch (Exception e) {
+        }
+        return "";
+    }
 
 }
 
