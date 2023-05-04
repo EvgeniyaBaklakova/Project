@@ -1,17 +1,14 @@
 package com.javamentor.qa.platform.service.impl;
 
+import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
+import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.javamentor.qa.platform.service.abstracts.model.RoleService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,7 +27,8 @@ public class TestDataInitService {
     private final QuestionService questionService;
     private final TagService tagService;
     private final AnswerService answerService;
-
+    private final TrackedTagService trackedTagService;
+    private final IgnoredTagService ignoredTagService;
     private final PasswordEncoder passwordEncoder;
 
     private final Role ROLE_USER = new Role("ROLE_USER");
@@ -38,12 +36,14 @@ public class TestDataInitService {
 
 
     @Autowired
-    public TestDataInitService(UserService userService, RoleService roleService, QuestionService questionService, TagService tagService, AnswerService answerService, PasswordEncoder passwordEncoder) {
+    public TestDataInitService(UserService userService, RoleService roleService, QuestionService questionService, TagService tagService, AnswerService answerService, TrackedTagService trackedTagService, IgnoredTagService ignoredTagService, PasswordEncoder passwordEncoder) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
         this.tagService = tagService;
         this.answerService = answerService;
+        this.trackedTagService = trackedTagService;
+        this.ignoredTagService = ignoredTagService;
         this.passwordEncoder = passwordEncoder;
 
     }
@@ -152,5 +152,39 @@ public class TestDataInitService {
         answer2.setUser(userService.getAll().get(1));
         answer2.setQuestion(questionList.get(3));
         answerService.persistAll(answer2);
+    }
+
+    public void initTrackedTag() {
+        List<User> userList = userService.getAll();
+
+        //1 User without TrackedTag
+        for(int i = 1; i < userList.size(); i++) {
+            int rand = (int) (Math.random() * 3);
+
+            for (int k = 1; k <= rand; k++) {
+                TrackedTag trackedTag = new TrackedTag();
+                trackedTag.setPersistDateTime(LocalDateTime.now(Clock.systemDefaultZone()));
+                trackedTag.setTrackedTag(tagService.getAll().get(k));
+                trackedTag.setUser(userService.getAll().get(i));
+                trackedTagService.persistAll(trackedTag);
+            }
+        }
+    }
+
+    public void initIgnoredTag() {
+        List<User> userList = userService.getAll();
+
+        //1 User without IgnoredTag
+        for(int i = 1; i < userList.size(); i++) {
+            int rand = (int) (Math.random() * 3);
+
+            for (int k = 1; k <= rand; k++) {
+                IgnoredTag ignoredTag = new IgnoredTag();
+                ignoredTag.setPersistDateTime(LocalDateTime.now(Clock.systemDefaultZone()));
+                ignoredTag.setIgnoredTag(tagService.getAll().get(k));
+                ignoredTag.setUser(userService.getAll().get(i));
+                ignoredTagService.persistAll(ignoredTag);
+            }
+        }
     }
 }
