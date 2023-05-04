@@ -34,4 +34,10 @@ public class TrackedTag implements Serializable {
     @Type(type = "org.hibernate.type.LocalDateTimeType")
     private LocalDateTime persistDateTime;
 
+
+    public TrackedTag(Tag trackedTag, User user, LocalDateTime localDateTime) {
+        this.trackedTag = trackedTag;
+        this.user = user;
+        persistDateTime = localDateTime;
+    }
 }
