@@ -73,7 +73,7 @@ public class TestTagResourceController extends AbstractTestApi {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-    private String getToken(String email, String password) {
+    public String getToken(String email, String password) {
         String token;
         Map<String,String> map = new HashMap<>();
         map.put("email", email);
