@@ -68,7 +68,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
         return (List<TagDto>) query.getResultList();
     }
 
-    public List<TagDto> getTagsByQuestionsIds(List<Long> id) {
+    public List<TagDto> getTagsByQuestionsIds(List<Long> ids) {
         String hql = "select question.id,\n" +
                 "       tag_id,\n" +
                 "       tag.description,\n" +
@@ -76,16 +76,14 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 "from question\n" +
                 "         join question_has_tag on question.id = question_has_tag.question_id\n" +
                 "         join tag on question_has_tag.tag_id = tag.id\n" +
-                "where question_id = :id";
+                "where question_id in :Ids";
         Map<Long, TagDto> tagDtoMap = new HashMap<>();
-       List<TagTest>  tagTest = new ArrayList<>();
+        List<TagTest> tagTest = new ArrayList<>();
 
-         entityManager.createNativeQuery(hql).setParameter("id", id).unwrap(org.hibernate.query.Query.class).setResultTransformer(new ResultTransformer() {
+        entityManager.createNativeQuery(hql).setParameter("Ids", ids).unwrap(org.hibernate.query.Query.class).setResultTransformer(new ResultTransformer() {
             @Override
             public Object transformTuple(Object[] objects, String[] strings) {
-                tagTest.add(new TagTest(((Number) objects[0]).longValue(), new TagDto(((Number) objects[1]).longValue(),objects[2].toString(),objects[3].toString())));
-
-
+                tagTest.add(new TagTest(((Number) objects[0]).longValue(), new TagDto(((Number) objects[1]).longValue(), objects[2].toString(), objects[3].toString())));
                 return tagTest;
             }
 
@@ -100,6 +98,7 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
 
 }
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -108,4 +107,4 @@ class TagTest {
 
     private long id;
     private TagDto tagDto;
- }
+}
