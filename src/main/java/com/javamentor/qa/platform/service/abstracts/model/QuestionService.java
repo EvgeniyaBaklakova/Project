@@ -9,5 +9,5 @@ import java.util.List;
 
 public interface QuestionService extends ReadWriteService<Question, Long> {
     Question save(Question questionEntity);
-    List<AllQuestionDto> getAllQuestions(@AuthenticationPrincipal User user);
+
 }

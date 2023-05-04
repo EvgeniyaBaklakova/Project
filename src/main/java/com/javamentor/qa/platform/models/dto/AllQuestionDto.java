@@ -13,27 +13,18 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+
 public class AllQuestionDto {
     private Long questionId;
     private String questionTitle;
     private LocalDateTime answerPersistDateTime;
-    private Integer countAnswer;
-    private List<TagDto> tagDtoList;
+    private Long countAnswer;
 
-    public AllQuestionDto(Long questionId,
-                          String questionTitle,
-                          LocalDateTime answerPersistDateTime,
-                          Integer countAnswer,
-                          Long tagId,
-                          String tagName,
-                          String tagDescription,
-                          LocalDateTime tagPersistDateTime) {
+
+    public AllQuestionDto(Long questionId, String questionTitle, LocalDateTime answerPersistDateTime, Long countAnswer) {
         this.questionId = questionId;
         this.questionTitle = questionTitle;
         this.answerPersistDateTime = answerPersistDateTime;
         this.countAnswer = countAnswer;
-        this.tagDtoList = List.of(new TagDto(tagId, tagName, tagDescription, tagPersistDateTime));
     }
-
 }

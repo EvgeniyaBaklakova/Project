@@ -9,6 +9,7 @@ import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.AllQuestionDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import io.swagger.annotations.ApiOperation;
@@ -43,6 +44,7 @@ public class UserResourceController {
 
         this.answerService = answerService;
     }
+    private final QuestionDtoService questionDtoService;
 
 
     @GetMapping("/{userId}")
@@ -73,7 +75,7 @@ public class UserResourceController {
 
     @GetMapping("/profile/questions")
     public ResponseEntity<List<AllQuestionDto>> getAllQuestion(@AuthenticationPrincipal User user){
-        return new  ResponseEntity<>(questionService.getAllQuestions(user), HttpStatus.OK);
+        return new  ResponseEntity<>(questionDtoService.getAllQuestions(user), HttpStatus.OK);
     }
 
 }

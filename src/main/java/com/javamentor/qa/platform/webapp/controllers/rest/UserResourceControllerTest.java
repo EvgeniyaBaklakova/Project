@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.models.dto.AllQuestionDto;
 import com.javamentor.qa.platform.models.dto.UserDtoTest;
 import com.javamentor.qa.platform.models.entity.user.User;
+import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoTestService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserResourceControllerTest {
 
     private final UserDtoTestService userDtoTestService;
-    private final QuestionService questionService;
+    private final QuestionDtoService questionDtoService;
 
 
 
@@ -34,7 +35,7 @@ public class UserResourceControllerTest {
 
     @GetMapping("/profile/questions")
     public ResponseEntity<AllQuestionDto> getAllQuestion(@AuthenticationPrincipal User user){
-        return  ResponseEntity.ok((AllQuestionDto) questionService.getAllQuestions(user));
+        return  ResponseEntity.ok((AllQuestionDto) questionDtoService.getAllQuestions(user));
     }
 
 }

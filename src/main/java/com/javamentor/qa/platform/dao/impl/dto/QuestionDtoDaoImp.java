@@ -2,12 +2,15 @@ package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
+import com.javamentor.qa.platform.models.dto.AllQuestionDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -40,6 +43,14 @@ public class QuestionDtoDaoImp implements QuestionDtoDao {
 
 
         return SingleResultUtil.getSingleResultOrNull(query);
+    }
+    @Override
+    public List<AllQuestionDto> getAllQuestions(User user) {
+        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.AllQuestionDto(q.id, q.title, q.persistDateTime," +
+                "(select count(a.id) as countAnswer from Answer a where a.question.id = q.id))  from Question q where user.id = :id";
+        return entityManager.createQuery(hql, AllQuestionDto.class).setParameter("id", user.getId()).getResultList();
+
+
     }
 
 }

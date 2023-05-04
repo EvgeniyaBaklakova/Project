@@ -6,11 +6,8 @@ import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.models.dto.AllQuestionDto;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
-import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.webapp.converters.AllQuestionDtoMapper;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +20,8 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
     private final TagService tagService;
     private final AllQuestionDtoMapper allQuestionDtoMapper;
 
-    public QuestionServiceImpl(QuestionDao questionDao, TagService tagService, AllQuestionDtoMapper allQuestionDtoMapper) {
+
+    public QuestionServiceImpl(QuestionDao questionDao, TagService tagService) {
         super(questionDao);
         this.questionDao = questionDao;
         this.tagService = tagService;
@@ -44,3 +42,6 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
         //достаём сохраненный вопрос из БД и возвращаем его
     }
 }
+
+
+

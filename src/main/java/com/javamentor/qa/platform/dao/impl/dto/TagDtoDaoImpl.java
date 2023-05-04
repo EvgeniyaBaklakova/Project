@@ -2,17 +2,23 @@ package com.javamentor.qa.platform.dao.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
+import com.javamentor.qa.platform.models.dto.AllQuestionDto;
 import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
+import com.javamentor.qa.platform.models.entity.question.Tag;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class TagDtoDaoImpl implements TagDtoDao {
@@ -62,4 +68,44 @@ public class TagDtoDaoImpl implements TagDtoDao {
         return (List<TagDto>) query.getResultList();
     }
 
+    public List<TagDto> getTagsByQuestionsIds(List<Long> id) {
+        String hql = "select question.id,\n" +
+                "       tag_id,\n" +
+                "       tag.description,\n" +
+                "       tag.name\n" +
+                "from question\n" +
+                "         join question_has_tag on question.id = question_has_tag.question_id\n" +
+                "         join tag on question_has_tag.tag_id = tag.id\n" +
+                "where question_id = :id";
+        Map<Long, TagDto> tagDtoMap = new HashMap<>();
+       List<TagTest>  tagTest = new ArrayList<>();
+
+         entityManager.createNativeQuery(hql).setParameter("id", id).unwrap(org.hibernate.query.Query.class).setResultTransformer(new ResultTransformer() {
+            @Override
+            public Object transformTuple(Object[] objects, String[] strings) {
+                tagTest.add(new TagTest(((Number) objects[0]).longValue(), new TagDto(((Number) objects[1]).longValue(),objects[2].toString(),objects[3].toString())));
+
+
+                return tagTest;
+            }
+
+            @Override
+            public List transformList(List list) {
+                return new ArrayList<>();
+            }
+        }).list();
+        System.out.println(tagTest);
+        return null;
+    }
+
+
 }
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+class TagTest {
+
+    private long id;
+    private TagDto tagDto;
+ }
