@@ -32,5 +32,28 @@ public abstract class AbstractTestApi {
     @Autowired
     protected ObjectMapper objectMapper;
 
+    private AuthDTO setUserAuth(String userName, String password){
+        AuthDTO authenticationRequest = new AuthDTO();
+        authenticationRequest.setPassword(password);
+        authenticationRequest.setEmail(userName);
+        return authenticationRequest;
+    }
+
+    public String getToken(String userName, String password) throws Exception {
+        String USER_TOKEN = mvc.perform(
+                        post("/api/auth/token/")
+                                .content(new ObjectMapper().writeValueAsString(this.setUserAuth(userName,password)))
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        USER_TOKEN = "Bearer " + USER_TOKEN.substring(USER_TOKEN.indexOf(":") + 2, USER_TOKEN.length() - 2);
+        return  USER_TOKEN;
+    }
+
+
+
+
+
 
 }

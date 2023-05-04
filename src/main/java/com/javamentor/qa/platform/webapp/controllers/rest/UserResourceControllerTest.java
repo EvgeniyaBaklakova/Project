@@ -20,10 +20,12 @@ public class UserResourceControllerTest {
     }
 
 
-    @GetMapping("/{userId}")
+    @GetMapping("user/{userId}")
     public ResponseEntity<UserDtoTest> getUserDto(@PathVariable("userId") long id) {
         return new ResponseEntity<>(userDtoTestService.getUserById(id), HttpStatus.OK);
 
     }
+
+
 
 }

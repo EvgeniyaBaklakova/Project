@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-@Api(tags = "UserPagination")
+@Api(tags = "UserPagination_shows_All_users_with_Pagination")
 public class ExampleControllerPaginationUser {
     private final ExamplePaginationDtoService examplePaginationDtoService;
 

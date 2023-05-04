@@ -4,6 +4,8 @@ import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -18,7 +20,10 @@ public class UserControllerTest extends AbstractTestApi {
     @Sql(value = "/script/getUserByIdTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void getUserByIdTest() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/test/101"))
+        String USER_TOKEN = getToken("test101@mail.ru", "123");
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/test/101")
+                .header(AUTHORIZATION, USER_TOKEN))
+
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Is.is(101)))
@@ -28,8 +33,6 @@ public class UserControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.city", Is.is("Saint-Petersburg")));
 
     }
-
-
 
 
 }
