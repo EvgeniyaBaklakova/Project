@@ -7,8 +7,14 @@ import com.javamentor.qa.platform.models.entity.question.TrackedTag;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.RoleService;
+import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.TrackedTagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.javamentor.qa.platform.service.abstracts.model.IgnoredTagService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,8 +24,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
-public class TestDataInitService {
 
+public class TestDataInitService {
     private final UserService userService;
 
     private final RoleService roleService;
@@ -157,8 +163,7 @@ public class TestDataInitService {
     public void initTrackedTag() {
         List<User> userList = userService.getAll();
 
-        //1 User without TrackedTag
-        for(int i = 1; i < userList.size(); i++) {
+        for(int i = 1; i < 4; i++) {
             int rand = (int) (Math.random() * 3);
 
             for (int k = 1; k <= rand; k++) {
@@ -174,8 +179,7 @@ public class TestDataInitService {
     public void initIgnoredTag() {
         List<User> userList = userService.getAll();
 
-        //1 User without IgnoredTag
-        for(int i = 1; i < userList.size(); i++) {
+        for(int i = 5; i < 8; i++) {
             int rand = (int) (Math.random() * 3);
 
             for (int k = 1; k <= rand; k++) {
