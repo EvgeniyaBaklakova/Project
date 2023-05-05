@@ -14,11 +14,6 @@ public class TagDto {
     private String  description;
     private LocalDateTime persistDateTime;
 
-    public TagDto(Long id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-    }
 
     public TagDto(Long id, String name, String description, LocalDateTime persistDateTime) {
         this.id = id;

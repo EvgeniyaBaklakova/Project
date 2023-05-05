@@ -18,6 +18,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.sql.Timestamp;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Repository
@@ -72,7 +77,8 @@ public class TagDtoDaoImpl implements TagDtoDao {
         String hql = "select question.id,\n" +
                 "       tag_id,\n" +
                 "       tag.description,\n" +
-                "       tag.name\n" +
+                "       tag.name,\n" +
+                "       tag.persist_date\n" +
                 "from question\n" +
                 "         join question_has_tag on question.id = question_has_tag.question_id\n" +
                 "         join tag on question_has_tag.tag_id = tag.id\n" +
@@ -83,7 +89,8 @@ public class TagDtoDaoImpl implements TagDtoDao {
         entityManager.createNativeQuery(hql).setParameter("Ids", ids).unwrap(org.hibernate.query.Query.class).setResultTransformer(new ResultTransformer() {
             @Override
             public Object transformTuple(Object[] objects, String[] strings) {
-                tagTest.add(new TagTest(((Number) objects[0]).longValue(), new TagDto(((Number) objects[1]).longValue(), objects[2].toString(), objects[3].toString())));
+                tagTest.add(new TagTest(((Number) objects[0]).longValue(), new TagDto(((Number) objects[1]).longValue(),
+                        objects[2].toString(), objects[3].toString(), ((Timestamp) objects[4]).toLocalDateTime())));
                 return tagTest;
             }
 
