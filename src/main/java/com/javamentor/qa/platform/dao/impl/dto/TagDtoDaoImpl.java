@@ -67,13 +67,10 @@ public class TagDtoDaoImpl implements TagDtoDao {
     }
 
     public List<TagQuestionDto> getTagsByQuestionsIds(List<Long> ids) {
-
-
-
         String hql = "select question.id,\n" +
                 "       tag_id,\n" +
-                "       tag.description,\n" +
                 "       tag.name,\n" +
+                "       tag.description,\n" +
                 "       tag.persist_date\n" +
                 "from question\n" +
                 "         join question_has_tag on question.id = question_has_tag.question_id\n" +
@@ -81,7 +78,6 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 "where question_id in :Ids";
 
         List<TagQuestionDto> tagQuestionDtos = new ArrayList<>();
-
         entityManager.createNativeQuery(hql).setParameter("Ids", ids).unwrap(org.hibernate.query.Query.class).setResultTransformer(new ResultTransformer() {
             @Override
             public Object transformTuple(Object[] objects, String[] strings) {
@@ -89,7 +85,6 @@ public class TagDtoDaoImpl implements TagDtoDao {
                         objects[2].toString(), objects[3].toString(), ((Timestamp) objects[4]).toLocalDateTime())));
                 return tagQuestionDtos;
             }
-
             @Override
             public List transformList(List list) {
                 return new ArrayList<>();
