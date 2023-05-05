@@ -2,9 +2,9 @@ package com.javamentor.qa.platform.service.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
-import com.javamentor.qa.platform.models.dto.AllQuestionDto;
+import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
-import com.javamentor.qa.platform.models.dto.tag.TagQuestionDto;
+import com.javamentor.qa.platform.models.entity.question.TagQuestion;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import org.springframework.stereotype.Service;
@@ -37,15 +37,15 @@ public class QuestionDtoServiceImp implements QuestionDtoService {
 
     @Override
     @Transactional
-    public List<AllQuestionDto> getAllQuestions(User user) {
-        List<AllQuestionDto> allQuestionDtoList = questionDtoDao.getAllQuestions(user);
-        List<Long> listQuestionsIds = allQuestionDtoList.stream().map(AllQuestionDto::getQuestionId)
+    public List<UserProfileQuestionDto> getAllQuestions(User user) {
+        List<UserProfileQuestionDto> userProfileQuestionDtoList = questionDtoDao.getAllQuestions(user);
+        List<Long> listQuestionsIds = userProfileQuestionDtoList.stream().map(UserProfileQuestionDto::getQuestionId)
                 .collect(Collectors.toList());
-        Map<Long, List<TagQuestionDto>> tagDtoDaoList = tagDtoDao.getTagsByQuestionsIds(listQuestionsIds)
-                .stream().collect(Collectors.groupingBy(TagQuestionDto::getQuestionId));
-        allQuestionDtoList.forEach(allQuestionDto -> allQuestionDto.setTagDtoList(tagDtoDaoList.get(allQuestionDto
-                .getQuestionId()).stream().map(TagQuestionDto::getTagDto).collect(Collectors.toList())));
-        return allQuestionDtoList;
+        Map<Long, List<TagQuestion>> tagDtoDaoList = tagDtoDao.getTagsByQuestionsIds(listQuestionsIds)
+                .stream().collect(Collectors.groupingBy(TagQuestion::getQuestionId));
+        userProfileQuestionDtoList.forEach(allQuestionDto -> allQuestionDto.setTagDtoList(tagDtoDaoList.get(allQuestionDto
+                .getQuestionId()).stream().map(TagQuestion::getTagDto).collect(Collectors.toList())));
+        return userProfileQuestionDtoList;
 
     }
 }

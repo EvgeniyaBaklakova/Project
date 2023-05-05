@@ -4,6 +4,7 @@ import com.javamentor.qa.platform.dao.impl.pagination.UserPageDtoDaoByVoteImpl;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.user.AllQuestionDto;
 import com.javamentor.qa.platform.models.dto.AllQuestionDto;
+import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -76,7 +77,7 @@ public class UserResourceController {
 
     @ApiOperation(value = "Возвращает список всех вопросов аутентифицированного пользователя")
     @GetMapping("/profile/questions")
-    public ResponseEntity<List<AllQuestionDto>> getAllQuestion(@AuthenticationPrincipal User user){
+    public ResponseEntity<List<UserProfileQuestionDto>> getAllQuestion(@AuthenticationPrincipal User user){
         return new  ResponseEntity<>(questionDtoService.getAllQuestions(user), HttpStatus.OK);
     }
 

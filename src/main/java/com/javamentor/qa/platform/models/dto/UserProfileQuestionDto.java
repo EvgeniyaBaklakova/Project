@@ -12,14 +12,14 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class AllQuestionDto {
+public class UserProfileQuestionDto {
     private Long questionId;
     private String questionTitle;
     private LocalDateTime answerPersistDateTime;
     private Long countAnswer;
     private List<TagDto> tagDtoList;
 
-    public AllQuestionDto(Long questionId, String questionTitle, LocalDateTime answerPersistDateTime, Long countAnswer) {
+    public UserProfileQuestionDto(Long questionId, String questionTitle, LocalDateTime answerPersistDateTime, Long countAnswer) {
         this.questionId = questionId;
         this.questionTitle = questionTitle;
         this.answerPersistDateTime = answerPersistDateTime;

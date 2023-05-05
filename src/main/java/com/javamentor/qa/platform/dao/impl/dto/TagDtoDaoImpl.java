@@ -5,7 +5,7 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
-import com.javamentor.qa.platform.models.dto.tag.TagQuestionDto;
+import com.javamentor.qa.platform.models.entity.question.TagQuestion;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +14,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,31 +67,23 @@ public class TagDtoDaoImpl implements TagDtoDao {
         return (List<TagDto>) query.getResultList();
     }
 
-    public List<TagQuestionDto> getTagsByQuestionsIds(List<Long> ids) {
-        String hql = "select question.id,\n" +
-                "       tag_id,\n" +
-                "       tag.name,\n" +
-                "       tag.description,\n" +
-                "       tag.persist_date\n" +
-                "from question\n" +
-                "         join question_has_tag on question.id = question_has_tag.question_id\n" +
-                "         join tag on question_has_tag.tag_id = tag.id\n" +
-                "where question_id in :Ids";
+    public List<TagQuestion> getTagsByQuestionsIds(List<Long> ids) {
+        String hql = "select q.id,t.id,t.name,t.description,t.persistDateTime from Question q  join  q.tags t where q.id in :Ids";
 
-        List<TagQuestionDto> tagQuestionDtos = new ArrayList<>();
-        entityManager.createNativeQuery(hql).setParameter("Ids", ids).unwrap(org.hibernate.query.Query.class).setResultTransformer(new ResultTransformer() {
+        List<TagQuestion> tagQuestions = new ArrayList<>();
+        entityManager.createQuery(hql).setParameter("Ids", ids).unwrap(org.hibernate.query.Query.class).setResultTransformer(new ResultTransformer() {
             @Override
             public Object transformTuple(Object[] objects, String[] strings) {
-                tagQuestionDtos.add(new TagQuestionDto(((Number) objects[0]).longValue(), new TagDto(((Number) objects[1]).longValue(),
-                        objects[2].toString(), objects[3].toString(), ((Timestamp) objects[4]).toLocalDateTime())));
-                return tagQuestionDtos;
+                tagQuestions.add(new TagQuestion(((Number) objects[0]).longValue(), new TagDto(((Number) objects[1]).longValue(),
+                        objects[2].toString(), objects[3].toString(), (LocalDateTime) objects[4])));
+                return tagQuestions;
             }
             @Override
             public List transformList(List list) {
                 return new ArrayList<>();
             }
         }).list();
-        return tagQuestionDtos;
+        return tagQuestions;
     }
 
 }
