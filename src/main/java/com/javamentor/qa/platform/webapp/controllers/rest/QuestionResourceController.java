@@ -118,6 +118,11 @@ public class QuestionResourceController {
 
     @PostMapping("/{id}/bookmark")
     @ApiOperation(value = "Добавление вопроcа в закладки текущего аутентифицированного пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Вопрос успешно добавлен"),
+            @ApiResponse(code = 400, message = "Вопрос с таким ID не найден"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
     public ResponseEntity<String> addQuestionToBookmarks(@PathVariable("id") Long id,
                                                          @AuthenticationPrincipal User user) {
         bookMarksService.addBookMarks(user, id);
