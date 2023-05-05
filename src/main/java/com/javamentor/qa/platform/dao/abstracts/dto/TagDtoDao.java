@@ -18,5 +18,5 @@ public interface TagDtoDao {
     List<IgnoredTagsDto> getIgnoredTags(Long userId);
 
     List<TagDto> getTagsByQuestionId(Long id);
-     List<TagQuestion> getTagsByQuestionsIds(List<Long> id);
+    List<TagQuestion> getTagsByQuestionsIds(List<Long> id);
 }

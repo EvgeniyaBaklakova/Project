@@ -19,6 +19,8 @@ import io.swagger.annotations.ApiResponses;
 import com.javamentor.qa.platform.webapp.controllers.util.DecodeJwtTokenUtil;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,6 +78,12 @@ public class UserResourceController {
 
 
     @ApiOperation(value = "Возвращает список всех вопросов аутентифицированного пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Вопросы успешно получены"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен"),
+            @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
+    })
     @GetMapping("/profile/questions")
     public ResponseEntity<List<UserProfileQuestionDto>> getAllQuestion(@AuthenticationPrincipal User user){
         return new  ResponseEntity<>(questionDtoService.getAllQuestions(user), HttpStatus.OK);

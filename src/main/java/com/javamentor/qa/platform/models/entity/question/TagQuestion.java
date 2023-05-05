@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public class TagQuestion {
 
-        private Long questionId;
-        private TagDto tagDto;
+    private Long questionId;
+    private TagDto tagDto;
 
 }

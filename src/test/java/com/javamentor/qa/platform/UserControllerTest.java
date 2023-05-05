@@ -18,7 +18,9 @@ import java.util.Map;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class UserControllerTest extends AbstractTestApi {
 
@@ -48,7 +50,7 @@ public class UserControllerTest extends AbstractTestApi {
     public void getAllQuestion() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/questions/").
-                header("Authorization", "Bearer " + getToken("test101@mail.ru", "password")))
+                        header("Authorization", "Bearer " + getToken("test101@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -81,17 +83,10 @@ public class UserControllerTest extends AbstractTestApi {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect( jsonPath( "$", Matchers.empty()));
+                .andExpect(jsonPath("$", Matchers.empty()));
 
 
     }
-
-
-
-
-
-
-
 
     public String getToken(String email, String password) {
         String token;

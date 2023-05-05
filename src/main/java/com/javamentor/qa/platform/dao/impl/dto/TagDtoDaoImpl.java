@@ -68,21 +68,25 @@ public class TagDtoDaoImpl implements TagDtoDao {
     }
 
     public List<TagQuestion> getTagsByQuestionsIds(List<Long> ids) {
-        String hql = "select q.id,t.id,t.name,t.description,t.persistDateTime from Question q  join  q.tags t where q.id in :Ids";
+        String hql = "select q.id,t.id,t.name,t.description,t.persistDateTime " +
+                "from Question q  join  q.tags t where q.id in :Ids";
 
         List<TagQuestion> tagQuestions = new ArrayList<>();
-        entityManager.createQuery(hql).setParameter("Ids", ids).unwrap(org.hibernate.query.Query.class).setResultTransformer(new ResultTransformer() {
-            @Override
-            public Object transformTuple(Object[] objects, String[] strings) {
-                tagQuestions.add(new TagQuestion(((Number) objects[0]).longValue(), new TagDto(((Number) objects[1]).longValue(),
-                        objects[2].toString(), objects[3].toString(), (LocalDateTime) objects[4])));
-                return tagQuestions;
-            }
-            @Override
-            public List transformList(List list) {
-                return new ArrayList<>();
-            }
-        }).list();
+        entityManager.createQuery(hql).setParameter("Ids", ids).unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new ResultTransformer() {
+                    @Override
+                    public Object transformTuple(Object[] objects, String[] strings) {
+                        tagQuestions.add(new TagQuestion(((Number) objects[0]).longValue(),
+                                new TagDto(((Number) objects[1]).longValue(),
+                                objects[2].toString(), objects[3].toString(), (LocalDateTime) objects[4])));
+                        return tagQuestions;
+                    }
+
+                    @Override
+                    public List transformList(List list) {
+                        return new ArrayList<>();
+                    }
+                }).list();
         return tagQuestions;
     }
 
