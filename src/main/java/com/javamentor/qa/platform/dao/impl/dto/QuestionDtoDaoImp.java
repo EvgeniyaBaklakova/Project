@@ -44,6 +44,7 @@ public class QuestionDtoDaoImp implements QuestionDtoDao {
 
         return SingleResultUtil.getSingleResultOrNull(query);
     }
+
     @Override
     public List<AllQuestionDto> getAllQuestions(User user) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.AllQuestionDto(q.id, q.title, q.persistDateTime," +

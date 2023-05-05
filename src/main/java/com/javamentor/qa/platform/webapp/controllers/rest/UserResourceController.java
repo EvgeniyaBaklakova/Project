@@ -17,6 +17,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import com.javamentor.qa.platform.webapp.controllers.util.DecodeJwtTokenUtil;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,6 +74,7 @@ public class UserResourceController {
     }
 
 
+    @ApiOperation(value = "Возвращает список всех вопросов аутентифицированного пользователя")
     @GetMapping("/profile/questions")
     public ResponseEntity<List<AllQuestionDto>> getAllQuestion(@AuthenticationPrincipal User user){
         return new  ResponseEntity<>(questionDtoService.getAllQuestions(user), HttpStatus.OK);
