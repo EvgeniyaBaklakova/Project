@@ -86,7 +86,7 @@ public class UserResourceController {
     })
     @GetMapping("/profile/questions")
     public ResponseEntity<List<UserProfileQuestionDto>> getAllQuestion(@AuthenticationPrincipal User user){
-        return new  ResponseEntity<>(questionDtoService.getAllQuestions(user), HttpStatus.OK);
+        return new  ResponseEntity<>(questionDtoService.getAllQuestions(user.getId()), HttpStatus.OK);
     }
 
 }

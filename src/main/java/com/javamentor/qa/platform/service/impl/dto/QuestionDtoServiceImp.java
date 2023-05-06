@@ -37,8 +37,8 @@ public class QuestionDtoServiceImp implements QuestionDtoService {
 
     @Override
     @Transactional
-    public List<UserProfileQuestionDto> getAllQuestions(User user) {
-        List<UserProfileQuestionDto> userProfileQuestionDtoList = questionDtoDao.getAllQuestions(user);
+    public List<UserProfileQuestionDto> getAllQuestions(Long id) {
+        List<UserProfileQuestionDto> userProfileQuestionDtoList = questionDtoDao.getAllQuestions(id);
         List<Long> listQuestionsIds = userProfileQuestionDtoList.stream().map(UserProfileQuestionDto::getQuestionId)
                 .collect(Collectors.toList());
         Map<Long, List<TagQuestion>> tagDtoDaoList = tagDtoDao.getTagsByQuestionsIds(listQuestionsIds)

@@ -46,10 +46,10 @@ public class QuestionDtoDaoImp implements QuestionDtoDao {
     }
 
     @Override
-    public List<UserProfileQuestionDto> getAllQuestions(User user) {
+    public List<UserProfileQuestionDto> getAllQuestions(Long id) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.UserProfileQuestionDto(q.id, q.title, q.persistDateTime," +
                 "(select count(a.id) as countAnswer from Answer a where a.question.id = q.id))  from Question q where user.id = :id";
-        return entityManager.createQuery(hql, UserProfileQuestionDto.class).setParameter("id", user.getId()).getResultList();
+        return entityManager.createQuery(hql, UserProfileQuestionDto.class).setParameter("id", id).getResultList();
 
 
     }
