@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.TagQuestion;
-import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +18,12 @@ import java.util.stream.Collectors;
 public class QuestionDtoServiceImp implements QuestionDtoService {
     private final TagDtoDao tagDtoDao;
     private final QuestionDtoDao questionDtoDao;
-    private final TagDtoDao tagDtoDa;
 
-    public QuestionDtoServiceImp(TagDtoDao tagDtoDao, QuestionDtoDao questionDtoDao, TagDtoDao tagDtoDa) {
+
+    public QuestionDtoServiceImp(TagDtoDao tagDtoDao, QuestionDtoDao questionDtoDao) {
         this.tagDtoDao = tagDtoDao;
         this.questionDtoDao = questionDtoDao;
-        this.tagDtoDa = tagDtoDa;
+
     }
 
 
@@ -37,8 +36,8 @@ public class QuestionDtoServiceImp implements QuestionDtoService {
 
     @Override
     @Transactional
-    public List<UserProfileQuestionDto> getAllQuestions(Long id) {
-        List<UserProfileQuestionDto> userProfileQuestionDtoList = questionDtoDao.getAllQuestions(id);
+    public List<UserProfileQuestionDto> getUserQuestions(Long id) {
+        List<UserProfileQuestionDto> userProfileQuestionDtoList = questionDtoDao.getUserQuestions(id);
         List<Long> listQuestionsIds = userProfileQuestionDtoList.stream().map(UserProfileQuestionDto::getQuestionId)
                 .collect(Collectors.toList());
         Map<Long, List<TagQuestion>> tagDtoDaoList = tagDtoDao.getTagsByQuestionsIds(listQuestionsIds)
