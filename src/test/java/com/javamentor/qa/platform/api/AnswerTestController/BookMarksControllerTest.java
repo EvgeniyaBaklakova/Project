@@ -1,14 +1,17 @@
 package com.javamentor.qa.platform.api.AnswerTestController;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class BookMarksControllerTest extends AbstractTestApi {
@@ -21,25 +24,28 @@ public class BookMarksControllerTest extends AbstractTestApi {
 
     public void addQuestionToBookmarks() throws Exception {
 
-        System.out.println("START TEST");
-
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post("/api/auth/token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\" : \"test101@mail.ru\", \"password\" : \"a\"}")) //тут вставляете ваши данные
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/102/bookmark")
+                        .header("Authorization","Bearer " + getToken("test101@mail.ru", "a")))
+                .andDo(print())
                 .andExpect(status().isOk())
-                .andReturn();
-
-        String response = result.getResponse().getContentAsString();
-        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
-        System.out.println(token);
-
-
-        this.mvc.perform(MockMvcRequestBuilders
-                        .post("/api/user/question/101/bookmark")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
-                .andExpect(status().isOk())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(jsonPath("$", Is.is("Вопрос успешно добавлен в закладки")));
     }
+
+    public String getToken(String email, String password) {
+        String token;
+        Map<String, String> map = new HashMap<>();
+        map.put("email", email);
+        map.put("password", password);
+        try {
+            String response = (this.mvc.perform(MockMvcRequestBuilders
+                            .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
+                    .andReturn().getResponse().getContentAsString());
+            token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
+            return token;
+        } catch (Exception e) {
+        }
+        return "";
+    }
+
 
 }
