@@ -6,8 +6,8 @@ import com.javamentor.qa.platform.service.abstracts.model.TrackedTagService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TrackedTagServiceimpl extends ReadWriteServiceImpl<TrackedTag, Long> implements TrackedTagService {
-    public TrackedTagServiceimpl(ReadWriteDao<TrackedTag, Long> readWriteDao) {
+public class TrackedTagServiceImpl extends ReadWriteServiceImpl<TrackedTag, Long> implements TrackedTagService {
+    public TrackedTagServiceImpl(ReadWriteDao<TrackedTag, Long> readWriteDao) {
         super(readWriteDao);
     }
 }
