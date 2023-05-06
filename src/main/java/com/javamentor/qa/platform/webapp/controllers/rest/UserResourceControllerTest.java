@@ -33,10 +33,4 @@ public class UserResourceControllerTest {
     }
 
 
-
-    @GetMapping("/profile/questions")
-    public ResponseEntity<UserProfileQuestionDto> getAllQuestion(@AuthenticationPrincipal User user){
-        return  ResponseEntity.ok((UserProfileQuestionDto) questionDtoService.getUserQuestions(user.getId()));
-    }
-
 }
