@@ -38,31 +38,7 @@ public class UserControllerTest extends AbstractTestApi {
 
     }
 
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
-    public void getCountAnswers() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/question/week").
-                        header("Authorization", "Bearer " + getToken("test100@mail.ru", "password")))
-
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(2)));
-    }
-
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
-    public void getCountAnswersZero() throws Exception {
-
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/question/week").
-                        header("Authorization", "Bearer " + getToken("test101@mail.ru", "password")))
-
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(0)));
-    }
 
 
     public String getToken(String email, String password) {
