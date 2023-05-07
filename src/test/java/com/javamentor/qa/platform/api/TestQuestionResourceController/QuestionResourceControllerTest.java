@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-public class TestQuestionResourceController extends AbstractTestApi {
+public class QuestionResourceControllerTest extends AbstractTestApi {
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/Before1.sql",
             executionPhase = BEFORE_TEST_METHOD)

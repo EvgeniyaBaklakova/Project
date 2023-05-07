@@ -30,7 +30,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/user")
 
-public class UserResourceController {
+public class  UserResourceController {
 
     private final UserDtoService userDtoService;
     private final AnswerService answerService;
