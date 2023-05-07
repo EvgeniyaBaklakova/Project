@@ -24,4 +24,6 @@ public class QuestionDaoImpl extends ReadWriteDaoImpl<Question, Long> implements
                 .setParameter("title", title).getSingleResult();
         return count == 0;
     }
+
+
 }

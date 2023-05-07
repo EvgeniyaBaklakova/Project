@@ -20,9 +20,12 @@ public class AnswerDaoImpl extends ReadWriteDaoImpl<Answer, Long> implements Ans
         entityManager.createQuery("UPDATE Answer a SET a.isDeleted = true WHERE a.id = :id")
                 .setParameter("id", answerId)
                 .executeUpdate();
-
-
     }
 
-
+    @Override
+    public Long countAnswerOfWeek(Long id) {
+        return (long) entityManager.createQuery("SELECT COUNT(a.user.id) FROM Answer a  WHERE a.user.id = :id " +
+                        "and a.persistDateTime > date(current_date - 7)")
+                .setParameter("id", id).getSingleResult();
+    }
 }

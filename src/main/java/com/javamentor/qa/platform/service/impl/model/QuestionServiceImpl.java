@@ -15,6 +15,7 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
     private final QuestionDao questionDao;
     private final TagService tagService;
 
+
     public QuestionServiceImpl(QuestionDao questionDao, TagService tagService) {
         super(questionDao);
         this.questionDao = questionDao;
@@ -35,3 +36,6 @@ public class QuestionServiceImpl extends ReadWriteServiceImpl<Question, Long> im
         //достаём сохраненный вопрос из БД и возвращаем его
     }
 }
+
+
+

@@ -22,7 +22,7 @@ public class UserControllerTest extends AbstractTestApi {
 
         String USER_TOKEN = getToken("test101@mail.ru", "123");
         this.mvc.perform(MockMvcRequestBuilders.get("/api/test/101")
-                .header(AUTHORIZATION, USER_TOKEN))
+                        .header(AUTHORIZATION, USER_TOKEN))
 
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -33,7 +33,6 @@ public class UserControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.city", Is.is("Saint-Petersburg")));
 
     }
-
 
 }
 
