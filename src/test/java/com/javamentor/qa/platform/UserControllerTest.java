@@ -2,12 +2,8 @@ package com.javamentor.qa.platform;
 
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
@@ -36,25 +32,6 @@ public class UserControllerTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.imageLink", Is.is("No link")))
                 .andExpect(jsonPath("$.city", Is.is("Saint-Petersburg")));
 
-    }
-
-
-
-
-    public String getToken(String email, String password) {
-        String token;
-        Map<String, String> map = new HashMap<>();
-        map.put("email", email);
-        map.put("password", password);
-        try {
-            String response = (this.mvc.perform(MockMvcRequestBuilders
-                            .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
-                    .andReturn().getResponse().getContentAsString());
-            token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
-            return token;
-        } catch (Exception e) {
-        }
-        return "";
     }
 
 }
