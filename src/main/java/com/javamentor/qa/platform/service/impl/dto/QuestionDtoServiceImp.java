@@ -38,6 +38,18 @@ public class QuestionDtoServiceImp implements QuestionDtoService {
     @Transactional
     public List<UserProfileQuestionDto> getUserQuestions(Long id) {
         List<UserProfileQuestionDto> userProfileQuestionDtoList = questionDtoDao.getUserQuestions(id);
+        return putTagToUserProfileQuestionDto(userProfileQuestionDtoList);
+
+    }
+
+    @Override
+    @Transactional
+    public List<UserProfileQuestionDto> getUserDeleteQuestions(Long id) {
+        List<UserProfileQuestionDto> userProfileQuestionDtoList = questionDtoDao.getUserDeleteQuestions(id);
+        return putTagToUserProfileQuestionDto(userProfileQuestionDtoList);
+    }
+
+    private List<UserProfileQuestionDto> putTagToUserProfileQuestionDto(List<UserProfileQuestionDto> userProfileQuestionDtoList) {
         List<Long> listQuestionsIds = userProfileQuestionDtoList.stream().map(UserProfileQuestionDto::getQuestionId)
                 .collect(Collectors.toList());
         Map<Long, List<TagQuestion>> tagDtoDaoList = tagDtoDao.getTagsByQuestionsIds(listQuestionsIds)
@@ -45,7 +57,7 @@ public class QuestionDtoServiceImp implements QuestionDtoService {
         userProfileQuestionDtoList.forEach(allQuestionDto -> allQuestionDto.setTagDtoList(tagDtoDaoList.get(allQuestionDto
                 .getQuestionId()).stream().map(TagQuestion::getTagDto).collect(Collectors.toList())));
         return userProfileQuestionDtoList;
-
     }
+
 }
 

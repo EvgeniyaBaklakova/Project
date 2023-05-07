@@ -80,4 +80,16 @@ public class UserResourceController {
         return new ResponseEntity<>(questionDtoService.getUserQuestions(user.getId()), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Возвращает список всех удаленных вопросов аутентифицированного пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Вопросы успешно получены"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен"),
+            @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
+    })
+    @GetMapping("/profile/delete/questions")
+    public ResponseEntity<List<UserProfileQuestionDto>> getAllDeleteQuestion(@AuthenticationPrincipal User user){
+        return new  ResponseEntity<>(questionDtoService.getUserDeleteQuestions(user.getId()), HttpStatus.OK);
+    }
+
 }

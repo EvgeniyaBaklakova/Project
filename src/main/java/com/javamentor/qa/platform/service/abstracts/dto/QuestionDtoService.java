@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface QuestionDtoService {
     Optional<QuestionDto> getQuestionDtoById(Long id);
     List<UserProfileQuestionDto> getUserQuestions(Long id);
+    List<UserProfileQuestionDto> getUserDeleteQuestions(Long id);
 }

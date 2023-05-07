@@ -260,6 +260,54 @@ public class TestUserResourceController extends AbstractTestApi {
 
     }
 
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
+    public void getAllDeleteQuestion() throws Exception {
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/delete/questions").
+                        header("Authorization", "Bearer " + getToken("test103@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].questionId", Is.is(103)))
+                .andExpect(jsonPath("$[0].questionTitle", Is.is("title4")))
+                .andExpect(jsonPath("$[0].answerPersistDateTime", Is.is("2023-04-23T13:01:11.245126")))
+                .andExpect(jsonPath("$[0].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$[0].tagDtoList[0].id", Is.is(106)))
+                .andExpect(jsonPath("$[0].tagDtoList[0].name", Is.is("name7")))
+                .andExpect(jsonPath("$[0].tagDtoList[0].description", Is.is("description5")))
+                .andExpect(jsonPath("$[0].tagDtoList[0].persistDateTime", Is.is("2023-04-23T13:01:11.245126")))
+                .andExpect(jsonPath("$[0].tagDtoList[1].id", Is.is(107)))
+                .andExpect(jsonPath("$[0].tagDtoList[1].name", Is.is("name8")))
+                .andExpect(jsonPath("$[0].tagDtoList[1].description", Is.is("description5")))
+                .andExpect(jsonPath("$[0].tagDtoList[1].persistDateTime", Is.is("2023-04-23T13:01:11.245126")))
+                .andExpect(jsonPath("$[0].tagDtoList[2].id", Is.is(108)))
+                .andExpect(jsonPath("$[0].tagDtoList[2].name", Is.is("name9")))
+                .andExpect(jsonPath("$[0].tagDtoList[2].description", Is.is("description5")))
+                .andExpect(jsonPath("$[0].tagDtoList[2].persistDateTime", Is.is("2023-04-23T13:01:11.245126")))
+                .andExpect(jsonPath("$[0].tagDtoList[3].id", Is.is(109)))
+                .andExpect(jsonPath("$[0].tagDtoList[3].name", Is.is("name10")))
+                .andExpect(jsonPath("$[0].tagDtoList[3].description", Is.is("description5")))
+                .andExpect(jsonPath("$[0].tagDtoList[3].persistDateTime", Is.is("2023-04-23T13:01:11.245126")));
+
+    }
+
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
+    public void getAllDeleteQuestionNoQuestion() throws Exception {
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/delete/questions").
+                        header("Authorization", "Bearer " + getToken("test100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", Matchers.empty()));
+
+
+    }
+
     public String getToken(String email, String password) {
         String token;
         Map<String, String> map = new HashMap<>();
