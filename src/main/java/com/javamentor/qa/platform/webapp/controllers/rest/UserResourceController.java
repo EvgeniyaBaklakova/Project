@@ -6,15 +6,12 @@ import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.dto.AllQuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,22 +23,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RequiredArgsConstructor
+
 @RestController
 @RequestMapping("/api/user")
 
-public class  UserResourceController {
+public class UserResourceController {
 
     private final UserDtoService userDtoService;
     private final AnswerService answerService;
-    private final QuestionService questionService;
-
-    public UserResourceController(UserDtoService userDtoService, AnswerService answerService) {
-        this.userDtoService = userDtoService;
-
-        this.answerService = answerService;
-    }
     private final QuestionDtoService questionDtoService;
+
+    public UserResourceController(UserDtoService userDtoService, AnswerService answerService, QuestionDtoService questionDtoService) {
+        this.userDtoService = userDtoService;
+        this.answerService = answerService;
+        this.questionDtoService = questionDtoService;
+    }
 
 
     @GetMapping("/{userId}")
@@ -49,6 +45,7 @@ public class  UserResourceController {
         return new ResponseEntity<>(userDtoService.getById(id), HttpStatus.OK);
 
     }
+
     @GetMapping("/vote")
     @ApiOperation(value = "Получение всех UserDTO с пагинацией отсортированные по голосам")
     @ApiResponses(value = {
@@ -63,6 +60,7 @@ public class  UserResourceController {
                 UserPageDtoDaoByVoteImpl.class.getSimpleName(), filter);
         return new ResponseEntity<>(userDtoService.getPageDto(data), HttpStatus.OK);
     }
+
     @GetMapping(value = "/profile/question/week")
     @ApiOperation(value = "Возвращает общее количество ответов за неделю которые написал аутентифицированный пользователь")
     public ResponseEntity<Long> getCountAnswers(@AuthenticationPrincipal User user) {
@@ -78,8 +76,8 @@ public class  UserResourceController {
             @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
     })
     @GetMapping("/profile/questions")
-    public ResponseEntity<List<UserProfileQuestionDto>> getAllQuestion(@AuthenticationPrincipal User user){
-        return new  ResponseEntity<>(questionDtoService.getUserQuestions(user.getId()), HttpStatus.OK);
+    public ResponseEntity<List<UserProfileQuestionDto>> getAllQuestion(@AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(questionDtoService.getUserQuestions(user.getId()), HttpStatus.OK);
     }
 
 }
