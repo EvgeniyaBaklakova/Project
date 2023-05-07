@@ -32,7 +32,7 @@ public abstract class PageDtoServiceImpl<T> {
         pageDTO.setCurrentPageNumber(properties.getCurrentPage());
         pageDTO.setItems(currentDao.getItems(properties));
         pageDTO.setItemsOnPage(pageDTO.getItems().size());
-        pageDTO.setTotalResultCount(Math.toIntExact(currentDao.getTotalResultCount(properties.getProps())));
+        pageDTO.setTotalResultCount(Math.toIntExact((Long) currentDao.getTotalResultCount(properties.getProps())));
         pageDTO.setTotalPageCount((int) Math.ceil((double) pageDTO.getTotalResultCount() / properties.getItemsOnPage()));
         return pageDTO;
     }

@@ -1,7 +1,8 @@
 package com.javamentor.qa.platform.security;
 
-import com.javamentor.qa.platform.security.service.JWTFilter;
-import lombok.RequiredArgsConstructor;
+import com.javamentor.qa.platform.security.service.JwtFilter;
+import com.javamentor.qa.platform.security.service.JwtProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,13 +18,19 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
 
-    private final JWTFilter jwtFilter;
+    private final JwtProvider jwtProvider;
+    private final JwtFilter jwtFilter;
+@Autowired
+    public SecurityConfig(JwtProvider jwtProvider,  JwtFilter jwtFilter1) {
+        this.jwtProvider = jwtProvider;
+        this.jwtFilter = jwtFilter1;
+    }
+
 
     @Override
     public void configure(WebSecurity web) throws Exception {
