@@ -16,10 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
-@Sql(value = "/script/AuthController/Before.sql", executionPhase = BEFORE_TEST_METHOD)
-@Sql(value = "/script/AuthController/After.sql", executionPhase = AFTER_TEST_METHOD)
+
 public class AuthControllerTest extends AbstractTestApi {
 
+    @Sql(value = "/script/AuthController/Before.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(value = "/script/AuthController/After.sql", executionPhase = AFTER_TEST_METHOD)
     @DisplayName("\uD83D\uDC80")
     @Test
     public void helloAuthenticated() throws Exception {
