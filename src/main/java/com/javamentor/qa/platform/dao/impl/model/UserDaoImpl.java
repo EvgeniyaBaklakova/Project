@@ -12,7 +12,6 @@ import javax.persistence.PersistenceContext;
 import java.util.Optional;
 
 @Repository
-@Transactional
 public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao {
 
     @PersistenceContext
