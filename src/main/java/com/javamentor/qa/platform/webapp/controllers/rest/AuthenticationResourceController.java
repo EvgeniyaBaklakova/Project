@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.security.service.AuthDTO;
 import com.javamentor.qa.platform.security.service.JWTUtil;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,6 +34,7 @@ public class AuthenticationResourceController {
     final AuthenticationManager authenticationManager;
     final JWTUtil tokenProvider;
 
+    @ApiOperation(value = "authenticate user", tags = "jwt Token receiving")
     @PostMapping("/auth/token")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody AuthDTO authDTO) throws InvalidKeySpecException, NoSuchAlgorithmException {
         String username = authDTO.getEmail();
