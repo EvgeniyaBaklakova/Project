@@ -3,7 +3,11 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.security.auth.AuthenticationResponse;
 import com.javamentor.qa.platform.security.service.AuthDTO;
-import com.javamentor.qa.platform.security.service.JwtProvider;
+import com.javamentor.qa.platform.security.service.JWTUtil;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,19 +24,18 @@ import javax.validation.Valid;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
+@Api(value = "login controller", tags = "получение jwt токена при попытке аутентификации")
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 public class AuthenticationResourceController {
 
+    final UserService userService;
     final AuthenticationManager authenticationManager;
-    final JwtProvider tokenProvider;
+    final JWTUtil tokenProvider;
 
-    public AuthenticationResourceController(AuthenticationManager authenticationManager, JwtProvider tokenProvider) {
-        this.authenticationManager = authenticationManager;
-        this.tokenProvider = tokenProvider;
-    }
-
-    @PostMapping("/token")
+    @ApiOperation(value = "authenticate user", tags = "jwt Token receiving")
+    @PostMapping("/auth/token")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody AuthDTO authDTO) throws InvalidKeySpecException, NoSuchAlgorithmException {
         String username = authDTO.getEmail();
         String password = authDTO.getPassword();
@@ -51,6 +54,5 @@ public class AuthenticationResourceController {
 
         String jwt = tokenProvider.generateToken(authentication.getName());
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
-
     }
 }

@@ -2,9 +2,11 @@ package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.ReadWriteDao;
 import com.javamentor.qa.platform.exception.ConstrainException;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.Optional;
 
 
 public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, K> {
@@ -24,7 +26,7 @@ public abstract class ReadWriteServiceImpl<E, K> extends ReadOnlyServiceImpl<E, 
 
     @Transactional
     public void update(E e) {
-        readWriteDao.update(e);
+        readWriteDao.update( e);
     }
 
     @Transactional

@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.webapp.controllers.util.UserNotFoundException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,6 +22,5 @@ public class UserDaoImpl extends ReadWriteDaoImpl<User, Long> implements UserDao
 
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("select u from User u " +
                 "join fetch u.role where u.email =: email", User.class).setParameter("email", email));
-
     }
 }

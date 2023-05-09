@@ -26,6 +26,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         Optional<User> user = userDao.getUserByEmail(email);
         return user.orElseThrow();
-
     }
 }
