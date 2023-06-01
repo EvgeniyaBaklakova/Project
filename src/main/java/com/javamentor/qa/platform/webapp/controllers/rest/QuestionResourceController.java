@@ -13,8 +13,7 @@ import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.javamentor.qa.platform.webapp.converters.QuestionConverter;
-import com.javamentor.qa.platform.webapp.converters.QuestionDtoConverter;
+import com.javamentor.qa.platform.webapp.converter.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -45,12 +44,11 @@ public class QuestionResourceController {
     private final UserService userService;
     private final CommentQuestionService commentQuestionService;
     private final QuestionConverter questionConverter;
-    private final QuestionDtoConverter questionDtoConverter;
 
     @Autowired
     public QuestionResourceController(BookMarksService bookMarksService, QuestionViewedService questionViewedService,
                                       QuestionService questionService, UserService userService, CommentQuestionService commentQuestionService,
-                                      QuestionConverter questionConverter, QuestionDtoConverter questionDtoConverter, QuestionDtoService questionDtoService) {
+                                      QuestionConverter questionConverter, QuestionDtoService questionDtoService) {
         this.bookMarksService = bookMarksService;
         this.questionService = questionService;
         this.questionDtoService = questionDtoService;
@@ -58,7 +56,6 @@ public class QuestionResourceController {
         this.userService = userService;
         this.commentQuestionService = commentQuestionService;
         this.questionConverter = questionConverter;
-        this.questionDtoConverter = questionDtoConverter;
     }
 
     @PostMapping("/{id}/view")
@@ -83,7 +80,7 @@ public class QuestionResourceController {
 
         Question question = questionService.save(questionEntity);
 
-        QuestionDto questionDto = questionDtoConverter.questionToQuestionDto(question, user);
+        QuestionDto questionDto = questionConverter.questionToQuestionDto(question, user);
         return new ResponseEntity<>(questionDto, HttpStatus.OK);
     }
 
