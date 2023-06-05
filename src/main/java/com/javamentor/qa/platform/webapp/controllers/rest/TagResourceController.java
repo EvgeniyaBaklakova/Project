@@ -1,7 +1,11 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.impl.pagination.TagPageDtoDaoByDateImpl;
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
+import com.javamentor.qa.platform.models.dto.tag.TagViewDto;
+import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.TrackedTag;
@@ -17,12 +21,8 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 
 import java.time.LocalDateTime;
@@ -105,5 +105,18 @@ public class TagResourceController {
         Long userId = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getId();
         List<IgnoredTagsDto> ignoredTagsDtos = tagDtoService.getIgnoredTags(userId);
         return new ResponseEntity<>(ignoredTagsDtos, HttpStatus.OK);
+    }
+
+    @GetMapping("/new")
+    @ApiOperation(value = "Получение всех тэгов с пагинацией, отсортированных по дате добавления")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = TagViewDto.class),
+            @ApiResponse(code = 400, message = "TagViewDto не найдены")
+    })
+    public ResponseEntity<PageDto<TagViewDto>> getAllTagsByData(@RequestParam(defaultValue = "1") Integer itemsOnPage,
+                                                                @RequestParam(required = false, defaultValue = "10") Integer items) {
+        PaginationData data = new PaginationData(itemsOnPage,items,
+                TagPageDtoDaoByDateImpl.class.getSimpleName());
+        return new ResponseEntity<>(tagDtoService.getPageDto(data),HttpStatus.OK);
     }
 }
