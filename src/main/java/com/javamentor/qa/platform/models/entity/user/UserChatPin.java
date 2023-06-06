@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.models.entity.user;
 
-import com.javamentor.qa.platform.models.entity.question.Question;
+import com.javamentor.qa.platform.models.entity.chat.Chat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,8 +8,14 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Type;
 
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -18,11 +24,10 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "user_favorite_question")
-public class UserFavoriteQuestion {
-
+@Table(name = "user_chat_pin")
+public class UserChatPin {
     @Id
-    @GeneratedValue(generator = "UserFavoriteQuestion_seq")
+    @GeneratedValue(generator = "UserChatPin_seq")
     private Long id;
 
     @Column(name = "persist_date", nullable = false, updatable = false)
@@ -35,14 +40,14 @@ public class UserFavoriteQuestion {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "question_id")
-    private Question question;
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserFavoriteQuestion that = (UserFavoriteQuestion) o;
+        UserChatPin that = (UserChatPin) o;
         return Objects.equals(id, that.id);
     }
 

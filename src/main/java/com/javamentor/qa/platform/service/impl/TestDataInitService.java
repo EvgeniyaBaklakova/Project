@@ -1,15 +1,14 @@
 package com.javamentor.qa.platform.service.impl;
 
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.RoleService;
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.models.entity.user.UserChatPin;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,6 +28,9 @@ public class TestDataInitService {
     private final QuestionService questionService;
     private final TagService tagService;
     private final AnswerService answerService;
+    private final SingleChatService singleChatService;
+    private final GroupChatService groupChatService;
+    private final UserChatPinService userChatPinService;
     private final PasswordEncoder passwordEncoder;
 
     private final Role ROLE_USER = new Role("ROLE_USER");
@@ -36,14 +38,24 @@ public class TestDataInitService {
 
 
     @Autowired
-    public TestDataInitService(UserService userService, RoleService roleService, QuestionService questionService, TagService tagService, AnswerService answerService, PasswordEncoder passwordEncoder) {
+    public TestDataInitService(UserService userService,
+                               RoleService roleService,
+                               QuestionService questionService,
+                               TagService tagService,
+                               AnswerService answerService,
+                               SingleChatService singleChatService,
+                               GroupChatService groupChatService,
+                               UserChatPinService userChatPinService,
+                               PasswordEncoder passwordEncoder) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
         this.tagService = tagService;
         this.answerService = answerService;
+        this.singleChatService = singleChatService;
+        this.groupChatService = groupChatService;
+        this.userChatPinService = userChatPinService;
         this.passwordEncoder = passwordEncoder;
-
     }
 
     public void initRoles() {
@@ -62,6 +74,7 @@ public class TestDataInitService {
                             true, false, "city", "link_site", "link_github", "link_vk",
                             "about", "image_link", null, "nick", ROLE_ADMIN));
         }
+
     }
 
     public void initTag() {
@@ -150,5 +163,43 @@ public class TestDataInitService {
         answer2.setUser(userService.getAll().get(1));
         answer2.setQuestion(questionList.get(3));
         answerService.persistAll(answer2);
+    }
+
+    public void initChat() {
+        SingleChat singleChat1 = new SingleChat();
+        SingleChat singleChat2 = new SingleChat();
+
+        singleChat1.setUserOne(userService.getAll().get(1));
+        singleChat1.setUseTwo(userService.getAll().get(2));
+
+        singleChat2.setUserOne(userService.getAll().get(3));
+        singleChat2.setUseTwo(userService.getAll().get(4));
+        singleChatService.persistAll(singleChat1, singleChat2);
+
+        GroupChat groupChat1 = new GroupChat();
+        Set<User> users = new HashSet<>();
+        users.add(userService.getAll().get(1));
+        users.add(userService.getAll().get(2));
+        users.add(userService.getAll().get(3));
+        groupChat1.setUsers(users);
+        groupChatService.persistAll(groupChat1);
+
+    }
+    public void initUserChatPin() {
+        User user1 = userService.getAll().get(1);
+        SingleChat singleChat1 = singleChatService.getAll().get(0);
+
+        User user2 = userService.getAll().get(3);
+        SingleChat singleChat2 = singleChatService.getAll().get(1);
+
+        UserChatPin userChatPin1 = new UserChatPin();
+        userChatPin1.setUser(user1);
+        userChatPin1.setChat(singleChat1.getChat());
+
+        UserChatPin userChatPin2 = new UserChatPin();
+        userChatPin2.setUser(user2);
+        userChatPin2.setChat(singleChat2.getChat());
+
+        userChatPinService.persistAll(userChatPin1, userChatPin2);
     }
 }
