@@ -113,9 +113,9 @@ public class TagResourceController {
             @ApiResponse(code = 200, message = "Success", response = TagViewDto.class),
             @ApiResponse(code = 400, message = "TagViewDto не найдены")
     })
-    public ResponseEntity<PageDto<TagViewDto>> getAllTagsByData(@RequestParam(defaultValue = "1") Integer itemsOnPage,
-                                                                @RequestParam(required = false, defaultValue = "10") Integer items) {
-        PaginationData data = new PaginationData(itemsOnPage,items,
+    public ResponseEntity<PageDto<TagViewDto>> getAllTagsByData(@RequestParam(defaultValue = "1") Integer page,
+                                                                @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage) {
+        PaginationData data = new PaginationData(page,itemsOnPage,
                 TagPageDtoDaoByDateImpl.class.getSimpleName());
         return new ResponseEntity<>(tagDtoService.getPageDto(data),HttpStatus.OK);
     }
