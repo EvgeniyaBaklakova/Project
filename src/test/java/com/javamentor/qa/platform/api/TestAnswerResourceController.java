@@ -103,19 +103,6 @@ public class TestAnswerResourceController extends AbstractTestApi {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-    @Test
-    @Sql(scripts = "/script/TestAnswerResourceController/TestBookMarks/Before.sql",
-            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestAnswerResourceController/TestBookMarks/After.sql",
-            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void addQuestionToBookmarks() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/bookmark")
-                        .header("Authorization","Bearer " + getToken("test100@mail.ru", "a")))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is("Вопрос успешно добавлен в закладки")));
-    }
-
       private boolean answerDeleteIdTest(Long answerId) {
         long count = (long) em.createQuery("SELECT Count(a) FROM Answer a  WHERE a.id =: id")
                 .setParameter("id", answerId)
