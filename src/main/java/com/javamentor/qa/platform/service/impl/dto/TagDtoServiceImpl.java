@@ -46,9 +46,4 @@ public class TagDtoServiceImpl extends PageDtoServiceImpl<TagViewDto> implements
         return tagDtoDao.getIgnoredTags(userId);
     }
 
-    @Override
-    public PageDto<TagViewDto> getPageDto(PaginationData properties) {
-        var pageDto = super.getPageDto(properties);
-        return pageDto;
-    }
 }
