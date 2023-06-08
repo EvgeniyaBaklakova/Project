@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.api.TestQuestionResourceController;
+package com.javamentor.qa.platform.api.TestQuestionResourceControllerPackage;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import org.hamcrest.core.Is;
@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class AddQuestionToBookmarksTest extends AbstractTestApi {
+public class TestAddQuestionToBookmarks extends AbstractTestApi {
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/AddQuestionToBookmarks/Before.sql", executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestQuestionResourceController/AddQuestionToBookmarks/After.sql", executionPhase = AFTER_TEST_METHOD)

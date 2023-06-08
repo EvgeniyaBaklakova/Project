@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.api.TestQuestionResourceController;
+package com.javamentor.qa.platform.api.TestQuestionResourceControllerPackage;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import org.hamcrest.core.Is;

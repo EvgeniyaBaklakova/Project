@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.api.TestQuestionResourceController;
+package com.javamentor.qa.platform.api.TestQuestionResourceControllerPackage;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class CommentAddingTest extends AbstractTestApi {
+public class TestCommentAdding extends AbstractTestApi {
 
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/CommentAddingApiTest/Before.sql", executionPhase = BEFORE_TEST_METHOD)

@@ -1,7 +1,8 @@
-package com.javamentor.qa.platform.api.AnswerTestController;
+package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import org.hamcrest.core.Is;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
@@ -13,59 +14,54 @@ import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-public class AnswerResourceControllerTest extends AbstractTestApi {
+public class TestAnswerResourceController extends AbstractTestApi {
 
     @Test
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerDeleteIdTest/Before.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerDeleteId/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerDeleteIdTest/After.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerDeleteId/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-
     public void answerDeleteIdFalse() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders
                         .delete("/api/user/question/101/answer/101"))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());
                  assertFalse(answerDeleteIdTest(101L),()-> "isDeleted = false! ответ не удален.");
-
     }
 
     @Test
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerDeleteIdTest/Before.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerDeleteId/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerDeleteIdTest/After.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerDeleteId/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void answerDeleteId() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders
                         .delete("/api/user/question/102/answer/102"))
                 .andExpect(status().isOk())
                 .andDo(MockMvcResultHandlers.print());
-                 assertTrue (answerDeleteIdTest(102L));
-
+                 Assertions.assertTrue(answerDeleteIdTest(102L));
     }
 
     @Test
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerDeleteIdTest/Before.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerDeleteId/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerDeleteIdTest/After.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerDeleteId/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-
     public void answerDeleteId_request() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders
                         .delete("/api/user/question/102/answer/103"))
                 .andExpect(status().isBadRequest())
                 .andDo(MockMvcResultHandlers.print());
-
     }
 
     @Test
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/Before.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerGetAll/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/After.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerGetAll/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getAllAnswersTest() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders
@@ -81,9 +77,9 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/Before1.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerGetAll/Before1.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/After.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerGetAll/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void countValuableTest() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders
@@ -96,9 +92,9 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/Before2.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerGetAll/Before2.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerGetAllTest/After.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerGetAll/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void getAllAnswersWithoutAnyTest() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders
@@ -107,13 +103,26 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
                 .andDo(MockMvcResultHandlers.print());
     }
 
+    @Test
+    @Sql(scripts = "/script/TestAnswerResourceController/TestBookMarks/Before.sql",
+            executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestAnswerResourceController/TestBookMarks/After.sql",
+            executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    public void addQuestionToBookmarks() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/bookmark")
+                        .header("Authorization","Bearer " + getToken("test100@mail.ru", "a")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is("Вопрос успешно добавлен в закладки")));
+    }
+
       private boolean answerDeleteIdTest(Long answerId) {
         long count = (long) em.createQuery("SELECT Count(a) FROM Answer a  WHERE a.id =: id")
                 .setParameter("id", answerId)
                 .getSingleResult();
-
         return count > 0;
     }
+
     public String getToken(String email, String password) {
         String token;
         Map<String,String> map = new HashMap<>();
@@ -125,9 +134,8 @@ public class AnswerResourceControllerTest extends AbstractTestApi {
                     .andReturn().getResponse().getContentAsString());
             token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
             return token;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return "";
     }
-
 }

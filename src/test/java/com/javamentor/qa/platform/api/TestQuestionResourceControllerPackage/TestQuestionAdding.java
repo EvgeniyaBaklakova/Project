@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.api.TestQuestionResourceController;
+package com.javamentor.qa.platform.api.TestQuestionResourceControllerPackage;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import org.hamcrest.core.Is;
@@ -14,7 +14,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class QuestionAddingTest extends AbstractTestApi {
+public class TestQuestionAdding extends AbstractTestApi {
 
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before1.sql", executionPhase = BEFORE_TEST_METHOD)

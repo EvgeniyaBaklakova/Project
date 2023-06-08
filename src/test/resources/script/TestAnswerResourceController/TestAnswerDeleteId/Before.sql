@@ -1,12 +1,12 @@
 TRUNCATE TABLE role CASCADE;
 INSERT INTO role (id, name)
-VALUES (101, 'ROLE_USER');
+VALUES (100, 'ROLE_USER');
 INSERT INTO role (id, name)
-VALUES (102, 'ROLE_ADMIN');
+VALUES (101, 'ROLE_ADMIN');
 
 
 INSERT INTO user_entity (id, about, city, email, full_Name, image_link, is_deleted, is_enabled, last_redaction_date, link_github, link_site, link_vk, nickname, password, persist_date, role_id)
-VALUES (101,
+VALUES (100,
         'Its me',
         'Minsk',
         'test101@mail.ru',
@@ -21,10 +21,10 @@ VALUES (101,
         'Dragonfly',
         '$2a$12$axPyq0kTyPAYggs3zdoAQePKfcErnvZrwqPR.3ijEqj8qukox8Zly',
         DATE(now()),
-        101);
+        100);
 
 INSERT INTO user_entity (id, about, city, email, full_Name, image_link, is_deleted, is_enabled, last_redaction_date, link_github, link_site, link_vk, nickname, password, persist_date, role_id)
-VALUES (102,
+VALUES (101,
         'Its not me',
         'Moscow',
         'test102@mail.ru',
@@ -39,7 +39,16 @@ VALUES (102,
         'NeDragonfly',
         '$2a$12$axPyq0kTyPAYggs3zdoAQePKfcErnvZrwqPR.3ijEqj8qukox8Zly',
         DATE(now()),
-        102);
+        101);
+
+INSERT INTO question (id, description, is_deleted, last_redaction_date, persist_date, title, user_id)
+VALUES (100,
+        'Question',
+        false,
+        DATE(now()),
+        DATE(now()),
+        'Title',
+        100);
 
 INSERT INTO question (id, description, is_deleted, last_redaction_date, persist_date, title, user_id)
 VALUES (101,
@@ -49,27 +58,18 @@ VALUES (101,
         DATE(now()),
         'Title',
         101);
-
-INSERT INTO question (id, description, is_deleted, last_redaction_date, persist_date, title, user_id)
-VALUES (102,
-        'Question',
-        false,
-        DATE(now()),
-        DATE(now()),
-        'Title',
-        102);
 INSERT INTO bookmarks (id, question_id, user_id)
 VALUES(2,
-       101,
-       101);
+       100,
+       100);
 
 INSERT INTO bookmarks (id, question_id, user_id)
 VALUES(3,
-       102,
-       102);
+       101,
+       101);
 
 INSERT INTO answer(id, date_accept_time, html_body, is_deleted, is_deleted_by_moderator, is_helpful, persist_date, update_date, question_id, user_id)
-VALUES(101,
+VALUES(100,
        DATE(now()),
        'text',
        false,
@@ -77,11 +77,11 @@ VALUES(101,
        false,
        DATE(now()),
        DATE(now()),
-       101,
-       101);
+       100,
+       100);
 
 INSERT INTO answer(id, date_accept_time, html_body, is_deleted, is_deleted_by_moderator, is_helpful, persist_date, update_date, question_id, user_id)
-VALUES(102,
+VALUES(101,
        DATE(now()),
        'text',
        true,
@@ -89,6 +89,6 @@ VALUES(102,
        false,
        DATE(now()),
        DATE(now()),
-       102,
-       102);
+       101,
+       101);
 
