@@ -24,9 +24,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TestQuestionResourceController extends AbstractTestApi {
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/Before1.sql",
+    @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/Before1.sql",
             executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/After.sql",
+    @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void viewAtFirstTime() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/1/view"))
@@ -35,9 +35,9 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/Before2.sql",
+    @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/Before2.sql",
             executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/After.sql",
+    @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void wasAlreadyViewed() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/1/view"))
@@ -46,8 +46,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionAddingApiTest/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void addQuestionAllOkTest() throws Exception {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post("/api/auth/token")
@@ -77,8 +77,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionAddingApiTest/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void addQuestionEmptyOrNullTitleTest() throws Exception {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post("/api/auth/token")
@@ -98,8 +98,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionAddingApiTest/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void addQuestionEmptyOrNullDescriptionTest() throws Exception {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post("/api/auth/token")
@@ -119,8 +119,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionAddingApiTest/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void addQuestionNoTagsTest() throws Exception {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post("/api/auth/token")
@@ -140,8 +140,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before2.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionAddingApiTest/Before2.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void addQuestionTagNotExistTest() throws Exception {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post("/api/auth/token")
@@ -161,8 +161,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before2.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionAddingApiTest/Before2.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void addQuestionTagExistsTest() throws Exception {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post("/api/auth/token")
@@ -182,8 +182,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/Before2.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionAddingApiTest/Before2.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void addQuestionTagExistsJoiningTest() throws Exception {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post("/api/auth/token")
@@ -204,8 +204,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/CommentAddingApiTest/Before.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/CommentAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestCommentAddingApi/Before.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestCommentAddingApi/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void addCommentAllOkTest() throws Exception {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post("/api/auth/token")
@@ -227,8 +227,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/CommentAddingApiTest/Before.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/CommentAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestCommentAddingApi/Before.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestCommentAddingApi/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void addCommentNullTextTest() throws Exception {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post("/api/auth/token")
@@ -249,8 +249,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/CommentAddingApiTest/Before.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/CommentAddingApiTest/After.sql", executionPhase = AFTER_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestCommentAddingApi/Before.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestCommentAddingApi/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void addCommentNoQuestionTest() throws Exception {
         MvcResult result = mvc.perform(MockMvcRequestBuilders
                         .post("/api/auth/token")
@@ -271,9 +271,9 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/Before1.sql",
+    @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/Before1.sql",
             executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/After.sql",
+    @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void questionNotFound() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/2/view"))
@@ -282,9 +282,9 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionDtoGetById/Before.sql",
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionDtoGetById/Before.sql",
             executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionDtoGetById/After.sql",
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionDtoGetById/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void questionGetById() throws Exception {
 
@@ -333,9 +333,9 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionDtoGetById/Before.sql",
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionDtoGetById/Before.sql",
             executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/QuestionDtoGetById/After.sql",
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionDtoGetById/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void noQuestionGetById() throws Exception {
 
@@ -345,8 +345,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/AddQuestionToBookmarks/Before.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/AddQuestionToBookmarks/After.sql", executionPhase = AFTER_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestAddQuestionToBookmarks/Before.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestAddQuestionToBookmarks/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void addQuestionToBookmarks() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/102/bookmark").header("Authorization","Bearer " + getToken("test101@mail.ru", "password")))
                 .andDo(print())
