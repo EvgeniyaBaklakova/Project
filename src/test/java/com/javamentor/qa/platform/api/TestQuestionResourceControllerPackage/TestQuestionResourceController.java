@@ -86,7 +86,6 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.listTagDto[1].name", Is.is("name2")))
                 .andExpect(jsonPath("$.listTagDto[1].description", Is.is("description2")));
 
-
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/104").header(AUTHORIZATION,"Bearer " + getToken("test100@mail.ru","123")))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -104,8 +103,6 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.countValuable", Is.is(0)))
                 .andExpect(jsonPath("$.persistDateTime", Is.is("2023-04-23T13:01:11.245126")))
                 .andExpect(jsonPath("$.lastUpdateDateTime", Is.is("2023-04-23T13:01:11.245126")));
-
-
     }
 
     @Test
@@ -118,9 +115,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
         this.mvc.perform(get("/api/user/question/{id}", 111).header(AUTHORIZATION,"Bearer " + getToken("test100@mail.ru","123") ))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
-
-
     }
+
     public String getToken(String email, String password) {
         String token;
         Map<String,String> map = new HashMap<>();
@@ -132,10 +128,9 @@ public class TestQuestionResourceController extends AbstractTestApi {
                     .andReturn().getResponse().getContentAsString());
             token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
             return token;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return "";
     }
-
 
 }
