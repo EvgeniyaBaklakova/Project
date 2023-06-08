@@ -10,16 +10,14 @@ import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.webapp.controllers.util.UserNotFoundException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,13 +31,11 @@ public class UserResourceController {
 
     private final UserDtoService userDtoService;
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
     private final AnswerService answerService;
     private final QuestionDtoService questionDtoService;
 
-    public UserResourceController(UserDtoService userDtoService, UserService userService, PasswordEncoder passwordEncoder, AnswerService answerService, QuestionDtoService questionDtoService) {
+    public UserResourceController(UserDtoService userDtoService, UserService userService, AnswerService answerService, QuestionDtoService questionDtoService) {
         this.userDtoService = userDtoService;
-        this.passwordEncoder = passwordEncoder;
         this.userService = userService;
         this.answerService = answerService;
         this.questionDtoService = questionDtoService;
@@ -109,8 +105,11 @@ public class UserResourceController {
     public ResponseEntity<Map<String,String>> changePassword(@RequestBody String newPass) {
         User user = (User) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
-        user.setPassword(passwordEncoder.encode(newPass));
-        userService.update(user);
+        try {
+            userService.changePassword(user.getId(), newPass);
+        } catch (UserNotFoundException exception) {
+            return new ResponseEntity<>(Map.of("status", "error"), HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(Map.of("status", "success"), HttpStatus.OK);
     }
 }

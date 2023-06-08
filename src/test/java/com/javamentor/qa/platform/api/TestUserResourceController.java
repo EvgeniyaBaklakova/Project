@@ -334,7 +334,7 @@ public class TestUserResourceController extends AbstractTestApi {
                         .header("Authorization", "Bearer " + getToken("test101@mail.ru", "123")))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Successful")));
+                .andExpect(content().string(containsString("success")));
     }
 
 

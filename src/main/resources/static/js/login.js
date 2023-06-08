@@ -1,7 +1,7 @@
 window.addEventListener('DOMContentLoaded', () => {
 function authProcess() {
     let formNode = document.querySelector('#formLogin');
-    const url = "http://localhost:8091/api/auth/token";
+    const url = "/api/auth/token";
     const form = new FormData(formNode);
 
     let data = {
@@ -22,7 +22,7 @@ function authProcess() {
             if(localStorage.key('jwtToken') != null)
                 localStorage.removeItem('jwtToken');
             localStorage.setItem('jwtToken',data.jwtToken);
-            window.location.replace('http://localhost:8091/main');
+            window.location.replace('/main');
         })
         .catch(err => {
             formNode.reset();
