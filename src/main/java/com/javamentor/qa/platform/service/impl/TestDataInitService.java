@@ -8,16 +8,25 @@ import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.UserChatPin;
-import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.RoleService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
+import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.service.abstracts.model.UserChatPinService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 @Service
@@ -166,40 +175,64 @@ public class TestDataInitService {
     }
 
     public void initChat() {
-        SingleChat singleChat1 = new SingleChat();
-        SingleChat singleChat2 = new SingleChat();
+        List<SingleChat> singleChatList = new ArrayList<>();
+        List<User> users = userService.getAll();
+        Random random = new Random();
+        Set<String> uniqueUserPairs = new HashSet<>();
+        for (int i = 0; i < 30; i++) {
+            int one = random.nextInt(20);
+            int two = random.nextInt(20);
+            if (one == two) {
+                continue;
+            }
+            String userPair = users.get(one).getId() + "-" + users.get(two).getId();
+            String reverseUserPair = users.get(two).getId() + "-" + users.get(one).getId();
+            if (!uniqueUserPairs.contains(userPair) && !uniqueUserPairs.contains(reverseUserPair)) {
+                SingleChat singleChat = new SingleChat();
+                singleChat.setUserOne(users.get(one));
+                singleChat.setUseTwo(users.get(two));
+                singleChatList.add(singleChat);
+                uniqueUserPairs.add(userPair);
+            }
+        }
+        singleChatService.persistAll(singleChatList);
 
-        singleChat1.setUserOne(userService.getAll().get(1));
-        singleChat1.setUseTwo(userService.getAll().get(2));
 
-        singleChat2.setUserOne(userService.getAll().get(3));
-        singleChat2.setUseTwo(userService.getAll().get(4));
-        singleChatService.persistAll(singleChat1, singleChat2);
+        List<GroupChat> groupChatList = new ArrayList<>();
 
-        GroupChat groupChat1 = new GroupChat();
-        Set<User> users = new HashSet<>();
-        users.add(userService.getAll().get(1));
-        users.add(userService.getAll().get(2));
-        users.add(userService.getAll().get(3));
-        groupChat1.setUsers(users);
-        groupChatService.persistAll(groupChat1);
+        for (int i = 0; i < 5; i++) {
+            GroupChat groupChat = new GroupChat();
+            int count = random.nextInt(7) + 3;
+            Set<User> group = new HashSet<>();
+            for (int j = 0; j < count; j++) {
+                group.add(users.get(random.nextInt(20)));
+            }
+            groupChat.setUsers(group);
+            groupChatList.add(groupChat);
+        }
+        groupChatService.persistAll(groupChatList);
 
     }
+    @Transactional
     public void initUserChatPin() {
-        User user1 = userService.getAll().get(1);
-        SingleChat singleChat1 = singleChatService.getAll().get(0);
+        List<UserChatPin> chatPins = new ArrayList<>();
+        List<SingleChat> singleChats = singleChatService.getAll();
 
-        User user2 = userService.getAll().get(3);
-        SingleChat singleChat2 = singleChatService.getAll().get(1);
+        GroupChat groupChat = groupChatService.getAll().get(0);
 
-        UserChatPin userChatPin1 = new UserChatPin();
-        userChatPin1.setUser(user1);
-        userChatPin1.setChat(singleChat1.getChat());
+        for (int i = 0; i < singleChats.size() / 2; i++) {
+            UserChatPin userChatPin = new UserChatPin();
+            userChatPin.setChat(singleChats.get(i).getChat());
+            userChatPin.setUser(singleChats.get(i).getUserOne());
+            chatPins.add(userChatPin);
+        }
 
-        UserChatPin userChatPin2 = new UserChatPin();
-        userChatPin2.setUser(user2);
-        userChatPin2.setChat(singleChat2.getChat());
-
-        userChatPinService.persistAll(userChatPin1, userChatPin2);
+        for (User user : groupChat.getUsers()) {
+            UserChatPin userChatPin = new UserChatPin();
+            userChatPin.setChat(groupChat.getChat());
+            userChatPin.setUser(user);
+            chatPins.add(userChatPin);
+        }
+        userChatPinService.persistAll(chatPins);
     }
 }
