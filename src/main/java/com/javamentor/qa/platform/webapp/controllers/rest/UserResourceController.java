@@ -105,11 +105,7 @@ public class UserResourceController {
     public ResponseEntity<Map<String,String>> changePassword(@RequestBody String newPass) {
         User user = (User) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
-        try {
             userService.changePassword(user.getId(), newPass);
-        } catch (UserNotFoundException exception) {
-            return new ResponseEntity<>(Map.of("status", "error"), HttpStatus.NOT_FOUND);
-        }
         return new ResponseEntity<>(Map.of("status", "success"), HttpStatus.OK);
     }
 }
