@@ -1,11 +1,15 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionDtoWithoutAnswersImpl;
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
-import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
-import com.javamentor.qa.platform.models.entity.question.Question;
-import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
+import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
+import com.javamentor.qa.platform.models.dto.tag.TrackedAndIgnoredTagsDto;
+import com.javamentor.qa.platform.models.dto.tag.TrackedTagsDto;
+import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
+import com.javamentor.qa.platform.models.entity.question.*;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.BookMarksService;
@@ -22,15 +26,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Api(value = "QuestionResource controller", tags = "Контроллер QuestionResource")
@@ -46,9 +47,9 @@ public class QuestionResourceController {
     private final QuestionConverter questionConverter;
 
     @Autowired
-    public QuestionResourceController(BookMarksService bookMarksService, QuestionViewedService questionViewedService,
-                                      QuestionService questionService, UserService userService, CommentQuestionService commentQuestionService,
-                                      QuestionConverter questionConverter, QuestionDtoService questionDtoService) {
+    public QuestionResourceController(BookMarksService bookMarksService,QuestionViewedService questionViewedService,
+                                      QuestionService questionService,UserService userService,CommentQuestionService commentQuestionService,
+                                      QuestionConverter questionConverter,QuestionDtoService questionDtoService) {
         this.bookMarksService = bookMarksService;
         this.questionService = questionService;
         this.questionDtoService = questionDtoService;
@@ -114,6 +115,30 @@ public class QuestionResourceController {
 
         return new ResponseEntity<>(questionDtoService.getQuestionDtoById(id), HttpStatus.OK);
 
+    }
+
+    @ApiOperation(value = "Получение всех QuestionDto, на которые нет ответов")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Вопросы успешно получены"),
+            @ApiResponse(code = 400, message = "Некорректный запрос"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен"),
+            @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")})
+    @GetMapping("/noAnswer")
+    public ResponseEntity<PageDto<QuestionDto>> getAllQuestionsWithoutAnswers(@RequestParam(defaultValue = "1") Integer page,
+                                                                              @RequestParam(required = false, defaultValue = "10") Integer items,
+                                                                              @RequestBody(required = false) TrackedAndIgnoredTagsDto tagsDto) {
+
+        List<TrackedTagsDto> trackedTagList = tagsDto != null ? tagsDto.getTrackedTagList() : Collections.emptyList();
+        List<IgnoredTagsDto> ignoredTagList = tagsDto != null ? tagsDto.getIgnoredTagList() : Collections.emptyList();
+
+        if (trackedTagList.isEmpty() && ignoredTagList.isEmpty()) {
+            PaginationData data = new PaginationData(page, items, QuestionDtoWithoutAnswersImpl.class.getSimpleName());
+            return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
+        }
+
+        PaginationData data = new PaginationData(page, items, QuestionDtoWithoutAnswersImpl.class.getSimpleName());
+        return new ResponseEntity<>(questionDtoService.getPageDtoWithTags(data, ignoredTagList, trackedTagList), HttpStatus.OK);
     }
 
     @PostMapping("/{id}/bookmark")
