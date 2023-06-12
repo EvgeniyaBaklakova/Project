@@ -16,7 +16,6 @@ import java.util.Date;
 @Component
 public class JWTUtil {
 
-
     @Value("${jwt.secret}")
     private String secret;
 
@@ -25,6 +24,17 @@ public class JWTUtil {
                 .withSubject("User Details")
                 .withClaim("email", email)
                 .withIssuedAt(new Date())
+                .withIssuer("YOUR APPLICATION/PROJECT/COMPANY NAME")
+                .sign(Algorithm.HMAC256(secret));
+    }
+
+    public String generatePersistentToken(String email) throws IllegalArgumentException, JWTCreationException {
+        Date expireDate = new Date(Long.MAX_VALUE);
+        return JWT.create()
+                .withSubject("User Details")
+                .withClaim("email", email)
+                .withIssuedAt(new Date())
+                .withExpiresAt(expireDate)
                 .withIssuer("YOUR APPLICATION/PROJECT/COMPANY NAME")
                 .sign(Algorithm.HMAC256(secret));
     }
