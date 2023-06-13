@@ -208,11 +208,18 @@ public class TestDataInitService {
                 group.add(users.get(random.nextInt(20)));
             }
             groupChat.setUsers(group);
+            groupChat.setIsGlobal(false);
             groupChatList.add(groupChat);
         }
+        GroupChat globalChat = new GroupChat();
+        Set<User> globalChatUsers = new HashSet<>(users);
+        globalChat.setUsers(globalChatUsers);
+        globalChat.setIsGlobal(true);
+        groupChatList.add(globalChat);
         groupChatService.persistAll(groupChatList);
 
     }
+
     @Transactional
     public void initUserChatPin() {
         List<UserChatPin> chatPins = new ArrayList<>();
