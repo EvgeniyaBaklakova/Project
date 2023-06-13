@@ -55,8 +55,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-
     }
 
     @Override

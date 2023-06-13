@@ -53,19 +53,6 @@ public class JwtProvider {
         return username;
     }
 
-    public String generateToken(String username) throws InvalidKeySpecException, NoSuchAlgorithmException {
-        return Jwts.builder()
-                .setClaims(Jwts.claims().setSubject(username))
-                .setIssuedAt(new Date())
-                .setExpiration(generateExpirationDate())
-                .signWith(SIGNATURE_ALGORITHM, secretKey)
-                .compact();
-    }
-
-    private Date generateExpirationDate() {
-        return new Date(3000, 1, 1);
-    }
-
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
         return (
@@ -92,17 +79,6 @@ public class JwtProvider {
         return expireDate;
     }
 
-
-    public Date getIssuedAtDateFromToken(String token) {
-        Date issueAt;
-        try {
-            final Claims claims = this.getAllClaimsFromToken(token);
-            issueAt = claims.getIssuedAt();
-        } catch (Exception e) {
-            issueAt = null;
-        }
-        return issueAt;
-    }
 
     public String getToken(HttpServletRequest request) {
         String authHeader = getAuthHeaderFromHeader(request);
