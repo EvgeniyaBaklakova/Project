@@ -5,9 +5,7 @@ import com.github.database.rider.core.api.configuration.DBUnit;
 import com.github.database.rider.junit5.api.DBRider;
 import com.javamentor.qa.platform.security.service.AuthDTO;
 import com.javamentor.qa.platform.webapp.configs.JmApplication;
-import com.javamentor.qa.platform.webapp.controllers.rest.AuthenticationResourceController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -19,7 +17,6 @@ import javax.persistence.PersistenceContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 @DBRider
 @SpringBootTest(classes = JmApplication.class)
@@ -53,10 +50,4 @@ public abstract class AbstractTestApi {
         USER_TOKEN = "Bearer " + USER_TOKEN.substring(USER_TOKEN.indexOf(":") + 2, USER_TOKEN.length() - 2);
         return  USER_TOKEN;
     }
-
-
-
-
-
-
 }
