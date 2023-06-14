@@ -353,21 +353,4 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is("Вопрос успешно добавлен в закладки")));
     }
-
-    public String getToken(String email, String password) {
-        String token;
-        Map<String,String> map = new HashMap<>();
-        map.put("email", email);
-        map.put("password", password);
-        try {
-            String response = (this.mvc.perform(MockMvcRequestBuilders
-                            .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
-                    .andReturn().getResponse().getContentAsString());
-            token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
-            return token;
-        } catch (Exception ignored) {
-        }
-        return "";
-    }
-
 }
