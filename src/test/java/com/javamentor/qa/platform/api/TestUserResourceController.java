@@ -320,7 +320,7 @@ public class TestUserResourceController extends AbstractTestApi {
                     .andReturn().getResponse().getContentAsString());
             token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
             return token;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return "";
     }
