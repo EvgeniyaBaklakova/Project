@@ -9,19 +9,24 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -30,11 +35,13 @@ import java.util.List;
 public class UserResourceController {
 
     private final UserDtoService userDtoService;
+    private final UserService userService;
     private final AnswerService answerService;
     private final QuestionDtoService questionDtoService;
 
-    public UserResourceController(UserDtoService userDtoService, AnswerService answerService, QuestionDtoService questionDtoService) {
+    public UserResourceController(UserDtoService userDtoService, UserService userService, AnswerService answerService, QuestionDtoService questionDtoService) {
         this.userDtoService = userDtoService;
+        this.userService = userService;
         this.answerService = answerService;
         this.questionDtoService = questionDtoService;
     }
@@ -88,8 +95,22 @@ public class UserResourceController {
             @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
     })
     @GetMapping("/profile/delete/questions")
-    public ResponseEntity<List<UserProfileQuestionDto>> getAllDeleteQuestion(@AuthenticationPrincipal User user){
-        return new  ResponseEntity<>(questionDtoService.getUserDeleteQuestions(user.getId()), HttpStatus.OK);
+    public ResponseEntity<List<UserProfileQuestionDto>> getAllDeleteQuestion(@AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(questionDtoService.getUserDeleteQuestions(user.getId()), HttpStatus.OK);
     }
 
+    @ApiOperation(value = "Осуществляет смену пароля пользователя, переданного в теле запроса в не зашифрованном виде")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Пароль успешно изменен"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен"),
+            @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
+    })
+    @PostMapping("/edit/pass")
+    public ResponseEntity<Map<String,String>> changePassword(@RequestBody String newPass) {
+        User user = (User) SecurityContextHolder.getContext()
+                .getAuthentication().getPrincipal();
+            userService.changePassword(user.getId(), newPass);
+        return new ResponseEntity<>(Map.of("status", "success"), HttpStatus.OK);
+    }
 }
