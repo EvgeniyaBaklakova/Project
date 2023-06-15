@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MvcResult;
@@ -41,7 +42,7 @@ public class TestTagResourceController extends AbstractTestApi {
         RelatedTagsDto t10 = new RelatedTagsDto(312L, "tag t12", 6L);
 
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/related").header("Authorization","Bearer " + getToken("test101@mail.ru", "test")))
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/tag/related").header("Authorization", "Bearer " + getToken("test101@mail.ru", "test")))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andExpect(content().json(objectMapper.writeValueAsString(Arrays.asList(t1, t2, t3, t4, t5, t6, t7, t8, t9, t10))));
@@ -53,7 +54,7 @@ public class TestTagResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestTagResourceController/AddTrackedIgnoredTagsTest/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void saveAsTracked() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/301/tracked").header("Authorization","Bearer " + getToken("test101@mail.ru", "test")))
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/301/tracked").header("Authorization", "Bearer " + getToken("test101@mail.ru", "test")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Is.is(301)))
                 .andExpect(jsonPath("$.name", Is.is("tag t1")))
@@ -66,7 +67,7 @@ public class TestTagResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestTagResourceController/AddTrackedIgnoredTagsTest/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void saveAsIgnored() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/301/ignored").header("Authorization","Bearer " + getToken("test101@mail.ru", "test")))
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/tag/301/ignored").header("Authorization", "Bearer " + getToken("test101@mail.ru", "test")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Is.is(301)))
                 .andExpect(jsonPath("$.name", Is.is("tag t1")))
@@ -75,7 +76,7 @@ public class TestTagResourceController extends AbstractTestApi {
 
     public String getToken(String email, String password) {
         String token;
-        Map<String,String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         map.put("email", email);
         map.put("password", password);
         try {
@@ -117,10 +118,156 @@ public class TestTagResourceController extends AbstractTestApi {
         String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders
-                .get("/api/user/tag/ignored")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(Arrays.asList(it1, it2, it3, it4, it5, it6, it7, it8, it9, it10))))
+                        .get("/api/user/tag/ignored")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(Arrays.asList(it1, it2, it3, it4, it5, it6, it7, it8, it9, it10))))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @Sql(scripts = "/script/TestTagResourceController/GetAllTagsWithPagination/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestTagResourceController/GetAllTagsWithPagination/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void getAllTagsWithPagination() throws Exception {
+        String token = getToken("test101@mail.ru", "test");
+
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/tag/new")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/tag/new")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
+                .andExpect(jsonPath("$.items.length()", Is.is(5)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(305)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("tag t5")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("tag5")))
+                .andExpect(jsonPath("$.items[0].questionCount", Is.is(6)))
+                .andExpect(jsonPath("$.items[0].questionCountOneDay", Is.is(5)))
+                .andExpect(jsonPath("$.items[0].questionCountWeekDay", Is.is(6)))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(304)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("tag t4")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("tag4")))
+                .andExpect(jsonPath("$.items[1].questionCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[1].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[1].questionCountWeekDay", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[2].id", Is.is(303)))
+                .andExpect(jsonPath("$.items[2].title", Is.is("tag t3")))
+                .andExpect(jsonPath("$.items[2].description", Is.is("tag3")))
+                .andExpect(jsonPath("$.items[2].questionCount", Is.is(6)))
+                .andExpect(jsonPath("$.items[2].questionCountOneDay", Is.is(3)))
+                .andExpect(jsonPath("$.items[2].questionCountWeekDay", Is.is(3)))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(302)))
+                .andExpect(jsonPath("$.items[3].title", Is.is("tag t2")))
+                .andExpect(jsonPath("$.items[3].description", Is.is("tag2")))
+                .andExpect(jsonPath("$.items[3].questionCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[3].questionCountOneDay", Is.is(1)))
+                .andExpect(jsonPath("$.items[3].questionCountWeekDay", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[4].id", Is.is(301)))
+                .andExpect(jsonPath("$.items[4].title", Is.is("tag t1")))
+                .andExpect(jsonPath("$.items[4].description", Is.is("tag1")))
+                .andExpect(jsonPath("$.items[4].questionCount", Is.is(10)))
+                .andExpect(jsonPath("$.items[4].questionCountOneDay", Is.is(5)))
+                .andExpect(jsonPath("$.items[4].questionCountWeekDay", Is.is(7)));
+
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/tag/new?page=2")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(2)));
+
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/tag/new?itemsOnPage=1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.items.length()", Is.is(1)));
+
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/tag/new?page=2&itemsOnPage=1")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(2)))
+                .andExpect(jsonPath("$.items.length()", Is.is(1)));
+
+
+    }
+    @Test
+    @Sql(scripts = "/script/TestTagResourceController/GetAllTagsByName/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestTagResourceController/GetAllTagsByName/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void getAllTagsWithPaginationByName() throws Exception {
+        String token = getToken("test101@mail.ru", "test");
+        this.mvc.perform(MockMvcRequestBuilders
+                .get("/api/user/tag/name?page=1")
+                .header(HttpHeaders.AUTHORIZATION,"Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        this.mvc.perform(MockMvcRequestBuilders
+                .get("/api/user/tag/name?page=1")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
+                .andExpect(jsonPath("$.items.length()", Is.is(5)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(305)))
+                .andExpect(jsonPath("$.items[0].description", Is.is("tag1")))
+                .andExpect(jsonPath("$.items[0].title", Is.is("tag t1")))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(302)))
+                .andExpect(jsonPath("$.items[1].description", Is.is("tag2")))
+                .andExpect(jsonPath("$.items[1].title", Is.is("tag t2")))
+
+                .andExpect(jsonPath("$.items[4].id", Is.is(301)))
+                .andExpect(jsonPath("$.items[4].description", Is.is("tag5")))
+                .andExpect(jsonPath("$.items[4].title", Is.is("tag t5")));
+
+    this.mvc.perform(MockMvcRequestBuilders
+            .get("/api/user/tag/name?page=1&items=2")
+            .header(HttpHeaders.AUTHORIZATION,"Bearer " + token)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
+
+            .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+            .andExpect(jsonPath("$.totalPageCount", Is.is(3)))
+            .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
+            .andExpect(jsonPath("$.items.length()", Is.is(2)))
+
+            .andExpect(jsonPath("$.items[0].title", Is.is("tag t1")))
+            .andExpect(jsonPath("$.items[1].title", Is.is("tag t2")));
+
+        this.mvc.perform(MockMvcRequestBuilders
+                        .get("/api/user/tag/name")              //without params
+                        .header(HttpHeaders.AUTHORIZATION,"Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(5)))
+                .andExpect(jsonPath("$.items.length()", Is.is(5)));
     }
 }

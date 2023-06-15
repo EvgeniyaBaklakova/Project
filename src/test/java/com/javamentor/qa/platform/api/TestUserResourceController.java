@@ -7,10 +7,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.hamcrest.text.IsEmptyString.emptyString;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
@@ -19,7 +21,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 public class TestUserResourceController extends AbstractTestApi {
 
@@ -324,5 +325,62 @@ public class TestUserResourceController extends AbstractTestApi {
         return "";
     }
 
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void changePasswordIsOk() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"newPass\": \"test\"}")
+                        .header("Authorization", "Bearer " + getToken("test101@mail.ru", "123")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("success")));
+    }
 
+
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void changePasswordIsForbidden() throws Exception {
+    this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
+            .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"newPass\": \"test\"}")
+                        .header("Authorization", "Bearer " + getToken("test103@mail.ru", "123")))
+            .andDo(print())
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void changePasswordIs4xxClientError() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"newPass\": \"test\"}")
+                        .header("Authorization", "Bearer " + getToken("test105@mail.ru", "123")))
+                .andDo(print())
+                .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    @Sql(scripts = "/script/TestUserResourceController/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void changePasswordIsEmptyBody() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("")
+                        .header("Authorization", "Bearer " + getToken("test101@mail.ru", "123")))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string(emptyString()));
+    }
 }
