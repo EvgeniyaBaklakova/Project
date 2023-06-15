@@ -26,7 +26,7 @@ public class UpVoteDownVoteTest extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/upVote")
                         .header("Authorization", "Bearer " + getToken("email@mail.ru", "test")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(10)));
+                .andExpect(jsonPath("$", Is.is(1)));
     }
 
     @Test
@@ -39,11 +39,11 @@ public class UpVoteDownVoteTest extends AbstractTestApi {
                         .header("Authorization", "Bearer " + getToken("email@mail.ru", "test")))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(-5)));
+                .andExpect(jsonPath("$", Is.is(-1)));
     }
 
     @Test
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerUpVoteDownVoteTest/Before1.sql",
+    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerUpVoteDownVoteTest/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerUpVoteDownVoteTest/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -51,11 +51,16 @@ public class UpVoteDownVoteTest extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/upVote")
                         .header("Authorization", "Bearer " + getToken("email@mail.ru", "test")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(10)));
+                .andExpect(jsonPath("$", Is.is(1)));
+
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/upVote")
+                        .header("Authorization", "Bearer " + getToken("email@mail.ru", "test")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(1)));
     }
 
     @Test
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerUpVoteDownVoteTest/Before2.sql",
+    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerUpVoteDownVoteTest/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerUpVoteDownVoteTest/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -63,11 +68,16 @@ public class UpVoteDownVoteTest extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/downVote")
                         .header("Authorization", "Bearer " + getToken("email@mail.ru", "test")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(-5)));
+                .andExpect(jsonPath("$", Is.is(-1)));
+
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/downVote")
+                        .header("Authorization", "Bearer " + getToken("email@mail.ru", "test")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(-1)));
     }
 
     @Test
-    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerUpVoteDownVoteTest/Before2.sql",
+    @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerUpVoteDownVoteTest/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/AnswerResourceControllerTest/AnswerUpVoteDownVoteTest/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -75,7 +85,12 @@ public class UpVoteDownVoteTest extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/upVote")
                         .header("Authorization", "Bearer " + getToken("email@mail.ru", "test")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(-5)));
+                .andExpect(jsonPath("$", Is.is(1)));
+
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/downVote")
+                        .header("Authorization", "Bearer " + getToken("email@mail.ru", "test")))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(1)));
     }
 
     public String getToken(String email, String password) {

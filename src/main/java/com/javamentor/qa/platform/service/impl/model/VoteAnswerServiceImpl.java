@@ -19,4 +19,9 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
     public boolean hasUserAlreadyVoted(Long answerId,Long userId) {
         return voteAnswerDao.hasUserAlreadyVoted(answerId, userId);
     }
+
+    @Override
+    public Long totalVotesCount(Long answerId) {
+        return voteAnswerDao.totalVotesCount(answerId);
+    }
 }

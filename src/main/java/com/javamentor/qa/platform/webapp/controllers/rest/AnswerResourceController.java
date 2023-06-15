@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -74,13 +75,14 @@ public class AnswerResourceController {
             @ApiResponse(code = 400, message = "Неверный запрос"),
             @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
-    @PostMapping("/{id}/upVote" )
+    @PostMapping("/{id}/upVote")
+    @Transactional
     public ResponseEntity<Long> upVoteAnswer(@PathVariable("id") Long answerId, @AuthenticationPrincipal User user) {
         if (!voteAnswerService.hasUserAlreadyVoted(answerId, user.getId())) {
             answerService.upVoteAnswer(answerId, user.getId());
             reputationService.increaseAuthorReputation(answerService.getAnswerAuthorId(answerId));
         }
-        return new ResponseEntity<>((reputationService.getAuthorReputation(answerService.getAnswerAuthorId(answerId)).longValue()), HttpStatus.OK);
+        return new ResponseEntity<>(voteAnswerService.totalVotesCount(answerId), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Проголосовать против ответа", tags ="Downvote answer")
@@ -89,13 +91,14 @@ public class AnswerResourceController {
             @ApiResponse(code = 400, message = "Неверный запрос"),
             @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
-    @PostMapping("/{id}/downVote" )
+    @PostMapping("/{id}/downVote")
+    @Transactional
     public ResponseEntity<Long> downVoteAnswer(@PathVariable("id") Long answerId, @AuthenticationPrincipal User user) {
         if (!voteAnswerService.hasUserAlreadyVoted(answerId,user.getId())) {
             answerService.downVoteAnswer(answerId,user.getId());
             reputationService.decreaseAuthorReputation(answerService.getAnswerAuthorId(answerId));
         }
-        return new ResponseEntity<>((reputationService.getAuthorReputation(answerService.getAnswerAuthorId(answerId)).longValue()), HttpStatus.OK);
+        return new ResponseEntity<>(voteAnswerService.totalVotesCount(answerId), HttpStatus.OK);
     }
 }
 

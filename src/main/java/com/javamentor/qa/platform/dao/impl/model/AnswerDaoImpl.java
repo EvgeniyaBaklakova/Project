@@ -2,6 +2,9 @@ package com.javamentor.qa.platform.dao.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.AnswerDao;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,29 +36,19 @@ public class AnswerDaoImpl extends ReadWriteDaoImpl<Answer, Long> implements Ans
     @Override
     @Transactional
     public void upVoteAnswer(Long answerId, Long userId) {
-        String query = "SELECT count(u.id) FROM Answer a LEFT JOIN VoteAnswer va ON a.id = va.id LEFT JOIN User u ON va.id = u.id";
-        if ((Long) entityManager.createQuery(query).getSingleResult() != 0) {
-            entityManager.createQuery("UPDATE VoteAnswer va SET va.vote = (:voteType), va.answer.id = (:answerId), va.user.id = (:userId)")
-                    .setParameter("voteType", "UP_VOTE")
-                    .setParameter("answerId", answerId)
-                    .setParameter("userId", userId)
-                    .executeUpdate();
-        }
-        entityManager.createQuery("SELECT count (va.id) FROM Answer a LEFT JOIN VoteAnswer va on va.id = a.id").getSingleResult();
+        Answer answer = entityManager.find(Answer.class, answerId);
+        User user = entityManager.find(User.class, userId);
+        VoteAnswer voteAnswer = new VoteAnswer(user, answer, VoteType.UP_VOTE);
+        entityManager.persist(voteAnswer);
     }
 
     @Override
     @Transactional
     public void downVoteAnswer(Long answerId, Long userId) {
-        String query = "SELECT count(u.id) FROM Answer a LEFT JOIN VoteAnswer va ON a.id = va.id LEFT JOIN User u ON va.id = u.id";
-        if ((Long) entityManager.createQuery(query).getSingleResult() != 0) {
-            entityManager.createQuery("UPDATE VoteAnswer va SET va.vote = (:voteType), va.answer.id = (:answerId), va.user.id = (:userId)")
-                    .setParameter("voteType", "DOWN_VOTE")
-                    .setParameter("answerId", answerId)
-                    .setParameter("userId", userId)
-                    .executeUpdate();
-        }
-        entityManager.createQuery("SELECT count (va.id) FROM Answer a LEFT JOIN VoteAnswer va on va.id = a.id").getSingleResult();
+        Answer answer = entityManager.find(Answer.class, answerId);
+        User user = entityManager.find(User.class, userId);
+        VoteAnswer voteAnswer = new VoteAnswer(user, answer, VoteType.DOWN_VOTE);
+        entityManager.persist(voteAnswer);
     }
 
     @Override
