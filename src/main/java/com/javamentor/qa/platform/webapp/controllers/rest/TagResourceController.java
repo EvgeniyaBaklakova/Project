@@ -1,9 +1,11 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.pagination.TagPageDtoDaoByDateImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.TagPageDtoDaoByNameImpl;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
+import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import com.javamentor.qa.platform.models.dto.tag.TagViewDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
@@ -124,4 +126,18 @@ public class TagResourceController {
                 TagPageDtoDaoByDateImpl.class.getSimpleName());
         return new ResponseEntity<>(tagDtoService.getPageDto(data),HttpStatus.OK);
     }
+
+    @GetMapping("/name")
+    @ApiOperation(value = "Получение всех тегов с пагинацией, отсортированных по имени")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = TagViewDto.class),
+            @ApiResponse(code = 400, message = "TagDto не найдены")
+    })
+    public ResponseEntity<PageDto<TagViewDto>> getAllTagsByName(@RequestParam(defaultValue = "1")Integer page,
+                                                            @RequestParam(required = false, defaultValue = "10") Integer items) {
+        PaginationData data = new PaginationData(page,items,
+                TagPageDtoDaoByNameImpl.class.getSimpleName());
+        return new ResponseEntity<>(tagDtoService.getPageDto(data), HttpStatus.OK);
+    }
+
 }
