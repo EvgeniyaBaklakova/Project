@@ -47,7 +47,7 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.fullName", Is.is("Alex Vasiliev")))
                 .andExpect(jsonPath("$.imageLink", Is.is("No link")))
                 .andExpect(jsonPath("$.city", Is.is("Saint-Petersburg")))
-                .andExpect(jsonPath("$.reputation", Is.is(0)));
+                .andExpect(jsonPath("$.reputation", Is.is(10)));
     }
 
     @Test

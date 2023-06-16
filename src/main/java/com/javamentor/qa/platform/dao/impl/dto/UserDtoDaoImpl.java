@@ -18,8 +18,8 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
     @Override
     public Optional<UserDto> getById(long id) {
-        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.user.UserDto(u.id, u.email, u.fullName, u.imageLink, u.city," +
-                "0) FROM User u WHERE u.id = :id";
+        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.user.UserDto(u.id, u.email, u.fullName, u.imageLink, u.city, r.count) " +
+                "FROM User u, Reputation r WHERE u.id = :id";
         TypedQuery<UserDto> query = (TypedQuery<UserDto>) entityManager.createQuery(hql).setParameter("id", id);
         return SingleResultUtil.getSingleResultOrNull(query);
     }
