@@ -3,8 +3,11 @@ package com.javamentor.qa.platform.service.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.dto.tag.TagDto;
+import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.TagQuestion;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@SuppressWarnings("unchecked")
 public class QuestionDtoServiceImp extends PageDtoServiceImpl<QuestionDto> implements QuestionDtoService {
     private final TagDtoDao tagDtoDao;
     private final QuestionDtoDao questionDtoDao;
@@ -39,6 +43,35 @@ public class QuestionDtoServiceImp extends PageDtoServiceImpl<QuestionDto> imple
         List<UserProfileQuestionDto> userProfileQuestionDtoList = questionDtoDao.getUserQuestions(id);
         return putTagToUserProfileQuestionDto(userProfileQuestionDtoList);
 
+    }
+
+    @Override
+    public PageDto<QuestionDto> getPageDto(PaginationData data) {
+        PageDto<QuestionDto> pageDto = super.getPageDto(data);
+        Map<String, Object> map = data.getProps();
+
+        List<Long> trackedTagsId = (List<Long>) map.get("trackedTags");
+        List<Long> ignoredTagsId = (List<Long>) map.get("ignoredTags");
+
+        List<QuestionDto> questionDtoList = pageDto.getItems().stream().peek(questionDto -> {
+            List<TagDto> tag = tagDtoDao.getTagsByQuestionId(questionDto.getId());
+            questionDto.setListTagDto(tag);
+        }).collect(Collectors.toList());
+
+        if (trackedTagsId != null || ignoredTagsId != null) {
+            questionDtoList = questionDtoList.stream().filter(questionDto -> {
+                List<Long> questionTagsIds = questionDto.getListTagDto().stream().map(TagDto::getId).collect(Collectors.toList());
+                if (ignoredTagsId != null && ignoredTagsId.stream().anyMatch(questionTagsIds::contains)) {
+                    return false;
+                } else return trackedTagsId == null || trackedTagsId.stream().anyMatch(questionTagsIds::contains);
+            }).collect(Collectors.toList());
+
+            pageDto.setTotalResultCount(questionDtoList.size());
+            pageDto.setItems(questionDtoList);
+            pageDto.setItemsOnPage(pageDto.getItems().size());
+        }
+
+        return pageDto;
     }
 
     @Override
