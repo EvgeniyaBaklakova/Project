@@ -22,7 +22,9 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -61,12 +63,11 @@ public class QuestionResourceController {
     }
 
     @PostMapping("/{id}/view")
-    public ResponseEntity addView(@PathVariable("id") long id, Principal principal) {
+    public ResponseEntity addView(@PathVariable("id") long id, @AuthenticationPrincipal User user) {
         Optional<Question> question = questionService.getById(id);
         if (question.isEmpty()) {
             return new ResponseEntity<>("Incorrect question id", HttpStatus.NOT_FOUND);
         }
-        User user = userService.getByEmail(principal.getName()).orElseThrow(() -> new UserNotFoundException("User with id: " + id +  " not found"));
         if (!questionViewedService.isViewed(user.getId(), id)) {
             questionViewedService.persist(new QuestionViewed(user, question.get(), LocalDateTime.now()));
             return new ResponseEntity<>("View was saved", HttpStatus.OK);
