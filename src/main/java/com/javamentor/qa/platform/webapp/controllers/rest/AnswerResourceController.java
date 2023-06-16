@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteAnswerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,8 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 
 import java.util.List;
@@ -29,14 +32,12 @@ public class AnswerResourceController {
 
     private final AnswerService answerService;
     private final AnswerDtoService answerDtoService;
-    private final ReputationService reputationService;
     private final VoteAnswerService voteAnswerService;
 
     @Autowired
-    public AnswerResourceController(AnswerService answerService,AnswerDtoService answerDtoService,ReputationService reputationService,VoteAnswerService voteAnswerService) {
+    public AnswerResourceController(AnswerService answerService,AnswerDtoService answerDtoService,VoteAnswerService voteAnswerService) {
         this.answerService = answerService;
         this.answerDtoService = answerDtoService;
-        this.reputationService = reputationService;
         this.voteAnswerService = voteAnswerService;
     }
 
@@ -72,32 +73,24 @@ public class AnswerResourceController {
     @ApiOperation(value = "Проголосовать за ответ", tags ="Upvote answer")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешно проголосовали за ответ!"),
-            @ApiResponse(code = 400, message = "Неверный запрос"),
+            @ApiResponse(code = 400, message = "Ответа с таким ID не существует"),
             @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
     @PostMapping("/{id}/upVote")
-    @Transactional
     public ResponseEntity<Long> upVoteAnswer(@PathVariable("id") Long answerId, @AuthenticationPrincipal User user) {
-        if (!voteAnswerService.hasUserAlreadyVoted(answerId, user.getId())) {
-            answerService.upVoteAnswer(answerId, user.getId());
-            reputationService.increaseAuthorReputation(answerService.getAnswerAuthorId(answerId));
-        }
+        voteAnswerService.upVoteAnswer(answerId, user.getId());
         return new ResponseEntity<>(voteAnswerService.totalVotesCount(answerId), HttpStatus.OK);
     }
 
     @ApiOperation(value = "Проголосовать против ответа", tags ="Downvote answer")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Успешно проголосовали против ответа!"),
-            @ApiResponse(code = 400, message = "Неверный запрос"),
+            @ApiResponse(code = 400, message = "Ответа с таким ID не существует"),
             @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
     @PostMapping("/{id}/downVote")
-    @Transactional
     public ResponseEntity<Long> downVoteAnswer(@PathVariable("id") Long answerId, @AuthenticationPrincipal User user) {
-        if (!voteAnswerService.hasUserAlreadyVoted(answerId,user.getId())) {
-            answerService.downVoteAnswer(answerId,user.getId());
-            reputationService.decreaseAuthorReputation(answerService.getAnswerAuthorId(answerId));
-        }
+        voteAnswerService.downVoteAnswer(answerId, user.getId());
         return new ResponseEntity<>(voteAnswerService.totalVotesCount(answerId), HttpStatus.OK);
     }
 }

@@ -6,9 +6,5 @@ public interface AnswerDao extends ReadWriteDao<Answer, Long> {
 
     Long countAnswerOfWeek(Long id);
 
-    void upVoteAnswer(Long id, Long userId);
-
-    void downVoteAnswer(Long id, Long userId);
-
     Long getAnswerAuthorId(Long answerId);
 }

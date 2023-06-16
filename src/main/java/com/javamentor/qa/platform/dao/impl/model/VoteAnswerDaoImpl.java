@@ -23,7 +23,7 @@ public class VoteAnswerDaoImpl extends ReadWriteDaoImpl<VoteAnswer, Long> implem
     }
 
     @Override
-    public Long totalVotesCount(Long answerId) {
+    public Long getTotalVotesCount(Long answerId) {
         Long upVotesCount = (Long) entityManager.createQuery("SELECT count(va) FROM VoteAnswer va WHERE va.vote = (:voteType) and va.answer.id = (:answerId)")
                 .setParameter("voteType", VoteType.UP_VOTE)
                 .setParameter("answerId", answerId)

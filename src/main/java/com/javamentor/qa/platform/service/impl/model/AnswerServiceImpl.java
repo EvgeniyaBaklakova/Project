@@ -30,16 +30,6 @@ public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implem
     }
 
     @Override
-    public void upVoteAnswer(Long id,Long userId) {
-        answerDao.upVoteAnswer(id, userId);
-    }
-
-    @Override
-    public void downVoteAnswer(Long id,Long userId) {
-        answerDao.downVoteAnswer(id, userId);
-    }
-
-    @Override
     public Long getAnswerAuthorId(Long answerId) {
         return answerDao.getAnswerAuthorId(answerId);
     }

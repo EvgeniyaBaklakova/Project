@@ -1,12 +1,13 @@
 package com.javamentor.qa.platform.dao.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.ReputationDao;
+import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Optional;
 
 @Repository
 public class ReputationDaoImpl extends ReadWriteDaoImpl<Reputation, Long> implements ReputationDao {
@@ -15,26 +16,15 @@ public class ReputationDaoImpl extends ReadWriteDaoImpl<Reputation, Long> implem
     EntityManager entityManager;
 
     @Override
-    public Integer getAuthorReputation(Long authorId) {
-        return (Integer) entityManager.createQuery("SELECT r.count From Reputation r where author.id = (:authorId)")
-                .setParameter("authorId", authorId).getSingleResult();
+    public Integer getAuthorReputationCount(Long authorId) {
+        return (Integer) entityManager.createQuery("SELECT r.count FROM Reputation r WHERE author.id = (:authorId)")
+                .setParameter("authorId", authorId)
+                .getSingleResult();
     }
 
     @Override
-    @Transactional
-    public void increaseAuthorReputation(Long authorId) {
-        entityManager.createQuery("UPDATE Reputation r SET r.count = (:newReputation) WHERE author.id = (:authorId)")
-                .setParameter("newReputation", getAuthorReputation(authorId) + 10)
-                .setParameter("authorId", authorId)
-                .executeUpdate();
-    }
-
-    @Override
-    @Transactional
-    public void decreaseAuthorReputation(Long authorId) {
-        entityManager.createQuery("UPDATE Reputation r SET r.count = (:newReputation) WHERE author.id = (:authorId)")
-                .setParameter("newReputation", getAuthorReputation(authorId) - 5)
-                .setParameter("authorId", authorId)
-                .executeUpdate();
+    public Optional<Reputation> getByAuthorId(Long authorId) {
+        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("SELECT r FROM Reputation r WHERE author.id = (:authorId)", Reputation.class)
+                .setParameter("authorId", authorId));
     }
 }
