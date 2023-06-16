@@ -18,7 +18,6 @@ import javax.persistence.PersistenceContext;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @DBRider
 @SpringBootTest(classes = JmApplication.class)
 @TestPropertySource(properties = {"spring.config.location = src/test/resources/application-test.properties"})
@@ -47,14 +46,7 @@ public abstract class AbstractTestApi {
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-
         USER_TOKEN = "Bearer " + USER_TOKEN.substring(USER_TOKEN.indexOf(":") + 2, USER_TOKEN.length() - 2);
         return  USER_TOKEN;
     }
-
-
-
-
-
-
 }

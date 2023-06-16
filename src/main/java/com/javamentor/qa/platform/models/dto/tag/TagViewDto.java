@@ -16,4 +16,10 @@ public class TagViewDto {
     private Long questionCount;
     private Long questionCountOneDay;
     private Long questionCountWeekDay;
+
+    public TagViewDto(Long id, String title, String description) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+    }
 }

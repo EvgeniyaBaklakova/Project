@@ -26,6 +26,9 @@ public class GroupChat{
     @MapsId
     private Chat chat = new Chat(ChatType.GROUP);
 
+    @Column(name = "isGlobal")
+    private Boolean isGlobal;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "groupchat_has_users",
             joinColumns = @JoinColumn(name = "chat_id"),
@@ -56,11 +59,12 @@ public class GroupChat{
         GroupChat groupChat = (GroupChat) o;
         return Objects.equals(id, groupChat.id) &&
                 Objects.equals(chat, groupChat.chat) &&
-                Objects.equals(users, groupChat.users);
+                Objects.equals(users, groupChat.users) &&
+                Objects.equals(isGlobal, groupChat.isGlobal);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chat, users);
+        return Objects.hash(id, chat, users, isGlobal);
     }
 }
