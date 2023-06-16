@@ -17,8 +17,9 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class GetAllQuestionsWithoutAnswersTest extends AbstractTestApi {
 
@@ -63,16 +64,9 @@ public class GetAllQuestionsWithoutAnswersTest extends AbstractTestApi {
     public void getAllEmptyQuestionsWithTrackedTags() throws Exception {
         String USER_TOKEN = getToken("myemail@mail.ru", "test");
 
-        String jsonBody = "{\"trackedTagList\":[" +
-                "{\"id\":401,\"title\":\"spring\"}," +
-                "{\"id\":402,\"title\":\"maven\"}," +
-                "{\"id\":403,\"title\":\"gradle\"}" +
-                "]," +
-                "\"ignoredTagList\": []}";
-
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer")
                         .header(AUTHORIZATION, "Bearer " + USER_TOKEN)
-                        .content(jsonBody)
+                        .param("trackedTag", "401", "402", "403")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -90,10 +84,10 @@ public class GetAllQuestionsWithoutAnswersTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[*].description", containsInAnyOrder("question6", "question9")))
                 .andExpect(jsonPath("$.items[*].viewCount", containsInAnyOrder(0, 1)))
                 .andExpect(jsonPath("$.items[*].countAnswer", containsInAnyOrder(0, 0)))
-                .andExpect(jsonPath("$.items[*].countValuable", containsInAnyOrder(0, 0)))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].id", containsInAnyOrder(401, 403, 404))) // here too
-                .andExpect(jsonPath("$.items[*].listTagDto[*].name", containsInAnyOrder("spring", "gradle", "hibernate"))) // and here
-                .andExpect(jsonPath("$.items[*].listTagDto[*].description", containsInAnyOrder("spring", "gradle", "hibernate"))) // and here
+                .andExpect(jsonPath("$.items[*].countValuable", containsInAnyOrder(0, 1)))
+                .andExpect(jsonPath("$.items[*].listTagDto[*].id", containsInAnyOrder(401, 403, 404)))
+                .andExpect(jsonPath("$.items[*].listTagDto[*].name", containsInAnyOrder("spring", "gradle", "hibernate")))
+                .andExpect(jsonPath("$.items[*].listTagDto[*].description", containsInAnyOrder("spring", "gradle", "hibernate")))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(2)));
     }
 
@@ -104,16 +98,9 @@ public class GetAllQuestionsWithoutAnswersTest extends AbstractTestApi {
     public void getAllEmptyQuestionsWithoutIgnoredTags() throws Exception {
         String USER_TOKEN = getToken("myemail@mail.ru", "test");
 
-        String jsonBody = "{\"trackedTagList\":[], " +
-                "\"ignoredTagList\":[" +
-                "{\"id\":401,\"title\":\"spring\"}," +
-                "{\"id\":402,\"title\":\"maven\"}," +
-                "{\"id\":403,\"title\":\"gradle\"}" +
-                "]}";
-
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer")
                         .header(AUTHORIZATION, "Bearer " + USER_TOKEN)
-                        .content(jsonBody)
+                        .param("ignoredTag", "401", "402", "403")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -131,10 +118,10 @@ public class GetAllQuestionsWithoutAnswersTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[*].description", containsInAnyOrder("question7", "question8")))
                 .andExpect(jsonPath("$.items[*].viewCount", containsInAnyOrder(0, 1)))
                 .andExpect(jsonPath("$.items[*].countAnswer", containsInAnyOrder(0, 0)))
-                .andExpect(jsonPath("$.items[*].countValuable", containsInAnyOrder(1, 1)))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].id", containsInAnyOrder(404, 404, 405))) // here too
-                .andExpect(jsonPath("$.items[*].listTagDto[*].name", containsInAnyOrder("hibernate", "hibernate", "mockito"))) // and here
-                .andExpect(jsonPath("$.items[*].listTagDto[*].description", containsInAnyOrder("hibernate", "hibernate", "mockito"))) // and here
+                .andExpect(jsonPath("$.items[*].countValuable", containsInAnyOrder(0, 1)))
+                .andExpect(jsonPath("$.items[*].listTagDto[*].id", containsInAnyOrder(404, 404, 405)))
+                .andExpect(jsonPath("$.items[*].listTagDto[*].name", containsInAnyOrder("hibernate", "hibernate", "mockito")))
+                .andExpect(jsonPath("$.items[*].listTagDto[*].description", containsInAnyOrder("hibernate", "hibernate", "mockito")))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(2)));
     }
 
@@ -145,20 +132,10 @@ public class GetAllQuestionsWithoutAnswersTest extends AbstractTestApi {
     public void getAllEmptyQuestionsWithTrackedTagsAndWithoutIgnoredTags() throws Exception {
         String USER_TOKEN = getToken("myemail@mail.ru", "test");
 
-        String jsonBody = "{\"trackedTagList\":[" +
-                "{\"id\":401,\"title\":\"spring\"}," +
-                "{\"id\":402,\"title\":\"maven\"}," +
-                "{\"id\":404,\"title\":\"hibernate\"}," +
-                "{\"id\":405,\"title\":\"mockito\"}" +
-                "]," +
-                "\"ignoredTagList\":[" +
-                "{\"id\":402,\"title\":\"maven\"}," +
-                "{\"id\":403,\"title\":\"gradle\"}" +
-                "]}";
-
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer")
                         .header(AUTHORIZATION, "Bearer " + USER_TOKEN)
-                        .content(jsonBody)
+                        .param("trackedTag", "401", "402", "404", "405")
+                        .param("ignoredTag", "402", "403")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -177,9 +154,9 @@ public class GetAllQuestionsWithoutAnswersTest extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[*].viewCount", containsInAnyOrder( 0, 1, 1)))
                 .andExpect(jsonPath("$.items[*].countAnswer", containsInAnyOrder(0, 0, 0)))
                 .andExpect(jsonPath("$.items[*].countValuable", containsInAnyOrder( 0, 1, 1)))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].id", containsInAnyOrder(401, 404, 404, 405))) // here too
-                .andExpect(jsonPath("$.items[*].listTagDto[*].name", containsInAnyOrder("spring", "hibernate", "hibernate", "mockito"))) // and here
-                .andExpect(jsonPath("$.items[*].listTagDto[*].description", containsInAnyOrder("spring","hibernate", "hibernate", "mockito"))) // and here
+                .andExpect(jsonPath("$.items[*].listTagDto[*].id", containsInAnyOrder(401, 404, 404, 405)))
+                .andExpect(jsonPath("$.items[*].listTagDto[*].name", containsInAnyOrder("spring", "hibernate", "hibernate", "mockito")))
+                .andExpect(jsonPath("$.items[*].listTagDto[*].description", containsInAnyOrder("spring","hibernate", "hibernate", "mockito")))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(3)));
     }
 

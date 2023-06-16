@@ -2,11 +2,9 @@ package com.javamentor.qa.platform.dao.impl.pagination;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.javamentor.qa.platform.dao.abstracts.pagination.QuestionDtoDaoWithoutAnswers;
+import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
-import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
-import com.javamentor.qa.platform.models.dto.tag.TrackedTagsDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import org.springframework.stereotype.Repository;
 
@@ -22,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Repository("QuestionDtoWithoutAnswersImpl")
 @SuppressWarnings({"unchecked"})
-public class QuestionDtoWithoutAnswersImpl implements QuestionDtoDaoWithoutAnswers<QuestionDto> {
+public class QuestionDtoWithoutAnswersImpl implements PageDtoDao<QuestionDto> {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -31,89 +29,17 @@ public class QuestionDtoWithoutAnswersImpl implements QuestionDtoDaoWithoutAnswe
     public List<QuestionDto> getItems(PaginationData properties) {
         int items = properties.getItemsOnPage();
         int offset = (properties.getCurrentPage() - 1) * items;
-        String firstQuery = "SELECT q.id, q.title, u.id, rep.count , u.fullName, u.imageLink, \n" +
-                "q.description, (SELECT COUNT(qv.user.id) FROM QuestionViewed qv WHERE qv.question.id = q.id) as viewCount," +
-                "count(a.id), (SELECT count(ufq.user.id) FROM UserFavoriteQuestion ufq WHERE ufq.question.id = q.id) \n" +
-                "as valuableCount, q.persistDateTime, q.lastUpdateDateTime\n" +
-                "FROM Question q \n" +
-                "LEFT JOIN User u on q.user.id = u.id \n" +
-                "LEFT JOIN Answer a on q.id = a.question.id \n" +
-                "LEFT JOIN Reputation rep on u.id = rep.author.id \n" +
-                "group by q.id, u.id, rep.count\n" +
-                "HAVING count(a.id) = 0\n" +
-                "ORDER BY q.id";
 
-
-        List<Object[]> results = entityManager.createQuery(firstQuery).setFirstResult(offset).setMaxResults(items).getResultList();
-
-        Multimap<Long, TagDto> questionTagMap = ArrayListMultimap.create();
-
-        List<Long> questionIds = results.stream()
-                .map(result -> (Long) result[0])
-                .collect(Collectors.toList());
-
-        if (!questionIds.isEmpty()) {
-            String secondQuery = "SELECT q.id, t.id, t.name, t.description, t.persistDateTime FROM Question q JOIN q.tags t WHERE q.id in :questionIds";
-            List<Object[]> tagResult = entityManager.createQuery(secondQuery)
-                    .setParameter("questionIds", questionIds)
-                    .getResultList();
-
-            for (Object[] result : tagResult) {
-                Long questionId = (Long) result[0];
-                Long tagId = (Long) result[1];
-                String tagName = (String) result[2];
-                String tagDescription = (String) result[3];
-                LocalDateTime tagPersistDate = (LocalDateTime) result[4];
-                TagDto tagDto = new TagDto(tagId, tagName, tagDescription, tagPersistDate);
-
-                questionTagMap.put(questionId, tagDto);
-            }
-        }
-
-        return results.stream()
-                .map(result -> {
-                    Long questionId = (Long) result[0];
-                    QuestionDto questionDTO = new QuestionDto(
-                            questionId,
-                            (String) result[1],
-                            (Long) result[2],
-                            ((Integer) result[3]).longValue(),
-                            (String) result[4],
-                            (String) result[5],
-                            (String) result[6],
-                            (Long) result[7],
-                            (Long) result[8],
-                            (Long) result[9],
-                            (LocalDateTime) result[10],
-                            (LocalDateTime) result[11]);
-                    questionDTO.setListTagDto(new ArrayList<>(questionTagMap.get(questionId)));
-                    return questionDTO;
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<QuestionDto> getItemsWithTags(PaginationData properties,List<IgnoredTagsDto> ignoredTagsDtoList,List<TrackedTagsDto> trackedTagsDtoList) {
-        int items = properties.getItemsOnPage();
-        int offset = (properties.getCurrentPage() - 1) * items;
-
-        List<Long> ignoredTagIds = new ArrayList<>();
-        if (ignoredTagsDtoList != null && !ignoredTagsDtoList.isEmpty() ) {
-            ignoredTagIds = ignoredTagsDtoList.stream().map(IgnoredTagsDto::getId).collect(Collectors.toList());
-        }
-
-        List<Long> trackedTagIds = new ArrayList<>();
-        if (trackedTagsDtoList != null && !trackedTagsDtoList.isEmpty()) {
-            trackedTagIds = trackedTagsDtoList.stream().map(TrackedTagsDto::getId).collect(Collectors.toList());
-        }
+        List<Long> ignoredTagIds = (List<Long>) properties.getProps().get("ignoredTags");
+        List<Long> trackedTagIds = (List<Long>) properties.getProps().get("trackedTags");
 
         String subQuery;
-        if (!trackedTagIds.isEmpty()) {
+        if (trackedTagIds != null) {
             subQuery = "SELECT q.id FROM Question q JOIN q.tags t WHERE t.id IN (:trackedTagIds)";
-            if (!ignoredTagIds.isEmpty()) {
+            if (ignoredTagIds != null) {
                 subQuery += " AND q.id NOT IN (SELECT q2.id FROM Question q2 JOIN q2.tags t2 WHERE t2.id IN (:ignoredTagIds))";
             }
-        } else if (!ignoredTagIds.isEmpty()) {
+        } else if (ignoredTagIds != null) {
             subQuery = "SELECT q.id FROM Question q WHERE q.id NOT IN (SELECT q2.id FROM Question q2 JOIN q2.tags t2 WHERE t2.id IN (:ignoredTagIds))";
         } else {
             subQuery = "SELECT q.id FROM Question q";
@@ -121,7 +47,7 @@ public class QuestionDtoWithoutAnswersImpl implements QuestionDtoDaoWithoutAnswe
 
         String mainQuery = "SELECT q.id, q.title, u.id, rep.count , u.fullName, u.imageLink, \n" +
                 "q.description, (SELECT COUNT(qv.user.id) FROM QuestionViewed qv WHERE qv.question.id = q.id) as viewCount," +
-                "count(a.id), (SELECT count(ufq.user.id) FROM UserFavoriteQuestion ufq WHERE ufq.question.id = q.id) \n" +
+                "count(a.id), (SELECT count(vq.id) FROM VoteQuestion vq WHERE vq.question.id = q.id and vote = 'UP_VOTE') \n" +
                 "as valuableCount, q.persistDateTime, q.lastUpdateDateTime\n" +
                 "FROM Question q \n" +
                 "LEFT JOIN User u on q.user.id = u.id \n" +
@@ -135,12 +61,12 @@ public class QuestionDtoWithoutAnswersImpl implements QuestionDtoDaoWithoutAnswe
                 .setFirstResult(offset)
                 .setMaxResults(items);
 
-        if (!ignoredTagIds.isEmpty() && !trackedTagIds.isEmpty()) {
+        if (ignoredTagIds != null && trackedTagIds != null) {
             query.setParameter("ignoredTagIds", ignoredTagIds)
                     .setParameter("trackedTagIds", trackedTagIds);
-        } else if (!ignoredTagIds.isEmpty()) {
+        } else if (ignoredTagIds != null) {
             query.setParameter("ignoredTagIds", ignoredTagIds);
-        } else if (!trackedTagIds.isEmpty()) {
+        } else if (trackedTagIds != null) {
             query.setParameter("trackedTagIds", trackedTagIds);
         }
 
@@ -192,36 +118,18 @@ public class QuestionDtoWithoutAnswersImpl implements QuestionDtoDaoWithoutAnswe
                 .collect(Collectors.toList());
     }
 
-
     @Override
     public Long getTotalResultCount(Map<String, Object> properties) {
-        String query = "SELECT COUNT(q.id)\n" +
-                "FROM Question q\n" +
-                "LEFT JOIN Answer a ON q.id = a.question.id\n" +
-                "WHERE a.question.id IS NULL";
-        return (Long) entityManager.createQuery(query).getSingleResult();
-    }
-
-
-    @Override
-    public Long getTotalResultCountWithTags(Map<String, Object> properties,List<IgnoredTagsDto> ignoredTagsDtoList,List<TrackedTagsDto> trackedTagsDtoList) {
-        List<Long> ignoredTagIds = new ArrayList<>();
-        if (ignoredTagsDtoList != null) {
-            ignoredTagIds = ignoredTagsDtoList.stream().map(IgnoredTagsDto::getId).collect(Collectors.toList());
-        }
-
-        List<Long> trackedTagIds = new ArrayList<>();
-        if (trackedTagsDtoList != null) {
-            trackedTagIds = trackedTagsDtoList.stream().map(TrackedTagsDto::getId).collect(Collectors.toList());
-        }
+        List<Long> ignoredTagIds = (List<Long>) properties.get("ignoredTags");
+        List<Long> trackedTagIds = (List<Long>) properties.get("trackedTags");
 
         String subQuery;
-        if (!trackedTagIds.isEmpty()) {
+        if (trackedTagIds != null) {
             subQuery = "SELECT q.id FROM Question q JOIN q.tags t WHERE t.id IN (:trackedTagIds)";
-            if (!ignoredTagIds.isEmpty()) {
+            if (ignoredTagIds != null) {
                 subQuery += " AND q.id NOT IN (SELECT q2.id FROM Question q2 JOIN q2.tags t2 WHERE t2.id IN (:ignoredTagIds))";
             }
-        } else if (!ignoredTagIds.isEmpty()) {
+        } else if (ignoredTagIds != null) {
             subQuery = "SELECT q.id FROM Question q WHERE q.id NOT IN (SELECT q2.id FROM Question q2 JOIN q2.tags t2 WHERE t2.id IN (:ignoredTagIds))";
         } else {
             subQuery = "SELECT q.id FROM Question q";
@@ -231,17 +139,16 @@ public class QuestionDtoWithoutAnswersImpl implements QuestionDtoDaoWithoutAnswe
 
         Query query = entityManager.createQuery(mainQuery);
 
-        if (!ignoredTagIds.isEmpty() && !trackedTagIds.isEmpty()) {
+        if (ignoredTagIds != null && trackedTagIds != null) {
             query.setParameter("ignoredTagIds", ignoredTagIds)
                     .setParameter("trackedTagIds", trackedTagIds);
-        } else if (!ignoredTagIds.isEmpty()) {
+        } else if (ignoredTagIds != null) {
             query.setParameter("ignoredTagIds", ignoredTagIds);
-        } else if (!trackedTagIds.isEmpty()) {
+        } else if (trackedTagIds != null) {
             query.setParameter("trackedTagIds", trackedTagIds);
         }
 
 
         return (Long) query.getSingleResult();
     }
-
 }
