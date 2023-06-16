@@ -24,6 +24,7 @@ public class UserDtoServiceImpl extends PageDtoServiceImpl<UserDto> implements U
 
     @Override
     public UserDto getById(long id) {
+        System.out.println("\n\nCURRENT ID: "+ id+"\n\n");
         return userDtoDao.getById(id).orElseThrow(UserNotFoundException::new);
     }
 
