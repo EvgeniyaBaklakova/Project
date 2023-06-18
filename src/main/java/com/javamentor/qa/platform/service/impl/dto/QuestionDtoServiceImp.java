@@ -90,6 +90,4 @@ public class QuestionDtoServiceImp extends PageDtoServiceImpl<QuestionDto> imple
                 .getQuestionId()).stream().map(TagQuestion::getTagDto).collect(Collectors.toList())));
         return userProfileQuestionDtoList;
     }
-
 }
-

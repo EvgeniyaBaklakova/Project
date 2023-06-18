@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Repository("QuestionDtoWithoutAnswersImpl")
+@Repository("QuestionDtoDaoWithoutAnswersImpl")
 public class QuestionDtoDaoWithoutAnswersImpl implements PageDtoDao<QuestionDto> {
 
     @PersistenceContext
@@ -25,20 +25,20 @@ public class QuestionDtoDaoWithoutAnswersImpl implements PageDtoDao<QuestionDto>
         int offset = (properties.getCurrentPage() - 1) * items;
 
         String mainQuery = "SELECT q.id, q.title, u.id, rep.count, u.fullName, u.imageLink,\n" +
-                "       q.description, (SELECT COUNT(qv.user.id) FROM QuestionViewed qv WHERE qv.question.id = q.id) AS viewCount,\n" +
-                "       COUNT(DISTINCT a.id) AS answerCount,\n" +
+                "       q.description, (SELECT COUNT(qv.user.id) FROM QuestionViewed qv WHERE qv.question.id = q.id),\n" +
+                "       COUNT(DISTINCT a.id),\n" +
                 "       SUM(CASE WHEN vq.vote = 'UP_VOTE' THEN 1 WHEN vq.vote = 'DOWN_VOTE' THEN -1 ELSE 0 END),\n" +
                 "       q.persistDateTime, q.lastUpdateDateTime\n" +
                 "FROM Question q\n" +
                 "LEFT JOIN User u ON q.user.id = u.id\n" +
                 "LEFT JOIN Reputation rep ON u.id = rep.author.id\n" +
                 "LEFT JOIN Answer a ON q.id = a.question.id\n" +
-                "LEFT JOIN VoteQuestion vq on q.id = vq.question.id\n"+
+                "LEFT JOIN VoteQuestion vq on q.id = vq.question.id\n" +
                 "WHERE a.id IS NULL\n" +
                 "GROUP BY q.id, u.id, rep.count\n" +
                 "ORDER BY q.id";
 
-        TypedQuery<Object[]> query = entityManager.createQuery(mainQuery, Object[].class)
+        TypedQuery<Object[]> query = entityManager.createQuery(mainQuery,Object[].class)
                 .setFirstResult(offset)
                 .setMaxResults(items);
 
