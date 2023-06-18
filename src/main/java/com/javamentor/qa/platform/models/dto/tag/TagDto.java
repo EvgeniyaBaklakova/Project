@@ -4,7 +4,6 @@ package com.javamentor.qa.platform.models.dto.tag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 
 @Getter
@@ -25,4 +24,11 @@ public class TagDto {
         this.description = description;
         this.persistDateTime = persistDateTime;
     }
+
+    public TagDto(Long id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
+
 }

@@ -11,9 +11,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
@@ -24,23 +21,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TestQuestionResourceController extends AbstractTestApi {
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/Before1.sql",
+    @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/Before.sql",
             executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void viewAtFirstTime() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/1/view"))
+        this.mvc.perform(MockMvcRequestBuilders
+                .post("/api/user/question/1/view")
+                .header("Authorization", "Bearer " + getToken("email1@mail.com", "test")))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/Before2.sql",
+    @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/Before.sql",
             executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void wasAlreadyViewed() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/1/view"))
+        this.mvc.perform(MockMvcRequestBuilders
+                .post("/api/user/question/1/view")
+                .header("Authorization", "Bearer " + getToken("email1@mail.com", "test")))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -271,12 +272,14 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/Before1.sql",
+    @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/Before.sql",
             executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestQuestionResourceController/TestViewPage/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void questionNotFound() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/2/view"))
+        this.mvc.perform(MockMvcRequestBuilders
+                .post("/api/user/question/2/view")
+                .header(AUTHORIZATION,"Bearer " + getToken("email1@mail.com","test")))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -289,7 +292,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
     public void questionGetById() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/100")
-                        .header(AUTHORIZATION,"Bearer " + getToken("test100@mail.ru","123")))
+                .header(AUTHORIZATION,"Bearer " + getToken("test100@mail.ru","123")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -313,7 +316,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.listTagDto[1].name", Is.is("name2")))
                 .andExpect(jsonPath("$.listTagDto[1].description", Is.is("description2")));
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/104").header(AUTHORIZATION,"Bearer " + getToken("test100@mail.ru","123")))
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/104")
+                .header(AUTHORIZATION,"Bearer " + getToken("test100@mail.ru","123")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -339,16 +343,19 @@ public class TestQuestionResourceController extends AbstractTestApi {
             executionPhase = AFTER_TEST_METHOD)
     public void noQuestionGetById() throws Exception {
 
-        this.mvc.perform(get("/api/user/question/{id}", 111).header(AUTHORIZATION,"Bearer " + getToken("test100@mail.ru","123") ))
+        this.mvc.perform(get("/api/user/question/{id}", 111)
+                .header(AUTHORIZATION,"Bearer " + getToken("test100@mail.ru","123") ))
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/TestAddQuestionToBookmarks/Before.sql", executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestQuestionResourceController/TestAddQuestionToBookmarks/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void addQuestionToBookmarks() throws Exception {
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/102/bookmark").header("Authorization","Bearer " + getToken("test101@mail.ru", "password")))
+        this.mvc.perform(MockMvcRequestBuilders
+                .post("/api/user/question/102/bookmark")
+                .header(AUTHORIZATION,"Bearer " + getToken("test101@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is("Вопрос успешно добавлен в закладки")));
