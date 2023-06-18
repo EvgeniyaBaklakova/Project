@@ -28,10 +28,4 @@ public class AnswerServiceImpl extends ReadWriteServiceImpl<Answer, Long> implem
     public Long countAnswerOfWeek(Long id) {
         return answerDao.countAnswerOfWeek(id);
     }
-
-    @Override
-    public Long getAnswerAuthorId(Long answerId) {
-        return answerDao.getAnswerAuthorId(answerId);
-    }
-
 }

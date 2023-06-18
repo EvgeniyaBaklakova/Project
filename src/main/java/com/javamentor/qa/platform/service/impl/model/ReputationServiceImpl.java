@@ -20,17 +20,6 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long
     }
 
     @Override
-    public Integer getAuthorReputationCount(Long authorId) {
-        return reputationDao.getAuthorReputationCount(authorId);
-    }
-
-    @Override
-    public Reputation getByAuthorId(Long authorId) {
-        return reputationDao.getByAuthorId(authorId).orElseThrow(() ->
-                new EntityNotFoundException("No entity found by author id: " + authorId));
-    }
-
-    @Override
     @Transactional
     public void increaseAuthorReputation(Long authorId) {
         if (authorId == null) {
@@ -57,6 +46,4 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long
         reputation.setCount(reputation.getCount() - 5);
         reputationDao.update(reputation);
     }
-
-
 }

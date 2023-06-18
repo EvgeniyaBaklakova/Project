@@ -31,29 +31,24 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
     }
 
     @Override
-    public boolean hasUserAlreadyVoted(Long answerId,Long userId) {
-        return voteAnswerDao.hasUserAlreadyVoted(answerId, userId);
-    }
-
-    @Override
     public Long totalVotesCount(Long answerId) {
         return voteAnswerDao.getTotalVotesCount(answerId);
     }
 
     @Override
     @Transactional
-    public void upVoteAnswer(Long answerId, Long userId) {
+    public void upVoteAnswer(Long answerId,Long userId) {
         if (answerId == null || userId == null) {
             throw new IllegalArgumentException("Answer ID or user ID cannot be null");
         }
 
-        if (!voteAnswerDao.hasUserAlreadyVoted(answerId, userId)) {
+        if (!voteAnswerDao.hasUserAlreadyVoted(answerId,userId)) {
             Answer answer = answerDao.getById(answerId)
                     .orElseThrow(() -> new EntityNotFoundException("Answer not found with ID " + answerId));
             User user = userDao.getById(userId)
                     .orElseThrow(() -> new EntityNotFoundException("User not found with ID " + userId));
 
-            voteAnswerDao.persist(new VoteAnswer(user, answer, VoteType.UP_VOTE));
+            voteAnswerDao.persist(new VoteAnswer(user,answer,VoteType.UP_VOTE));
 
             Long authorId = answerDao.getAnswerAuthorId(answerId);
             if (authorId != null) {
@@ -64,18 +59,18 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
 
     @Override
     @Transactional
-    public void downVoteAnswer(Long answerId, Long userId) {
+    public void downVoteAnswer(Long answerId,Long userId) {
         if (answerId == null || userId == null) {
             throw new IllegalArgumentException("Answer ID or user ID cannot be null");
         }
 
-        if (!voteAnswerDao.hasUserAlreadyVoted(answerId, userId)) {
+        if (!voteAnswerDao.hasUserAlreadyVoted(answerId,userId)) {
             Answer answer = answerDao.getById(answerId)
                     .orElseThrow(() -> new EntityNotFoundException("Answer not found with ID " + answerId));
             User user = userDao.getById(userId)
                     .orElseThrow(() -> new EntityNotFoundException("User not found with ID " + userId));
 
-            voteAnswerDao.persist(new VoteAnswer(user, answer, VoteType.DOWN_VOTE));
+            voteAnswerDao.persist(new VoteAnswer(user,answer,VoteType.DOWN_VOTE));
 
             Long authorId = answerDao.getAnswerAuthorId(answerId);
             if (authorId != null) {
