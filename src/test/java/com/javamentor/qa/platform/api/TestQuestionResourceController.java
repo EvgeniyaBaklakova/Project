@@ -359,10 +359,18 @@ public class TestQuestionResourceController extends AbstractTestApi {
             executionPhase = AFTER_TEST_METHOD)
 
     public void getAllEmptyQuestionsTagsDoNotMatter() throws Exception {
-        String USER_TOKEN = getToken("myemail@mail.ru", "test");
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post("/api/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\" : \"myemail@mail.ru\", \"password\" : \"test\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer")
-                        .header(AUTHORIZATION, "Bearer " + USER_TOKEN)
+                        .header(AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -392,10 +400,18 @@ public class TestQuestionResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/TestGetAllQuestionsWithoutAnswers/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void getAllEmptyQuestionsWithTrackedTags() throws Exception {
-        String USER_TOKEN = getToken("myemail@mail.ru", "test");
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post("/api/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\" : \"myemail@mail.ru\", \"password\" : \"test\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer")
-                        .header(AUTHORIZATION, "Bearer " + USER_TOKEN)
+                        .header(AUTHORIZATION, "Bearer " + token)
                         .param("trackedTag", "401", "402", "403")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -426,10 +442,18 @@ public class TestQuestionResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/TestGetAllQuestionsWithoutAnswers/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void getAllEmptyQuestionsWithoutIgnoredTags() throws Exception {
-        String USER_TOKEN = getToken("myemail@mail.ru", "test");
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post("/api/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\" : \"myemail@mail.ru\", \"password\" : \"test\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer")
-                        .header(AUTHORIZATION, "Bearer " + USER_TOKEN)
+                        .header(AUTHORIZATION, "Bearer " + token)
                         .param("ignoredTag", "401", "402", "403")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -460,10 +484,18 @@ public class TestQuestionResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestQuestionResourceController/TestGetAllQuestionsWithoutAnswers/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void getAllEmptyQuestionsWithTrackedTagsAndWithoutIgnoredTags() throws Exception {
-        String USER_TOKEN = getToken("myemail@mail.ru", "test");
+        MvcResult result = mvc.perform(MockMvcRequestBuilders
+                        .post("/api/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"email\" : \"myemail@mail.ru\", \"password\" : \"test\"}"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/noAnswer")
-                        .header(AUTHORIZATION, "Bearer " + USER_TOKEN)
+                        .header(AUTHORIZATION, "Bearer " + token)
                         .param("trackedTag", "401", "402", "404", "405")
                         .param("ignoredTag", "402", "403")
                         .contentType(MediaType.APPLICATION_JSON))
