@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
-import com.javamentor.qa.platform.dao.impl.pagination.QuestionDtoWithoutAnswersImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionDtoDaoWithoutAnswersImpl;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
@@ -143,7 +143,7 @@ public class QuestionResourceController {
             map.put("ignoredTags", ignoredTag);
         }
 
-        PaginationData data = new PaginationData(page, items, QuestionDtoWithoutAnswersImpl.class.getSimpleName());
+        PaginationData data = new PaginationData(page, items, QuestionDtoDaoWithoutAnswersImpl.class.getSimpleName());
         data.setProps(map);
 
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);

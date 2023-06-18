@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Repository("QuestionDtoWithoutAnswersImpl")
-public class QuestionDtoWithoutAnswersImpl implements PageDtoDao<QuestionDto> {
+public class QuestionDtoDaoWithoutAnswersImpl implements PageDtoDao<QuestionDto> {
 
     @PersistenceContext
     private EntityManager entityManager;
