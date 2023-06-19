@@ -18,7 +18,7 @@ public class QuestionDto {
     private Long id;
     private String title;
     private Long authorId;
-    private Long authorReputation;
+    private Integer authorReputation;
     private String authorName;
     private String authorImage;
     private String description;
@@ -29,7 +29,7 @@ public class QuestionDto {
     private LocalDateTime lastUpdateDateTime;
     private List<TagDto> listTagDto;
 
-    public QuestionDto(Long id, String title, Long authorId, Long authorReputation, String authorName, String authorImage, String description, Long viewCount, Long countAnswer, Long countValuable, LocalDateTime persistDateTime, LocalDateTime lastUpdateDateTime) {
+    public QuestionDto(Long id, String title, Long authorId, Integer authorReputation, String authorName, String authorImage, String description, Long viewCount, Long countAnswer, Long countValuable, LocalDateTime persistDateTime, LocalDateTime lastUpdateDateTime) {
         this.id = id;
         this.title = title;
         this.authorId = authorId;

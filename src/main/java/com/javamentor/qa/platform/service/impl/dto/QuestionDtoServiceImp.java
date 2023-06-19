@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.service.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
+import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.TagQuestion;
@@ -15,12 +16,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class QuestionDtoServiceImp implements QuestionDtoService {
+public class QuestionDtoServiceImp extends PageDtoServiceImpl<QuestionDto> implements QuestionDtoService {
     private final TagDtoDao tagDtoDao;
     private final QuestionDtoDao questionDtoDao;
 
 
-    public QuestionDtoServiceImp(TagDtoDao tagDtoDao, QuestionDtoDao questionDtoDao) {
+    public QuestionDtoServiceImp(TagDtoDao tagDtoDao, QuestionDtoDao questionDtoDao, Map<String, PageDtoDao<QuestionDto>> daoMap) {
+        super(daoMap);
         this.tagDtoDao = tagDtoDao;
         this.questionDtoDao = questionDtoDao;
 
