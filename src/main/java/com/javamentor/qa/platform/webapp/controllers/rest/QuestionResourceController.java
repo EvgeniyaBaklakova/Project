@@ -113,7 +113,7 @@ public class QuestionResourceController {
 
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/tag/{id}")
     @ApiOperation(value = "Получение QuestionDto по TagId", tags = {"Получение QuestionDto"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
@@ -123,10 +123,9 @@ public class QuestionResourceController {
 
     public ResponseEntity<?> getQuestionDtoByTagId(@RequestParam(defaultValue = "1") Integer page,
                                                    @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage, @PathVariable Long id) {
-        PaginationData data = new PaginationData(page,itemsOnPage,
-                TagPageDtoDaoByDateImpl.class.getSimpleName());
-        return null;
-        new ResponseEntity<>(questionDtoService.getQuestionDtoByTagId(id),HttpStatus.OK);
+//        PaginationData data = new PaginationData(page,itemsOnPage,
+//                TagPageDtoDaoByDateImpl.class.getSimpleName());
+        return new ResponseEntity<>(questionDtoService.getQuestionDtoByTagId(id),HttpStatus.OK);
     }
 
     @PostMapping("/{id}/bookmark")

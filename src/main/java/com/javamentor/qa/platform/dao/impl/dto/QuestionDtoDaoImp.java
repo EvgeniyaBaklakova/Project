@@ -19,17 +19,21 @@ public class QuestionDtoDaoImp implements QuestionDtoDao {
     private EntityManager entityManager;
 
     public List<QuestionDto> getQuestionDtoByTagId(Long id) {
-        String hql = "SELECT new com.javamentor.qa.platform.models.dto.QuestionDto(q.id, q.title, q.user.id, q.user.reputation, q.user.name, q.user.image, q.description, " +
+        String hql = "SELECT new com.javamentor.qa.platform.models.dto.QuestionDto(" +
+                "q.id, " +
+                "q.title, " +
+                "q.user.id, " +
+                "r.authorReputation" +
+                //"q.user.reputation, " +
+                "q.user.name, " +
+                "q.user.image, " +
+                "q.description, " +
                 "COUNT(DISTINCT qv) as viewCount, " +
                 "COUNT(DISTINCT a) as countAnswer, " +
                 "COUNT(DISTINCT v) as countValuable, " +
-                "q.persistDateTime, q.lastUpdateDateTime) " +
-                "FROM Question q " +
-                "JOIN q.tags t " +
-                "LEFT JOIN q.viewQuestions qv " +
-                "LEFT JOIN q.answers a " +
-                "LEFT JOIN q.voteQuestions v " +
-                "WHERE t.id = :tagId " +
+                "q.persistDateTime, " +
+                "q.lastUpdateDateTime) " +
+                "FROM Question q JOIN q.tags t LEFT JOIN q.answers a LEFT JOIN q.voteQuestions v WHERE t.id = :tagId " +
                 "GROUP BY q.id";
 
         List<QuestionDto> questionDto = entityManager.createQuery(hql, QuestionDto.class)
@@ -37,6 +41,16 @@ public class QuestionDtoDaoImp implements QuestionDtoDao {
                 .getResultList();
         return questionDto;
     }
+//    "SELECT new com.javamentor.qa.platform.models.dto.QuestionDto(q.id, q.title, q.user.id, q.user.reputation," +
+//            " q.user.name, q.user.image, q.description, " +
+//            "(select count (qw.question.id) from QuestionViewed qw where qw.question.id = q.id), " +
+//            "(select count (a.question.id) from Answer a where a.question.id = q.id), " +
+//            "(select count(vq.question.id) from VoteQuestion vq where vq.question.id = :id and vq.vote = 'up') - " +
+//            "(select count(vq.question.id) from VoteQuestion vq where vq.question.id = :id and vq.vote = 'down'), " +
+//            "q.persistDateTime, " +
+//            "q.lastUpdateDateTime) " +
+
+
 
     @Override
     public Optional<QuestionDto> getQuestionDtoById(Long id) {
