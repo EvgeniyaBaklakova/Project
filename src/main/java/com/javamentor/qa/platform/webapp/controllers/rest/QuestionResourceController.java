@@ -122,11 +122,11 @@ public class QuestionResourceController {
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
 
     public ResponseEntity<?> getQuestionDtoByTagId(@RequestParam(defaultValue = "1") Integer page,
-                                                   @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage, @PathVariable String id) {
+                                                   @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage, @PathVariable Long id) {
         PaginationData data = new PaginationData(page,itemsOnPage,
                 TagPageDtoDaoByDateImpl.class.getSimpleName());
         return null;
-        //new ResponseEntity<>(questionDtoService.(id),HttpStatus.OK)
+        new ResponseEntity<>(questionDtoService.getQuestionDtoByTagId(id),HttpStatus.OK);
     }
 
     @PostMapping("/{id}/bookmark")
