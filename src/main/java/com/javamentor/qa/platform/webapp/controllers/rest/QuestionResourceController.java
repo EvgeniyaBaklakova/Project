@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
+import com.javamentor.qa.platform.exception.UserNotFoundException;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
@@ -21,7 +22,9 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -59,19 +63,17 @@ public class QuestionResourceController {
     }
 
     @PostMapping("/{id}/view")
-    public ResponseEntity addView(@PathVariable("id") long id) {
+    public ResponseEntity addView(@PathVariable("id") long id, @AuthenticationPrincipal User user) {
         Optional<Question> question = questionService.getById(id);
         if (question.isEmpty()) {
             return new ResponseEntity<>("Incorrect question id", HttpStatus.NOT_FOUND);
         }
-        User user = userService.getById(1L).get();
         if (!questionViewedService.isViewed(user.getId(), id)) {
             questionViewedService.persist(new QuestionViewed(user, question.get(), LocalDateTime.now()));
             return new ResponseEntity<>("View was saved", HttpStatus.OK);
         }
         return new ResponseEntity<>("Already viewed", HttpStatus.OK);
     }
-
     @ApiOperation(value = "Добавляет новый Question и возвращает QuestionDto")
     @PostMapping
     public ResponseEntity<QuestionDto> addQuestion(@RequestBody @Valid QuestionCreateDto questionToCreate,
