@@ -1,13 +1,14 @@
 package com.javamentor.qa.platform.dao.impl.pagination;
 
-import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
+import com.javamentor.qa.platform.dao.impl.pagination.transformers.QuestionDtoResultTransformer;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.List;
 import java.util.Map;
 
@@ -17,11 +18,6 @@ public class QuestionPageDtoDaoAllImpl implements PageDtoDao<QuestionDto> {
     @PersistenceContext
     private EntityManager entityManager;
 
-    private final TagDtoDao tagDtoDao;
-
-    public QuestionPageDtoDaoAllImpl(TagDtoDao tagDtoDao) {
-        this.tagDtoDao = tagDtoDao;
-    }
 
     @Override
     public List<QuestionDto> getItems(PaginationData properties) {
@@ -30,95 +26,97 @@ public class QuestionPageDtoDaoAllImpl implements PageDtoDao<QuestionDto> {
         int items = properties.getItemsOnPage();
         int offset = (properties.getCurrentPage() - 1) * items;
 
-        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.question.QuestionDto(q.id, q.title, q.user.id," +
-                "(Select r.count FROM Reputation r JOIN r.author as ra Where ra.id = q.user.id), q.user.fullName, q.user.imageLink, q.description," +
-                "(select count(qv.id) from QuestionViewed qv JOIN qv.question as qvq WHERE qvq.id = q.id)," +
-                "(select count(a.id) from Answer a JOIN a.question as aq WHERE aq.id = q.id)," +
-                "(select count(vq.id) from VoteQuestion vq JOIN vq.question as vqq WHERE vqq.id = q.id)," +
-                "q.persistDateTime, q.lastUpdateDateTime) FROM Question q";
 
-        String testHql = "Select q.id FROM Question q JOIN q.tags as qt Where qt.name <> 'Name1'";
-        String testHql1 = "(Select r.count FROM Reputation r JOIN r.question as rq Where rq.id = q.id)";
-
-        List<QuestionDto> result;
-        if (trackedTag != null) {
-            hql += " WHERE q.id in (select q.id from Question q JOIN q.tags as qt WHERE qt.name in (:tt))";
-            if (ignoredTag != null) {
-                hql += " AND q.id not in (select q.id from Question q JOIN q.tags as qt WHERE qt.name in (:it))";
-                result = entityManager.createQuery(hql)
-                        .setFirstResult(offset)
-                        .setMaxResults(items)
-                        .setParameter("tt", trackedTag)
-                        .setParameter("it", ignoredTag)
-                        .getResultList();
-            } else {
-                result = entityManager.createQuery(hql)
-                        .setFirstResult(offset)
-                        .setMaxResults(items)
-                        .setParameter("tt", trackedTag)
-                        .getResultList();
-            }
+        String hql;
+        if (trackedTag != null & ignoredTag != null) {
+            hql = "SELECT q.id as q_id, q.title as q_title, q.user.id as user_id," +
+                    "cast((Select r.count FROM Reputation r JOIN r.author as ra Where ra.id = q.user.id) as java.lang.Long) as rep, q.user.fullName as u_name, q.user.imageLink as img, q.description as desc," +
+                    "(select count(qv.id) from QuestionViewed qv JOIN qv.question as qvq WHERE qvq.id = q.id) as vc," +
+                    "(select count(a.id) from Answer a JOIN a.question as aq WHERE aq.id = q.id) as ac," +
+                    "(select count(vq.id) from VoteQuestion vq JOIN vq.question as vqq WHERE vqq.id = q.id) as valc," +
+                    "q.persistDateTime as pdt, q.lastUpdateDateTime as udt, qt.id as t_id, qt.name as t_name, qt.description as t_desc, qt.persistDateTime as t_dt FROM Question q Join q.tags as qt" +
+                    " WHERE q.id in (select q.id from Question q JOIN q.tags as qt WHERE qt.name in (:tt))" +
+                    " AND q.id not in (select q.id from Question q JOIN q.tags as qt WHERE qt.name in (:it))";
         } else {
-            if (ignoredTag != null) {
-                hql += " WHERE q.id not in (select q.id from Question q JOIN q.tags as qt WHERE qt.name in (:it))";
-                result = entityManager.createQuery(hql)
-                        .setFirstResult(offset)
-                        .setMaxResults(items)
-                        .setParameter("it", ignoredTag)
-                        .getResultList();
-            } else {
-                result = entityManager.createQuery(hql)
-                        .setFirstResult(offset)
-                        .setMaxResults(items)
-                        .getResultList();
-            }
+            hql = "SELECT q.id as q_id, q.title as q_title, q.user.id as user_id," +
+                    "cast((Select r.count FROM Reputation r JOIN r.author as ra Where ra.id = q.user.id) as java.lang.Long) as rep, q.user.fullName as u_name, q.user.imageLink as img, q.description as desc," +
+                    "(select count(qv.id) from QuestionViewed qv JOIN qv.question as qvq WHERE qvq.id = q.id) as vc," +
+                    "(select count(a.id) from Answer a JOIN a.question as aq WHERE aq.id = q.id) as ac," +
+                    "(select count(vq.id) from VoteQuestion vq JOIN vq.question as vqq WHERE vqq.id = q.id) as valc," +
+                    "q.persistDateTime as pdt, q.lastUpdateDateTime as udt, qt.id as t_id, qt.name as t_name, qt.description as t_desc, qt.persistDateTime as t_dt FROM Question q Join q.tags as qt";
         }
 
-
-
-        Long id;
-        for (QuestionDto dto:
-                result) {
-            id = dto.getId();
-            dto.setListTagDto(tagDtoDao.getTagsByQuestionId(id));
+        if (trackedTag != null & ignoredTag == null) {
+            hql = "SELECT q.id as q_id, q.title as q_title, q.user.id as user_id," +
+                    "cast((Select r.count FROM Reputation r JOIN r.author as ra Where ra.id = q.user.id) as java.lang.Long) as rep, q.user.fullName as u_name, q.user.imageLink as img, q.description as desc," +
+                    "(select count(qv.id) from QuestionViewed qv JOIN qv.question as qvq WHERE qvq.id = q.id) as vc," +
+                    "(select count(a.id) from Answer a JOIN a.question as aq WHERE aq.id = q.id) as ac," +
+                    "(select count(vq.id) from VoteQuestion vq JOIN vq.question as vqq WHERE vqq.id = q.id) as valc," +
+                    "q.persistDateTime as pdt, q.lastUpdateDateTime as udt, qt.id as t_id, qt.name as t_name, qt.description as t_desc, qt.persistDateTime as t_dt FROM Question q Join q.tags as qt" +
+                    " WHERE q.id in (select q.id from Question q JOIN q.tags as qt WHERE qt.name in (:tt))";
         }
-        return result;
 
+        if (trackedTag == null & ignoredTag != null) {
+            hql = "SELECT q.id as q_id, q.title as q_title, q.user.id as user_id," +
+                    "cast((Select r.count FROM Reputation r JOIN r.author as ra Where ra.id = q.user.id) as java.lang.Long) as rep, q.user.fullName as u_name, q.user.imageLink as img, q.description as desc," +
+                    "(select count(qv.id) from QuestionViewed qv JOIN qv.question as qvq WHERE qvq.id = q.id) as vc," +
+                    "(select count(a.id) from Answer a JOIN a.question as aq WHERE aq.id = q.id) as ac," +
+                    "(select count(vq.id) from VoteQuestion vq JOIN vq.question as vqq WHERE vqq.id = q.id) as valc," +
+                    "q.persistDateTime as pdt, q.lastUpdateDateTime as udt, qt.id as t_id, qt.name as t_name, qt.description as t_desc, qt.persistDateTime as t_dt FROM Question q Join q.tags as qt" +
+                    " WHERE q.id not in (select q.id from Question q JOIN q.tags as qt WHERE qt.name in (:it))";
+        }
+
+        Query query = entityManager.createQuery(hql)
+                .setFirstResult(offset)
+                .setMaxResults(items)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new QuestionDtoResultTransformer());
+        if (trackedTag != null) {
+            query.setParameter("tt", trackedTag);
+        }
+
+        if (ignoredTag != null) {
+            query.setParameter("it", ignoredTag);
+        }
+
+        return query.getResultList();
 
     }
 
     @Override
     public Long getTotalResultCount(Map<String, Object> properties) {
         String hql = "select count(q.id) from Question q";
-        Long result;
         List<String> trackedTag = (List<String>) properties.get("trackedTag");
         List<String> ignoredTag = (List<String>) properties.get("ignoredTag");
 
-        if (trackedTag != null) {
-            hql += " WHERE q.id in (select q.id from Question q JOIN q.tags as qt WHERE qt.name in (:tt))";
-            if (ignoredTag != null) {
-                hql += " AND q.id not in (select q.id from Question q JOIN q.tags as qt WHERE qt.name in (:it))";
-                result = (Long) entityManager.createQuery(hql)
-                        .setParameter("tt", trackedTag)
-                        .setParameter("it", ignoredTag)
-                        .getSingleResult();
-            } else {
-                result = (Long) entityManager.createQuery(hql)
-                        .setParameter("tt", trackedTag)
-                        .getSingleResult();
-            }
+        if (trackedTag != null & ignoredTag != null) {
+            hql = "SELECT COUNT(q.id) FROM Question q" +
+                    " WHERE q.id in (select q.id from Question q JOIN q.tags as qt WHERE qt.name in (:tt))" +
+                    " AND q.id not in (select q.id from Question q JOIN q.tags as qt WHERE qt.name in (:it))";
         } else {
-            if (ignoredTag != null) {
-                hql += " WHERE q.id not in (select q.id from Question q JOIN q.tags as qt WHERE qt.name in (:it))";
-                result = (Long) entityManager.createQuery(hql)
-                        .setParameter("it", ignoredTag)
-                        .getSingleResult();
-            } else {
-                result = (Long) entityManager.createQuery(hql)
-                        .getSingleResult();
-            }
+            hql = "SELECT COUNT(q.id) FROM Question q";
         }
 
-        return result;
+        if (trackedTag != null & ignoredTag == null) {
+            hql = "SELECT COUNT(q.id) FROM Question q" +
+                    " WHERE q.id in (select q.id from Question q JOIN q.tags as qt WHERE qt.name in (:tt))";
+        }
+
+        if (trackedTag == null & ignoredTag != null) {
+            hql = "SELECT COUNT(q.id) FROM Question q" +
+                    " WHERE q.id not in (select q.id from Question q JOIN q.tags as qt WHERE qt.name in (:it))";
+        }
+
+        Query query = entityManager.createQuery(hql);
+
+        if (trackedTag != null) {
+            query.setParameter("tt", trackedTag);
+        }
+
+        if (ignoredTag != null) {
+            query.setParameter("it", ignoredTag);
+        }
+
+        return (Long) query.getSingleResult();
     }
 }
