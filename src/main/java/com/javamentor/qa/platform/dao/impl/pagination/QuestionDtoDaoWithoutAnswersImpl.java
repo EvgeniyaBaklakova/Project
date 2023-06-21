@@ -7,11 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Repository("QuestionDtoDaoWithoutAnswersImpl")
 public class QuestionDtoDaoWithoutAnswersImpl implements PageDtoDao<QuestionDto> {
@@ -24,45 +21,22 @@ public class QuestionDtoDaoWithoutAnswersImpl implements PageDtoDao<QuestionDto>
         int items = properties.getItemsOnPage();
         int offset = (properties.getCurrentPage() - 1) * items;
 
-        String mainQuery = "SELECT q.id, q.title, u.id, rep.count, u.fullName, u.imageLink,\n" +
-                "       q.description, (SELECT COUNT(qv.user.id) FROM QuestionViewed qv WHERE qv.question.id = q.id),\n" +
-                "       COUNT(DISTINCT a.id),\n" +
-                "       SUM(CASE WHEN vq.vote = 'UP_VOTE' THEN 1 WHEN vq.vote = 'DOWN_VOTE' THEN -1 ELSE 0 END),\n" +
-                "       q.persistDateTime, q.lastUpdateDateTime\n" +
-                "FROM Question q\n" +
-                "LEFT JOIN User u ON q.user.id = u.id\n" +
-                "LEFT JOIN Reputation rep ON u.id = rep.author.id\n" +
-                "LEFT JOIN Answer a ON q.id = a.question.id\n" +
-                "LEFT JOIN VoteQuestion vq on q.id = vq.question.id\n" +
-                "WHERE a.id IS NULL\n" +
-                "GROUP BY q.id, u.id, rep.count\n" +
+        String query = "SELECT NEW com.javamentor.qa.platform.models.dto.question.QuestionDto(q.id, q.title, u.id," +
+                "CAST(rep.count as long), u.fullName, u.imageLink, q.description, " +
+                "(SELECT CAST(COUNT(qv.user.id) as long) FROM QuestionViewed qv WHERE qv.question.id = q.id), " +
+                "COUNT(DISTINCT a.id), " +
+                "SUM(CASE WHEN vq.vote = 'UP_VOTE' THEN 1 WHEN vq.vote = 'DOWN_VOTE' THEN -1 ELSE 0 END), " +
+                "q.persistDateTime, q.lastUpdateDateTime) " +
+                "FROM Question q " +
+                "LEFT JOIN User u ON q.user.id = u.id " +
+                "LEFT JOIN Reputation rep ON u.id = rep.author.id " +
+                "LEFT JOIN Answer a ON q.id = a.question.id " +
+                "LEFT JOIN VoteQuestion vq on q.id = vq.question.id " +
+                "WHERE a.id IS NULL " +
+                "GROUP BY q.id, u.id, rep.count " +
                 "ORDER BY q.id";
 
-        TypedQuery<Object[]> query = entityManager.createQuery(mainQuery,Object[].class)
-                .setFirstResult(offset)
-                .setMaxResults(items);
-
-
-        List<Object[]> results = query.getResultList();
-
-        return results.stream()
-                .map(result -> {
-                    Long questionId = (Long) result[0];
-                    return new QuestionDto(
-                            questionId,
-                            (String) result[1],
-                            (Long) result[2],
-                            ((Integer) result[3]).longValue(),
-                            (String) result[4],
-                            (String) result[5],
-                            (String) result[6],
-                            (Long) result[7],
-                            (Long) result[8],
-                            (Long) result[9],
-                            (LocalDateTime) result[10],
-                            (LocalDateTime) result[11]);
-                })
-                .collect(Collectors.toList());
+        return entityManager.createQuery(query, QuestionDto.class).setFirstResult(offset).setMaxResults(items).getResultList();
     }
 
     @Override

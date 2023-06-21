@@ -1,9 +1,11 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
-import com.javamentor.qa.platform.exception.UserNotFoundException;
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionDtoDaoWithoutAnswersImpl;
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
@@ -13,7 +15,6 @@ import com.javamentor.qa.platform.service.abstracts.model.BookMarksService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converter.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,19 +23,20 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Api(value = "QuestionResource controller", tags = "Контроллер QuestionResource")
@@ -45,19 +47,17 @@ public class QuestionResourceController {
     private final QuestionService questionService;
     private final QuestionDtoService questionDtoService;
     private final QuestionViewedService questionViewedService;
-    private final UserService userService;
     private final CommentQuestionService commentQuestionService;
     private final QuestionConverter questionConverter;
 
     @Autowired
     public QuestionResourceController(BookMarksService bookMarksService, QuestionViewedService questionViewedService,
-                                      QuestionService questionService, UserService userService, CommentQuestionService commentQuestionService,
+                                      QuestionService questionService, CommentQuestionService commentQuestionService,
                                       QuestionConverter questionConverter, QuestionDtoService questionDtoService) {
         this.bookMarksService = bookMarksService;
         this.questionService = questionService;
         this.questionDtoService = questionDtoService;
         this.questionViewedService = questionViewedService;
-        this.userService = userService;
         this.commentQuestionService = commentQuestionService;
         this.questionConverter = questionConverter;
     }
@@ -129,5 +129,31 @@ public class QuestionResourceController {
                                                          @AuthenticationPrincipal User user) {
         bookMarksService.addBookMarks(user, id);
         return ResponseEntity.ok("Вопрос успешно добавлен в закладки");
+    }
+
+    @ApiOperation(value = "Получение всех QuestionDto, на которые нет ответов")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Вопросы успешно получены"),
+            @ApiResponse(code = 400, message = "Некорректный запрос"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен"),
+            @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")})
+    @GetMapping("/noAnswer")
+    public ResponseEntity<PageDto<QuestionDto>> getAllQuestionsWithoutAnswers(@RequestParam(defaultValue = "1") Integer page,
+                                                                              @RequestParam(required = false, defaultValue = "10") Integer items,
+                                                                              @RequestParam(required = false) List<Long> trackedTag,
+                                                                              @RequestParam(required = false) List<Long> ignoredTag) {
+        Map<String, Object> map = new HashMap<>();
+        if (trackedTag != null) {
+            map.put("trackedTags", trackedTag);
+        }
+        if (ignoredTag != null) {
+            map.put("ignoredTags", ignoredTag);
+        }
+
+        PaginationData data = new PaginationData(page, items, QuestionDtoDaoWithoutAnswersImpl.class.getSimpleName());
+        data.setProps(map);
+
+        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
 }
