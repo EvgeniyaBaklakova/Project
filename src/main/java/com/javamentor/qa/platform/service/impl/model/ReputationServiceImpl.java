@@ -42,8 +42,8 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long
 
         Reputation reputation = reputationDao.getByAuthorId(authorId).orElseThrow(() ->
                 new EntityNotFoundException("No entity found by author id: " + authorId));
-
-        reputation.setCount(reputation.getCount() - 5);
+        reputation.setCount(reputation.getCount() - count);
+        reputation.setQuestion(null);
         reputationDao.update(reputation);
     }
 }

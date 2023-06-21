@@ -58,11 +58,11 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
 
         if (voteType.isEmpty() && authorId != null) {
             voteAnswerDao.persist(new VoteAnswer(user,answer,VoteType.UP_VOTE));
-            reputationService.increaseAuthorReputation(authorId, +10);
+            reputationService.increaseAuthorReputation(authorId, 10);
         } else if (voteType.isPresent() && voteType.get().equals(VoteType.DOWN_VOTE) && authorId != null) {
             VoteAnswer voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(answerId, userId).orElseThrow();
             voteAnswer.setVote(VoteType.UP_VOTE);
-            reputationService.increaseAuthorReputation(authorId, +15);
+            reputationService.increaseAuthorReputation(authorId, 15);
         }
     }
 
@@ -83,11 +83,11 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
 
         if (voteType.isEmpty() && authorId != null) {
             voteAnswerDao.persist(new VoteAnswer(user,answer,VoteType.DOWN_VOTE));
-            reputationService.increaseAuthorReputation(authorId, -5);
+            reputationService.decreaseAuthorReputation(authorId, 5);
         } else if (voteType.isPresent() && voteType.get().equals(VoteType.UP_VOTE) && authorId != null) {
             VoteAnswer voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(answerId, userId).orElseThrow();
             voteAnswer.setVote(VoteType.DOWN_VOTE);
-            reputationService.increaseAuthorReputation(authorId, -15);
+            reputationService.decreaseAuthorReputation(authorId, 15);
         }
     }
 }
