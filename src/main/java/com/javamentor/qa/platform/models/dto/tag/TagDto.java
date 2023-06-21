@@ -4,7 +4,6 @@ package com.javamentor.qa.platform.models.dto.tag;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.time.LocalDateTime;
 
 @Getter
