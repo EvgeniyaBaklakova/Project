@@ -1,14 +1,18 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import com.javamentor.qa.platform.dao.abstracts.model.VoteAnswerDao;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -16,6 +20,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class TestAnswerResourceController extends AbstractTestApi {
+
+    @Autowired
+    VoteAnswerDao voteAnswerDao;
 
     @Test
     @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerDeleteId/Before.sql",
@@ -113,20 +120,15 @@ public class TestAnswerResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void upVoteTest() throws Exception {
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post("/api/auth/token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\" : \"email@mail.ru\", \"password\" : \"test\"}"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String response = result.getResponse().getContentAsString();
-        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
-
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/upVote")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", getToken("email@mail.ru", "test")))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(1)));
+
+        Optional<VoteAnswer> voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(301L, 111L);
+        Assertions.assertNotNull(voteAnswer);
+        Assertions.assertEquals(VoteType.UP_VOTE, voteAnswer.get().getVote());
     }
 
     @Test
@@ -135,102 +137,52 @@ public class TestAnswerResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void downVoteTest() throws Exception {
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post("/api/auth/token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\" : \"email@mail.ru\", \"password\" : \"test\"}"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String response = result.getResponse().getContentAsString();
-        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
-
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/downVote")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", getToken("email@mail.ru", "test")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(-1)));
+
+        Optional<VoteAnswer> voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(301L, 111L);
+        Assertions.assertNotNull(voteAnswer);
+        Assertions.assertEquals(VoteType.DOWN_VOTE, voteAnswer.get().getVote());
     }
 
     @Test
-    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/Before.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/Before1.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void tryToVoteAnswerUpTwoTimes() throws Exception {
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post("/api/auth/token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\" : \"email@mail.ru\", \"password\" : \"test\"}"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String response = result.getResponse().getContentAsString();
-        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
-
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/upVote")
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(1)));
-
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/upVote")
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(1)));
+                        .header("Authorization", getToken("email@mail.ru", "test")))
+                .andExpect(status().isConflict());
     }
 
     @Test
-    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/Before.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/Before2.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void tryToVoteAnswerDownTwoTimes() throws Exception {
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post("/api/auth/token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\" : \"email@mail.ru\", \"password\" : \"test\"}"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String response = result.getResponse().getContentAsString();
-        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
-
-
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/downVote")
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(-1)));
-
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/downVote")
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(-1)));
+                        .header("Authorization", getToken("email@mail.ru", "test")))
+                .andExpect(status().isConflict());
     }
 
     @Test
-    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/Before.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/Before1.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void tryToVoteAnswerUpAndDown() throws Exception {
-        MvcResult result = mvc.perform(MockMvcRequestBuilders
-                        .post("/api/auth/token")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\" : \"email@mail.ru\", \"password\" : \"test\"}"))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String response = result.getResponse().getContentAsString();
-        String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
-
-        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/upVote")
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(1)));
-
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/downVote")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", getToken("email@mail.ru", "test")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(1)));
+                .andExpect(jsonPath("$", Is.is(-1)));
+
+        Optional<VoteAnswer> voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(301L, 111L);
+        Assertions.assertNotNull(voteAnswer);
+        Assertions.assertEquals(VoteType.DOWN_VOTE, voteAnswer.get().getVote());
     }
 }

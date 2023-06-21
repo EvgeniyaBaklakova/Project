@@ -14,9 +14,9 @@ public class ReputationValidator implements ConstraintValidator<CombinedNotNullQ
 
     @Override
     public boolean isValid(final Reputation reputation, final ConstraintValidatorContext context) {
-        return (reputation.getQuestion() != null || reputation.getAnswer() != null)
-                && ((reputation.getQuestion() == null && reputation.getType() == ReputationType.Answer)
-                || (reputation.getAnswer() == null && reputation.getType() == ReputationType.Question)
-                || (reputation.getQuestion() != null && reputation.getAnswer() != null));
+        return (reputation.getQuestion() == null && reputation.getAnswer() != null)
+                && (reputation.getType() == ReputationType.Answer || reputation.getType() == ReputationType.VoteAnswer)
+                || (reputation.getQuestion() != null && reputation.getAnswer() == null)
+                && (reputation.getType() == ReputationType.Question || reputation.getType() == ReputationType.VoteQuestion);
     }
 }

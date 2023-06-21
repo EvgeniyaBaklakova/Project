@@ -21,21 +21,21 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long
 
     @Override
     @Transactional
-    public void increaseAuthorReputation(Long authorId) {
+    public void increaseAuthorReputation(Long authorId, Integer count) {
         if (authorId == null) {
             throw new IllegalArgumentException("Author ID is null");
         }
 
         Reputation reputation = reputationDao.getByAuthorId(authorId).orElseThrow(() ->
                 new EntityNotFoundException("No entity found by author id: " + authorId));
-
-        reputation.setCount(reputation.getCount() + 10);
+        reputation.setCount(reputation.getCount() + count);
+        reputation.setQuestion(null);
         reputationDao.update(reputation);
     }
 
     @Override
     @Transactional
-    public void decreaseAuthorReputation(Long authorId) {
+    public void decreaseAuthorReputation(Long authorId, Integer count) {
         if (authorId == null) {
             throw new IllegalArgumentException("Author ID is null");
         }

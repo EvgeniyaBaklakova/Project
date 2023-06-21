@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.AnswerDto;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.AnswerDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
@@ -77,9 +78,18 @@ public class AnswerResourceController {
             @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
     @PostMapping("/{id}/upVote")
-    public ResponseEntity<Long> upVoteAnswer(@PathVariable("id") Long answerId, @AuthenticationPrincipal User user) {
-        voteAnswerService.upVoteAnswer(answerId, user.getId());
-        return new ResponseEntity<>(voteAnswerService.totalVotesCount(answerId), HttpStatus.OK);
+    public ResponseEntity<Object> upVoteAnswer(@PathVariable("id") Long answerId, @AuthenticationPrincipal User user) {
+        Optional<VoteType> voteType = voteAnswerService.hasUserAlreadyVoted(answerId,user.getId());
+
+        if (voteType.isEmpty()) {
+            voteAnswerService.upVoteAnswer(answerId, user.getId());
+            return new ResponseEntity<>(voteAnswerService.totalVotesCount(answerId), HttpStatus.OK);
+        } else if (voteType.get().equals(VoteType.DOWN_VOTE)) {
+            voteAnswerService.upVoteAnswer(answerId, user.getId());
+            return new ResponseEntity<>(voteAnswerService.totalVotesCount(answerId), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Невозможно проголосовать за ответ дважды", HttpStatus.CONFLICT);
+        }
     }
 
     @ApiOperation(value = "Проголосовать против ответа", tags ="Downvote answer")
@@ -89,9 +99,18 @@ public class AnswerResourceController {
             @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
     @PostMapping("/{id}/downVote")
-    public ResponseEntity<Long> downVoteAnswer(@PathVariable("id") Long answerId, @AuthenticationPrincipal User user) {
-        voteAnswerService.downVoteAnswer(answerId, user.getId());
-        return new ResponseEntity<>(voteAnswerService.totalVotesCount(answerId), HttpStatus.OK);
+    public ResponseEntity<Object> downVoteAnswer(@PathVariable("id") Long answerId, @AuthenticationPrincipal User user) {
+        Optional<VoteType> voteType = voteAnswerService.hasUserAlreadyVoted(answerId,user.getId());
+
+        if (voteType.isEmpty()) {
+            voteAnswerService.downVoteAnswer(answerId, user.getId());
+            return new ResponseEntity<>(voteAnswerService.totalVotesCount(answerId), HttpStatus.OK);
+        } else if (voteType.get().equals(VoteType.UP_VOTE)) {
+            voteAnswerService.downVoteAnswer(answerId, user.getId());
+            return new ResponseEntity<>(voteAnswerService.totalVotesCount(answerId), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Невозможно проголосовать против ответа дважды", HttpStatus.CONFLICT);
+        }
     }
 }
 

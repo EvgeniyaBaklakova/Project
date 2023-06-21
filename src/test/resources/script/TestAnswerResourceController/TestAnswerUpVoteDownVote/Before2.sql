@@ -16,5 +16,5 @@ values (301, now(), 'html', false, false, true, now(), now(), 201, 112);
 insert into reputation(id, count, persist_date, type, answer_id, author_id, question_id, sender_id)
 values (401, 0, now(), 1, 301, 112, 201, 111);
 
-
-
+insert into votes_on_answers(id, persist_date, vote, answer_id, user_id)
+values (501, now(), 'DOWN_VOTE', 301, 111)
