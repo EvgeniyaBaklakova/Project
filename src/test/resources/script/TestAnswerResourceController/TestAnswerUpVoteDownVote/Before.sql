@@ -13,8 +13,5 @@ values (201, 'question1', false, now(), now(), 'question1', 112);
 insert into answer(id, date_accept_time, html_body, is_deleted, is_deleted_by_moderator, is_helpful, persist_date, update_date, question_id, user_id)
 values (301, now(), 'html', false, false, true, now(), now(), 201, 112);
 
-insert into reputation(id, count, persist_date, type, answer_id, author_id, question_id, sender_id)
-values (401, 0, now(), 1, 301, 112, 201, 111);
-
 
 
