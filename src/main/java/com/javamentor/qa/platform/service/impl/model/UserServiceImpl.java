@@ -9,12 +9,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements UserService {
     private final PasswordEncoder passwordEncoder;
+    private final UserDao userDao;
     @Autowired
     public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
         super(userDao);
+        this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -25,5 +29,10 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
                 .orElseThrow(() -> new UserNotFoundException("User with id: " + id +  " not found"));
         user.setPassword(passwordEncoder.encode(newPassword));
         update(user);
+    }
+
+    @Override
+    public Optional<User> getByEmail(String email) {
+        return userDao.getUserByEmail(email);
     }
 }
