@@ -17,7 +17,6 @@ public class UserDtoDaoImpl implements UserDtoDao {
     private EntityManager entityManager;
 
     @Override
-    @SuppressWarnings("lombok")
     public Optional<UserDto> getById(long id) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.user.UserDto" +
                 "(u.id, u.email, u.fullName, u.imageLink, u.city, " +
