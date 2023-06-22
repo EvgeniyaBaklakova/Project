@@ -23,7 +23,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TestUserResourceController extends AbstractTestApi {
 
-
     @Test
     @Sql(scripts = "/script/TestUserResourceController/Before.sql",
             executionPhase = BEFORE_TEST_METHOD)
@@ -32,7 +31,7 @@ public class TestUserResourceController extends AbstractTestApi {
     public void getUserDto() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/101").
-                header("Authorization", "Bearer " + getToken("test101@mail.ru", "123")))
+                header("Authorization", getToken("test101@mail.ru", "123")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -51,7 +50,7 @@ public class TestUserResourceController extends AbstractTestApi {
             executionPhase = AFTER_TEST_METHOD)
     public void getUserDtoNotFound() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/999").
-                        header("Authorization", "Bearer " + getToken("test101@mail.ru", "123")))
+                        header("Authorization", getToken("test101@mail.ru", "123")))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("User with this id not found"));
@@ -67,7 +66,7 @@ public class TestUserResourceController extends AbstractTestApi {
 
         mvc.perform(get("/api/user/vote")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, "Bearer " + USER_TOKEN)
+                        .header(AUTHORIZATION, USER_TOKEN)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -91,7 +90,7 @@ public class TestUserResourceController extends AbstractTestApi {
 
 
         mvc.perform(get("/api/user/vote")
-                        .header(AUTHORIZATION, "Bearer " + USER_TOKEN)
+                        .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("currentPageNumber", "2")
                 )
@@ -108,7 +107,7 @@ public class TestUserResourceController extends AbstractTestApi {
 
         mvc.perform(get("/api/user/vote")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, "Bearer " + USER_TOKEN)
+                        .header(AUTHORIZATION, USER_TOKEN)
                         .param("currentPageNumber", "2")
                 )
                 .andDo(print())
@@ -119,18 +118,19 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.itemsOnPage").value("10"));
 
         mvc.perform(get("/api/user/vote")
-                        .header(AUTHORIZATION, "Bearer " + USER_TOKEN)
+                        .header(AUTHORIZATION, USER_TOKEN)
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
     }
-    @Test  // Проверка передачи всех верных данных
+
+    @Test
     @Sql(value = {"/script/TestUserResourceController/getUsersByVoteAsc_shouldFindAllData_whenExists/Before.sql"}, executionPhase = BEFORE_TEST_METHOD)
     @Sql(value = {"/script/TestUserResourceController/getUsersByVoteAsc_shouldFindAllData_whenExists/After.sql"}, executionPhase = AFTER_TEST_METHOD)
     void getUsersByVoteAsc_shouldFindAllData_whenExists() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/vote").
-                        header("Authorization", "Bearer " + getToken("user101@mail.ru", "123")))
+        this.mvc.perform(get("/api/user/vote").
+                        header(AUTHORIZATION, getToken("user101@mail.ru", "123")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalResultCount", Is.is(10)))
@@ -184,8 +184,8 @@ public class TestUserResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
     public void getCountAnswers() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/question/week").
-                        header("Authorization", "Bearer " + getToken("test100@mail.ru", "password")))
+        this.mvc.perform(get("/api/user/profile/question/week").
+                        header(AUTHORIZATION, getToken("test100@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(2)));
@@ -196,9 +196,8 @@ public class TestUserResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
     public void getCountAnswersZero() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/question/week").
-                        header("Authorization", "Bearer " + getToken("test101@mail.ru", "password")))
-
+        this.mvc.perform(get("/api/user/profile/question/week").
+                        header(AUTHORIZATION, getToken("test101@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(0)));
@@ -210,8 +209,8 @@ public class TestUserResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
     public void getAllQuestion() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/questions/").
-                        header("Authorization", "Bearer " + getToken("test101@mail.ru", "password")))
+        this.mvc.perform(get("/api/user/profile/questions/").
+                        header(AUTHORIZATION, getToken("test101@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -239,14 +238,12 @@ public class TestUserResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
     public void getAllQuestionNoQuestion() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/questions/").
-                        header("Authorization", "Bearer " + getToken("test100@mail.ru", "password")))
+        this.mvc.perform(get("/api/user/profile/questions/").
+                        header(AUTHORIZATION, getToken("test100@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", Matchers.empty()));
-
-
     }
 
     @Test
@@ -254,8 +251,8 @@ public class TestUserResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
     public void getAllDeleteQuestion() throws Exception {
 
-        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/delete/questions").
-                        header("Authorization", "Bearer " + getToken("test103@mail.ru", "password")))
+        this.mvc.perform(get("/api/user/profile/delete/questions").
+                        header(AUTHORIZATION, getToken("test103@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -288,29 +285,13 @@ public class TestUserResourceController extends AbstractTestApi {
     public void getAllDeleteQuestionNoQuestion() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/delete/questions").
-                        header("Authorization", "Bearer " + getToken("test100@mail.ru", "password")))
+                        header(AUTHORIZATION, getToken("test100@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", Matchers.empty()));
 
 
-    }
-
-    public String getToken(String email, String password) {
-        String token;
-        Map<String, String> map = new HashMap<>();
-        map.put("email", email);
-        map.put("password", password);
-        try {
-            String response = (this.mvc.perform(MockMvcRequestBuilders
-                            .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
-                    .andReturn().getResponse().getContentAsString());
-            token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
-            return token;
-        } catch (Exception ignored) {
-        }
-        return "";
     }
 
     @Test
@@ -322,7 +303,7 @@ public class TestUserResourceController extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"newPass\": \"test\"}")
-                        .header("Authorization", "Bearer " + getToken("test101@mail.ru", "123")))
+                        .header(AUTHORIZATION, getToken("test101@mail.ru", "123")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("success")));
@@ -338,7 +319,7 @@ public class TestUserResourceController extends AbstractTestApi {
     this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
             .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"newPass\": \"test\"}")
-                        .header("Authorization", "Bearer " + getToken("test103@mail.ru", "123")))
+                        .header(AUTHORIZATION, getToken("test103@mail.ru", "123")))
             .andDo(print())
             .andExpect(status().isForbidden());
     }
@@ -352,7 +333,7 @@ public class TestUserResourceController extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"newPass\": \"test\"}")
-                        .header("Authorization", "Bearer " + getToken("test105@mail.ru", "123")))
+                        .header(AUTHORIZATION, getToken("test105@mail.ru", "123")))
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
     }
@@ -366,9 +347,26 @@ public class TestUserResourceController extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("")
-                        .header("Authorization", "Bearer " + getToken("test101@mail.ru", "123")))
+                        .header(AUTHORIZATION, getToken("test101@mail.ru", "123")))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(emptyString()));
+    }
+
+    @Override
+    public String getToken(String email, String password) {
+        String token;
+        Map<String, String> map = new HashMap<>();
+        map.put("email", email);
+        map.put("password", password);
+        try {
+            String response = (this.mvc.perform(MockMvcRequestBuilders
+                            .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
+                    .andReturn().getResponse().getContentAsString());
+            token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
+            return "Bearer " + token;
+        } catch (Exception ignored) {
+        }
+        return "";
     }
 }
