@@ -21,10 +21,11 @@ public class JWTUtil {
     private String secret;
 
     public String generateToken(String email) throws IllegalArgumentException, JWTCreationException {
+        Date expireDate = new Date(System.currentTimeMillis() + 3600000);
         return JWT.create()
-                .withSubject("User Details")
-                .withClaim("email", email)
+                .withSubject(email)
                 .withIssuedAt(new Date())
+                .withExpiresAt(expireDate)
                 .withIssuer("YOUR APPLICATION/PROJECT/COMPANY NAME")
                 .sign(Algorithm.HMAC256(secret));
     }
@@ -32,8 +33,7 @@ public class JWTUtil {
     public String generatePersistentToken(String email) throws IllegalArgumentException, JWTCreationException {
         Date expireDate = new Date(Long.MAX_VALUE);
         return JWT.create()
-                .withSubject("User Details")
-                .withClaim("email", email)
+                .withSubject(email)
                 .withIssuedAt(new Date())
                 .withExpiresAt(expireDate)
                 .withIssuer("YOUR APPLICATION/PROJECT/COMPANY NAME")
