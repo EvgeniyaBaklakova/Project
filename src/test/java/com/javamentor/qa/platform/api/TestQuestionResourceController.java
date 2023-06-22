@@ -14,7 +14,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigInteger;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
@@ -392,25 +391,92 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
-                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
-                .andExpect(jsonPath("$.totalResultCount", Is.is(4)))
-                .andExpect(jsonPath("$.items", hasSize(4)))
-                .andExpect(jsonPath("$.items[*].id", containsInAnyOrder(206, 207, 208, 209)))
-                .andExpect(jsonPath("$.items[*].title", containsInAnyOrder("question6", "question7", "question8", "question9")))
-                .andExpect(jsonPath("$.items[*].authorId", containsInAnyOrder(101, 101, 101, 101)))
-                .andExpect(jsonPath("$.items[*].authorReputation", containsInAnyOrder(100500, 100500, 100500, 100500)))
-                .andExpect(jsonPath("$.items[*].authorName", containsInAnyOrder("name", "name", "name", "name")))
-                .andExpect(jsonPath("$.items[*].authorImage", containsInAnyOrder("link", "link", "link", "link")))
-                .andExpect(jsonPath("$.items[*].description", containsInAnyOrder("question6", "question7", "question8", "question9")))
-                .andExpect(jsonPath("$.items[*].viewCount", containsInAnyOrder(0, 0, 1, 1)))
-                .andExpect(jsonPath("$.items[*].countAnswer", containsInAnyOrder(0, 0, 0, 0)))
-                .andExpect(jsonPath("$.items[*].countValuable", containsInAnyOrder(0, 1, 1, 0)))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].id", containsInAnyOrder(403, 404, 405, 401, 404, 404)))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].name", containsInAnyOrder("spring", "gradle", "hibernate", "hibernate", "hibernate", "mockito")))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].description", containsInAnyOrder("spring", "gradle", "hibernate", "hibernate", "hibernate", "mockito")))
-                .andExpect(jsonPath("$.itemsOnPage", Is.is(4)));
+                .andExpect(jsonPath("$.currentPageNumber").value(1))
+                .andExpect(jsonPath("$.totalPageCount").value(1))
+                .andExpect(jsonPath("$.totalResultCount").value(4))
+                .andExpect(jsonPath("$.items").isArray())
+                .andExpect(jsonPath("$.items.length()").value(4))
+
+                .andExpect(jsonPath("$.items[0].id").value(206))
+                .andExpect(jsonPath("$.items[1].id").value(207))
+                .andExpect(jsonPath("$.items[2].id").value(208))
+                .andExpect(jsonPath("$.items[3].id").value(209))
+
+                .andExpect(jsonPath("$.items[0].title").value("question6"))
+                .andExpect(jsonPath("$.items[1].title").value("question7"))
+                .andExpect(jsonPath("$.items[2].title").value("question8"))
+                .andExpect(jsonPath("$.items[3].title").value("question9"))
+
+                .andExpect(jsonPath("$.items[0].authorId").value(101))
+                .andExpect(jsonPath("$.items[1].authorId").value(101))
+                .andExpect(jsonPath("$.items[2].authorId").value(101))
+                .andExpect(jsonPath("$.items[3].authorId").value(101))
+
+                .andExpect(jsonPath("$.items[0].authorReputation").value(100500))
+                .andExpect(jsonPath("$.items[1].authorReputation").value(100500))
+                .andExpect(jsonPath("$.items[2].authorReputation").value(100500))
+                .andExpect(jsonPath("$.items[3].authorReputation").value(100500))
+
+                .andExpect(jsonPath("$.items[0].authorName").value("name"))
+                .andExpect(jsonPath("$.items[1].authorName").value("name"))
+                .andExpect(jsonPath("$.items[2].authorName").value("name"))
+                .andExpect(jsonPath("$.items[3].authorName").value("name"))
+
+                .andExpect(jsonPath("$.items[0].authorImage").value("link"))
+                .andExpect(jsonPath("$.items[1].authorImage").value("link"))
+                .andExpect(jsonPath("$.items[2].authorImage").value("link"))
+                .andExpect(jsonPath("$.items[3].authorImage").value("link"))
+
+                .andExpect(jsonPath("$.items[0].description").value("question6"))
+                .andExpect(jsonPath("$.items[1].description").value("question7"))
+                .andExpect(jsonPath("$.items[2].description").value("question8"))
+                .andExpect(jsonPath("$.items[3].description").value("question9"))
+
+                .andExpect(jsonPath("$.items[0].viewCount").value(0))
+                .andExpect(jsonPath("$.items[1].viewCount").value(1))
+                .andExpect(jsonPath("$.items[2].viewCount").value(0))
+                .andExpect(jsonPath("$.items[3].viewCount").value(1))
+
+                .andExpect(jsonPath("$.items[0].countAnswer").value(0))
+                .andExpect(jsonPath("$.items[1].countAnswer").value(0))
+                .andExpect(jsonPath("$.items[2].countAnswer").value(0))
+                .andExpect(jsonPath("$.items[3].countAnswer").value(0))
+
+                .andExpect(jsonPath("$.items[0].countValuable").value(0))
+                .andExpect(jsonPath("$.items[1].countValuable").value(1))
+                .andExpect(jsonPath("$.items[2].countValuable").value(0))
+                .andExpect(jsonPath("$.items[3].countValuable").value(1))
+
+                .andExpect(jsonPath("$.items[0].listTagDto").isArray())
+                .andExpect(jsonPath("$.items[0].listTagDto.length()").value(2))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id").value(403))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].id").value(404))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name").value("gradle"))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].name").value("hibernate"))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description").value("gradle"))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].description").value("hibernate"))
+
+                .andExpect(jsonPath("$.items[1].listTagDto.length()").value(1))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].id").value(404))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].name").value("hibernate"))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].description").value("hibernate"))
+
+                .andExpect(jsonPath("$.items[2].listTagDto.length()").value(2))
+                .andExpect(jsonPath("$.items[2].listTagDto[0].id").value(404))
+                .andExpect(jsonPath("$.items[2].listTagDto[1].id").value(405))
+                .andExpect(jsonPath("$.items[2].listTagDto[0].name").value("hibernate"))
+                .andExpect(jsonPath("$.items[2].listTagDto[1].name").value("mockito"))
+                .andExpect(jsonPath("$.items[2].listTagDto[0].description").value("hibernate"))
+                .andExpect(jsonPath("$.items[2].listTagDto[1].description").value("mockito"))
+
+                .andExpect(jsonPath("$.items[3].listTagDto.length()").value(1))
+                .andExpect(jsonPath("$.items[3].listTagDto[0].id").value(401))
+                .andExpect(jsonPath("$.items[3].listTagDto[0].name").value("spring"))
+                .andExpect(jsonPath("$.items[3].listTagDto[0].description").value("spring"))
+
+                .andExpect(jsonPath("$.itemsOnPage").value(4));
     }
+
 
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/TestGetAllQuestionsWithoutAnswers/Before.sql", executionPhase = BEFORE_TEST_METHOD)
@@ -428,19 +494,50 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(2)))
                 .andExpect(jsonPath("$.items", hasSize(2)))
-                .andExpect(jsonPath("$.items[*].id", containsInAnyOrder(206, 209)))
-                .andExpect(jsonPath("$.items[*].title", containsInAnyOrder("question6", "question9")))
-                .andExpect(jsonPath("$.items[*].authorId", containsInAnyOrder(101, 101)))
-                .andExpect(jsonPath("$.items[*].authorReputation", containsInAnyOrder(100500, 100500)))
-                .andExpect(jsonPath("$.items[*].authorName", containsInAnyOrder("name", "name")))
-                .andExpect(jsonPath("$.items[*].authorImage", containsInAnyOrder("link", "link")))
-                .andExpect(jsonPath("$.items[*].description", containsInAnyOrder("question6", "question9")))
-                .andExpect(jsonPath("$.items[*].viewCount", containsInAnyOrder(0, 1)))
-                .andExpect(jsonPath("$.items[*].countAnswer", containsInAnyOrder(0, 0)))
-                .andExpect(jsonPath("$.items[*].countValuable", containsInAnyOrder(0, 1)))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].id", containsInAnyOrder(401, 403, 404)))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].name", containsInAnyOrder("spring", "gradle", "hibernate")))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].description", containsInAnyOrder("spring", "gradle", "hibernate")))
+                .andExpect(jsonPath("$.items[0].id").value(206))
+                .andExpect(jsonPath("$.items[1].id").value(209))
+
+                .andExpect(jsonPath("$.items[0].title").value("question6"))
+                .andExpect(jsonPath("$.items[1].title").value("question9"))
+
+                .andExpect(jsonPath("$.items[0].authorId").value(101))
+                .andExpect(jsonPath("$.items[1].authorId").value(101))
+
+                .andExpect(jsonPath("$.items[0].authorReputation").value(100500))
+                .andExpect(jsonPath("$.items[1].authorReputation").value(100500))
+
+                .andExpect(jsonPath("$.items[0].authorName").value("name"))
+                .andExpect(jsonPath("$.items[1].authorName").value("name"))
+
+                .andExpect(jsonPath("$.items[0].authorImage").value("link"))
+                .andExpect(jsonPath("$.items[1].authorImage").value("link"))
+
+                .andExpect(jsonPath("$.items[0].description").value("question6"))
+                .andExpect(jsonPath("$.items[1].description").value("question9"))
+
+                .andExpect(jsonPath("$.items[0].viewCount").value(0))
+                .andExpect(jsonPath("$.items[1].viewCount").value(1))
+
+                .andExpect(jsonPath("$.items[0].countAnswer").value(0))
+                .andExpect(jsonPath("$.items[1].countAnswer").value(0))
+
+                .andExpect(jsonPath("$.items[0].countValuable").value(0))
+                .andExpect(jsonPath("$.items[1].countValuable").value(1))
+
+                .andExpect(jsonPath("$.items[0].listTagDto").isArray())
+                .andExpect(jsonPath("$.items[0].listTagDto.length()").value(2))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id").value(403))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].id").value(404))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name").value("gradle"))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].name").value("hibernate"))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description").value("gradle"))
+                .andExpect(jsonPath("$.items[0].listTagDto[1].description").value("hibernate"))
+
+                .andExpect(jsonPath("$.items[1].listTagDto").isArray())
+                .andExpect(jsonPath("$.items[1].listTagDto.length()").value(1))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].id").value(401))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].name").value("spring"))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].description").value("spring"))
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(2)));
     }
 
@@ -460,19 +557,49 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(2)))
                 .andExpect(jsonPath("$.items", hasSize(2)))
-                .andExpect(jsonPath("$.items[*].id", containsInAnyOrder(207, 208)))
-                .andExpect(jsonPath("$.items[*].title", containsInAnyOrder("question7", "question8")))
-                .andExpect(jsonPath("$.items[*].authorId", containsInAnyOrder(101, 101)))
-                .andExpect(jsonPath("$.items[*].authorReputation", containsInAnyOrder(100500, 100500)))
-                .andExpect(jsonPath("$.items[*].authorName", containsInAnyOrder("name", "name")))
-                .andExpect(jsonPath("$.items[*].authorImage", containsInAnyOrder("link", "link")))
-                .andExpect(jsonPath("$.items[*].description", containsInAnyOrder("question7", "question8")))
-                .andExpect(jsonPath("$.items[*].viewCount", containsInAnyOrder(0, 1)))
-                .andExpect(jsonPath("$.items[*].countAnswer", containsInAnyOrder(0, 0)))
-                .andExpect(jsonPath("$.items[*].countValuable", containsInAnyOrder(0, 1)))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].id", containsInAnyOrder(404, 404, 405)))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].name", containsInAnyOrder("hibernate", "hibernate", "mockito")))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].description", containsInAnyOrder("hibernate", "hibernate", "mockito")))
+
+                .andExpect(jsonPath("$.items[0].id").value(207))
+                .andExpect(jsonPath("$.items[1].id").value(208))
+
+                .andExpect(jsonPath("$.items[0].title").value("question7"))
+                .andExpect(jsonPath("$.items[1].title").value("question8"))
+
+                .andExpect(jsonPath("$.items[0].authorId").value(101))
+                .andExpect(jsonPath("$.items[1].authorId").value(101))
+
+                .andExpect(jsonPath("$.items[0].authorReputation").value(100500))
+                .andExpect(jsonPath("$.items[1].authorReputation").value(100500))
+
+                .andExpect(jsonPath("$.items[0].authorName").value("name"))
+                .andExpect(jsonPath("$.items[1].authorName").value("name"))
+
+                .andExpect(jsonPath("$.items[0].authorImage").value("link"))
+                .andExpect(jsonPath("$.items[1].authorImage").value("link"))
+
+                .andExpect(jsonPath("$.items[0].description").value("question7"))
+                .andExpect(jsonPath("$.items[1].description").value("question8"))
+
+                .andExpect(jsonPath("$.items[0].viewCount").value(1))
+                .andExpect(jsonPath("$.items[1].viewCount").value(0))
+
+                .andExpect(jsonPath("$.items[0].countAnswer").value(0))
+                .andExpect(jsonPath("$.items[1].countAnswer").value(0))
+
+                .andExpect(jsonPath("$.items[0].countValuable").value(1))
+                .andExpect(jsonPath("$.items[1].countValuable").value(0))
+
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id").value(404))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name").value("hibernate"))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description").value("hibernate"))
+
+                .andExpect(jsonPath("$.items[1].listTagDto[0].id").value(404))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].name").value("hibernate"))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].description").value("hibernate"))
+
+                .andExpect(jsonPath("$.items[1].listTagDto[1].id").value(405))
+                .andExpect(jsonPath("$.items[1].listTagDto[1].name").value("mockito"))
+                .andExpect(jsonPath("$.items[1].listTagDto[1].description").value("mockito"))
+
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(2)));
     }
 
@@ -493,19 +620,52 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(3)))
                 .andExpect(jsonPath("$.items", hasSize(3)))
-                .andExpect(jsonPath("$.items[*].id", containsInAnyOrder(207, 208, 209)))
-                .andExpect(jsonPath("$.items[*].title", containsInAnyOrder("question7", "question8", "question9")))
-                .andExpect(jsonPath("$.items[*].authorId", containsInAnyOrder(101, 101, 101)))
-                .andExpect(jsonPath("$.items[*].authorReputation", containsInAnyOrder(100500, 100500, 100500)))
-                .andExpect(jsonPath("$.items[*].authorName", containsInAnyOrder("name", "name", "name")))
-                .andExpect(jsonPath("$.items[*].authorImage", containsInAnyOrder("link", "link", "link")))
-                .andExpect(jsonPath("$.items[*].description", containsInAnyOrder("question7", "question8", "question9")))
-                .andExpect(jsonPath("$.items[*].viewCount", containsInAnyOrder( 0, 1, 1)))
-                .andExpect(jsonPath("$.items[*].countAnswer", containsInAnyOrder(0, 0, 0)))
-                .andExpect(jsonPath("$.items[*].countValuable", containsInAnyOrder( 0, 1, 1)))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].id", containsInAnyOrder(401, 404, 404, 405)))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].name", containsInAnyOrder("spring", "hibernate", "hibernate", "mockito")))
-                .andExpect(jsonPath("$.items[*].listTagDto[*].description", containsInAnyOrder("spring","hibernate", "hibernate", "mockito")))
+
+                .andExpect(jsonPath("$.items[0].id").value(207))
+                .andExpect(jsonPath("$.items[0].title").value("question7"))
+                .andExpect(jsonPath("$.items[0].authorId").value(101))
+                .andExpect(jsonPath("$.items[0].authorReputation").value(100500))
+                .andExpect(jsonPath("$.items[0].authorName").value("name"))
+                .andExpect(jsonPath("$.items[0].authorImage").value("link"))
+                .andExpect(jsonPath("$.items[0].description").value("question7"))
+                .andExpect(jsonPath("$.items[0].viewCount").value(1))
+                .andExpect(jsonPath("$.items[0].countAnswer").value(0))
+                .andExpect(jsonPath("$.items[0].countValuable").value(1))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id").value(404))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name").value("hibernate"))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description").value("hibernate"))
+
+                .andExpect(jsonPath("$.items[1].id").value(208))
+                .andExpect(jsonPath("$.items[1].title").value("question8"))
+                .andExpect(jsonPath("$.items[1].authorId").value(101))
+                .andExpect(jsonPath("$.items[1].authorReputation").value(100500))
+                .andExpect(jsonPath("$.items[1].authorName").value("name"))
+                .andExpect(jsonPath("$.items[1].authorImage").value("link"))
+                .andExpect(jsonPath("$.items[1].description").value("question8"))
+                .andExpect(jsonPath("$.items[1].viewCount").value(0))
+                .andExpect(jsonPath("$.items[1].countAnswer").value(0))
+                .andExpect(jsonPath("$.items[1].countValuable").value(0))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].id").value(404))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].name").value("hibernate"))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].description").value("hibernate"))
+                .andExpect(jsonPath("$.items[1].listTagDto[1].id").value(405))
+                .andExpect(jsonPath("$.items[1].listTagDto[1].name").value("mockito"))
+                .andExpect(jsonPath("$.items[1].listTagDto[1].description").value("mockito"))
+
+                .andExpect(jsonPath("$.items[2].id").value(209))
+                .andExpect(jsonPath("$.items[2].title").value("question9"))
+                .andExpect(jsonPath("$.items[2].authorId").value(101))
+                .andExpect(jsonPath("$.items[2].authorReputation").value(100500))
+                .andExpect(jsonPath("$.items[2].authorName").value("name"))
+                .andExpect(jsonPath("$.items[2].authorImage").value("link"))
+                .andExpect(jsonPath("$.items[2].description").value("question9"))
+                .andExpect(jsonPath("$.items[2].viewCount").value(1))
+                .andExpect(jsonPath("$.items[2].countAnswer").value(0))
+                .andExpect(jsonPath("$.items[2].countValuable").value(1))
+                .andExpect(jsonPath("$.items[2].listTagDto[0].id").value(401))
+                .andExpect(jsonPath("$.items[2].listTagDto[0].name").value("spring"))
+                .andExpect(jsonPath("$.items[2].listTagDto[0].description").value("spring"))
+
                 .andExpect(jsonPath("$.itemsOnPage", Is.is(3)));
     }
 }

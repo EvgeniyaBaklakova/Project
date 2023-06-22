@@ -10,6 +10,4 @@ public interface QuestionDtoService extends PageDtoService<QuestionDto> {
     Optional<QuestionDto> getQuestionDtoById(Long id);
     List<UserProfileQuestionDto> getUserQuestions(Long id);
     List<UserProfileQuestionDto> getUserDeleteQuestions(Long id);
-    List<QuestionDto> filterQuestionsByTags(List<Long> trackedTagsId, List<Long> ignoredTagsId, List<QuestionDto> questionDtoList);
-    List<QuestionDto> applyTagsToQuestions(List<QuestionDto> questionDtoList);
 }

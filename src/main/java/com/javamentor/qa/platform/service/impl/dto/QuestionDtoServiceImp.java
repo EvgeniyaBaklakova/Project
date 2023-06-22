@@ -20,7 +20,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@SuppressWarnings("unchecked")
 public class QuestionDtoServiceImp extends PageDtoServiceImpl<QuestionDto> implements QuestionDtoService {
     private final TagDtoDao tagDtoDao;
     private final QuestionDtoDao questionDtoDao;
@@ -67,23 +66,12 @@ public class QuestionDtoServiceImp extends PageDtoServiceImpl<QuestionDto> imple
     public PageDto<QuestionDto> getPageDto(PaginationData data) {
         PageDto<QuestionDto> pageDto = super.getPageDto(data);
         List<QuestionDto> questionDtoList = pageDto.getItems();
-        questionDtoList = applyTagsToQuestions(questionDtoList);
 
-        if (!(data.getProps() == null)) {
-            List<Long> trackedTagsId = (List<Long>) data.getProps().get("trackedTags");
-            List<Long> ignoredTagsId = (List<Long>) data.getProps().get("ignoredTags");
-
-            questionDtoList = filterQuestionsByTags(trackedTagsId, ignoredTagsId, questionDtoList);
-            pageDto.setItemsOnPage(questionDtoList.size());
-            pageDto.setTotalResultCount(questionDtoList.size());
-        }
-
-        pageDto.setItems(questionDtoList);
+        pageDto.setItems(applyTagsToQuestions(questionDtoList));
         return pageDto;
     }
 
-    @Override
-    public List<QuestionDto> applyTagsToQuestions(List<QuestionDto> questionDtoList) {
+    private List<QuestionDto> applyTagsToQuestions(List<QuestionDto> questionDtoList) {
         List<Long> questionIds = questionDtoList.stream().map(QuestionDto::getId).collect(Collectors.toList());
         Map<Long, List<TagQuestion>> questionTagsMap = tagDtoDao.getTagsByQuestionsIds(questionIds).stream().collect(Collectors.groupingBy(TagQuestion::getQuestionId));
 
@@ -95,21 +83,6 @@ public class QuestionDtoServiceImp extends PageDtoServiceImpl<QuestionDto> imple
                             .collect(Collectors.toList());
                     questionDto.setListTagDto(tagList);
                     return questionDto;
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<QuestionDto> filterQuestionsByTags(List<Long> trackedTagsId, List<Long> ignoredTagsId, List<QuestionDto> questionDtoList) {
-        List<Long> questionIds = questionDtoList.stream().map(QuestionDto::getId).collect(Collectors.toList());
-        Map<Long, List<TagQuestion>> questionTagsMap = tagDtoDao.getTagsByQuestionsIds(questionIds).stream().collect(Collectors.groupingBy(TagQuestion::getQuestionId));
-
-        return questionDtoList.stream()
-                .filter(questionDto -> {
-                    List<Long> questionTagsIds = questionTagsMap.getOrDefault(questionDto.getId(), Collections.emptyList())
-                            .stream().map(TagQuestion::getTagDto).map(TagDto::getId).collect(Collectors.toList());
-                    return (ignoredTagsId == null || Collections.disjoint(questionTagsIds, ignoredTagsId)) &&
-                            (trackedTagsId == null || questionTagsIds.stream().anyMatch(trackedTagsId::contains));
                 })
                 .collect(Collectors.toList());
     }
