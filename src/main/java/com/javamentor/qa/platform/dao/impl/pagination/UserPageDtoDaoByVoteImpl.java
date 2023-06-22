@@ -53,7 +53,7 @@ public class UserPageDtoDaoByVoteImpl implements PageDtoDao<UserDto> {
                                     (String) objects[2],
                                     (String) objects[3],
                                     (String) objects[4],
-                                    (Integer) objects[5]);
+                                    (Long) objects[5]);
                         }
 
                         @Override
@@ -79,7 +79,7 @@ public class UserPageDtoDaoByVoteImpl implements PageDtoDao<UserDto> {
                                 (String) objects[2],
                                 (String) objects[3],
                                 (String) objects[4],
-                                (Integer) objects[5]);
+                                (Long) objects[5]);
                     }
 
                     @Override

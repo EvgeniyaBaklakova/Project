@@ -17,13 +17,15 @@ public class UserDtoDaoImpl implements UserDtoDao {
     private EntityManager entityManager;
 
     @Override
+    @SuppressWarnings("lombok")
     public Optional<UserDto> getById(long id) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.user.UserDto" +
-                "(u.id, u.email, u.fullName, u.imageLink, u.city, r.count) " +
-                "FROM User u, Reputation r WHERE u.id = :id";
+                "(u.id, u.email, u.fullName, u.imageLink, u.city, " +
+                "(SELECT SUM(r.count) FROM Reputation r WHERE r.author.id = u.id)) " +
+                "FROM User u " +
+                "WHERE u.id = :id";
 
         TypedQuery<UserDto> query = entityManager.createQuery(hql, UserDto.class).setParameter("id", id);
-
         return SingleResultUtil.getSingleResultOrNull(query);
     }
 }

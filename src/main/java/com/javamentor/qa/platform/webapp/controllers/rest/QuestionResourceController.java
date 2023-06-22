@@ -59,7 +59,7 @@ public class QuestionResourceController {
     }
 
     @PostMapping("/{id}/view")
-    public ResponseEntity addView(@PathVariable("id") long id) {
+    public ResponseEntity<String> addView(@PathVariable("id") long id) {
         Optional<Question> question = questionService.getById(id);
         if (question.isEmpty()) {
             return new ResponseEntity<>("Incorrect question id", HttpStatus.NOT_FOUND);
@@ -105,7 +105,6 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "Вопрос с таким ID не найден"),
             @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
-
     public ResponseEntity<?> getQuestionDtoById(@PathVariable Long id) {
 
         if (questionDtoService.getQuestionDtoById(id).isEmpty()) {
@@ -128,4 +127,20 @@ public class QuestionResourceController {
         bookMarksService.addBookMarks(user, id);
         return ResponseEntity.ok("Вопрос успешно добавлен в закладки");
     }
+
+//    @PostMapping("/new")
+//    @ApiOperation(value = "Добавление вопроcа в закладки текущего аутентифицированного пользователя")
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "QuestionDto успешно получены"),
+//            @ApiResponse(code = 400, message = "Вопросы с такими id не были найдены"),
+//            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+//            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
+//
+//
+//    public ResponseEntity<String> getAllQuestionDtoSortedByDate(
+//            Integer page, Integer[] items, List<> trackedTag, List ignoredTag) {
+//
+//
+//        return ResponseEntity.ok("Вопрос успешно добавлен в закладки");
+//    }
 }
