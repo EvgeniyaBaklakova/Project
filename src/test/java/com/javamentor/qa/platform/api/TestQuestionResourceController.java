@@ -73,7 +73,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
             executionPhase = AFTER_TEST_METHOD)
     public void questionNotFound() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/2/view")
-                        .header(AUTHORIZATION, getToken("email1@mail.com","test")))
+                .header(AUTHORIZATION, getToken("email1@mail.com","test")))
                 .andDo(print())
                 .andExpect(status().isNotFound());
     }
@@ -94,7 +94,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
 
         this.mvc.perform(MockMvcRequestBuilders
                         .post("/api/user/question")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION,"Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"title\", \"description\": \"description\",\"tags\": [{\"name\": \"tag\"}]}"))
                 .andExpect(status().isOk())
@@ -124,7 +124,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
         String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION,"Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": null, \"description\": \"description\",\"tags\": [{\"name\": \"tag\"}]}"))
                 .andExpect(status().isBadRequest());
@@ -145,7 +145,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
         String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION,"Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"title\", \"description\": null,\"tags\": [{\"name\": \"tag\"}]}"))
                 .andExpect(status().isBadRequest());
@@ -166,7 +166,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
         String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION,"Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"title\", \"description\": \"description\",\"tags\": []}"))
                 .andExpect(status().isBadRequest());
@@ -187,7 +187,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
         String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION,"Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"title\", \"description\": \"description\",\"tags\": [{\"name\": \"tag 1\"}]}"))
                 .andExpect(status().isOk());
@@ -208,7 +208,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
         String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION,"Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"title\", \"description\": \"description\",\"tags\": [{\"name\": \"tag\"}]}"))
                 .andExpect(status().isOk());
@@ -229,7 +229,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
         String token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION,"Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"title\": \"title\", \"description\": \"description\",\"tags\": [{\"name\": \"tag\"}]}"))
                 .andExpect(status().isOk())
@@ -252,7 +252,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
 
         this.mvc.perform(MockMvcRequestBuilders
                         .post("/api/user/question/1/comment")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION,"Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("\"test message\""))
                 .andDo(print())
@@ -275,7 +275,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
 
         this.mvc.perform(MockMvcRequestBuilders
                         .post("/api/user/question/1/comment")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION,token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content((byte[]) null))
                 .andExpect(status().is4xxClientError());
@@ -297,7 +297,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
 
         this.mvc.perform(MockMvcRequestBuilders
                         .post("/api/user/question/1100/comment")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION,token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("\"test message\""))
                 .andExpect(status().is4xxClientError());

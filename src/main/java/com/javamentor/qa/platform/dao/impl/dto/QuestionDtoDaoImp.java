@@ -40,7 +40,6 @@ public class QuestionDtoDaoImp implements QuestionDtoDao {
                                 "where q.id = :id group by q.id, u.id", QuestionDto.class)
                 .setParameter("id", id);
 
-
         return SingleResultUtil.getSingleResultOrNull(query);
     }
 

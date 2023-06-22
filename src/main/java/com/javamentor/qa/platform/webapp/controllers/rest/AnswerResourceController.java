@@ -64,7 +64,5 @@ public class AnswerResourceController {
     public ResponseEntity<List<AnswerDto>> getAllAnswers(@PathVariable("questionId") Long questionId) {
         return new ResponseEntity<>(answerDtoService.getAllAnswers(questionId), HttpStatus.OK);
     }
-
-
 }
 
