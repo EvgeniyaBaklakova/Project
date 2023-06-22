@@ -38,6 +38,6 @@ public class TrackedTag implements Serializable {
     public TrackedTag(Tag trackedTag, User user, LocalDateTime localDateTime) {
         this.trackedTag = trackedTag;
         this.user = user;
-        persistDateTime = localDateTime;
+        this.persistDateTime = localDateTime;
     }
 }
