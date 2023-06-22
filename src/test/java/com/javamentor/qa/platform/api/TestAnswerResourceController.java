@@ -1,9 +1,11 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import com.javamentor.qa.platform.dao.abstracts.model.ReputationDao;
 import com.javamentor.qa.platform.dao.abstracts.model.VoteAnswerDao;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
+import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -23,6 +23,9 @@ public class TestAnswerResourceController extends AbstractTestApi {
 
     @Autowired
     VoteAnswerDao voteAnswerDao;
+
+    @Autowired
+    ReputationDao reputationDao;
 
     @Test
     @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerDeleteId/Before.sql",
@@ -126,9 +129,14 @@ public class TestAnswerResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(1)));
 
-        Optional<VoteAnswer> voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(301L, 111L);
+        VoteAnswer voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(301L, 111L).orElseThrow();
+        Reputation reputation = reputationDao.getByAuthorId(112L).orElseThrow();
+
         Assertions.assertNotNull(voteAnswer);
-        Assertions.assertEquals(VoteType.UP_VOTE, voteAnswer.get().getVote());
+        Assertions.assertNotNull(reputation);
+
+        Assertions.assertEquals(VoteType.UP_VOTE, voteAnswer.getVote());
+        Assertions.assertEquals(reputation.getCount(), 10);
     }
 
     @Test
@@ -143,9 +151,14 @@ public class TestAnswerResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(-1)));
 
-        Optional<VoteAnswer> voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(301L, 111L);
+        VoteAnswer voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(301L, 111L).orElseThrow();
+        Reputation reputation = reputationDao.getByAuthorId(112L).orElseThrow();
+
         Assertions.assertNotNull(voteAnswer);
-        Assertions.assertEquals(VoteType.DOWN_VOTE, voteAnswer.get().getVote());
+        Assertions.assertNotNull(reputation);
+
+        Assertions.assertEquals(VoteType.DOWN_VOTE, voteAnswer.getVote());
+        Assertions.assertEquals(reputation.getCount(), -5);
     }
 
     @Test
@@ -181,8 +194,13 @@ public class TestAnswerResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(-1)));
 
-        Optional<VoteAnswer> voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(301L, 111L);
+        VoteAnswer voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(301L, 111L).orElseThrow();
+        Reputation reputation = reputationDao.getByAuthorId(112L).orElseThrow();
+
         Assertions.assertNotNull(voteAnswer);
-        Assertions.assertEquals(VoteType.DOWN_VOTE, voteAnswer.get().getVote());
+        Assertions.assertNotNull(reputation);
+
+        Assertions.assertEquals(reputation.getCount(), -5);
+        Assertions.assertEquals(VoteType.DOWN_VOTE, voteAnswer.getVote());
     }
 }

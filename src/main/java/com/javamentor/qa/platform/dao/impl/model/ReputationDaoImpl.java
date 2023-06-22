@@ -13,7 +13,7 @@ import java.util.Optional;
 public class ReputationDaoImpl extends ReadWriteDaoImpl<Reputation, Long> implements ReputationDao {
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Override
     public Optional<Reputation> getByAuthorId(Long authorId) {

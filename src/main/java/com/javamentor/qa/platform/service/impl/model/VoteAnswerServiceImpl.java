@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
 
 @Service
 public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long> implements VoteAnswerService {
@@ -37,9 +36,15 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
     }
 
     @Override
-    public Optional<VoteType> hasUserAlreadyVoted(Long answerId, Long userId) {
-        return voteAnswerDao.hasUserAlreadyVoted(answerId, userId);
+    public boolean hasUserAlreadyUpVoted(Long answerId, Long userId) {
+        return voteAnswerDao.hasUserAlreadyUpVoted(answerId, userId);
     }
+
+    @Override
+    public boolean hasUserAlreadyDownVoted(Long answerId, Long userId) {
+        return voteAnswerDao.hasUserAlreadyDownVoted(answerId, userId);
+    }
+
 
     @Override
     @Transactional
@@ -54,15 +59,14 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID " + userId));
 
         Long authorId = answerDao.getAnswerAuthorId(answerId);
-        Optional<VoteType> voteType = voteAnswerDao.hasUserAlreadyVoted(answerId, userId);
 
-        if (voteType.isEmpty() && authorId != null) {
-            voteAnswerDao.persist(new VoteAnswer(user,answer,VoteType.UP_VOTE));
-            reputationService.increaseAuthorReputation(authorId, userId, 10);
-        } else if (voteType.isPresent() && voteType.get().equals(VoteType.DOWN_VOTE) && authorId != null) {
+        if (voteAnswerDao.hasUserAlreadyDownVoted(answerId, userId)) {
             VoteAnswer voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(answerId, userId).orElseThrow();
             voteAnswer.setVote(VoteType.UP_VOTE);
-            reputationService.increaseAuthorReputation(authorId, userId, 15);
+            reputationService.updateAuthorReputationAsVoteChanged(authorId, 10);
+        } else {
+            voteAnswerDao.persist(new VoteAnswer(user, answer, VoteType.UP_VOTE));
+            reputationService.updateAuthorReputation(authorId, userId, 10);
         }
     }
 
@@ -79,15 +83,14 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID " + userId));
 
         Long authorId = answerDao.getAnswerAuthorId(answerId);
-        Optional<VoteType> voteType = voteAnswerDao.hasUserAlreadyVoted(answerId, userId);
 
-        if (voteType.isEmpty() && authorId != null) {
-            voteAnswerDao.persist(new VoteAnswer(user,answer,VoteType.DOWN_VOTE));
-            reputationService.decreaseAuthorReputation(authorId, userId, 5);
-        } else if (voteType.isPresent() && voteType.get().equals(VoteType.UP_VOTE) && authorId != null) {
+        if (voteAnswerDao.hasUserAlreadyUpVoted(answerId, userId)) {
             VoteAnswer voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(answerId, userId).orElseThrow();
             voteAnswer.setVote(VoteType.DOWN_VOTE);
-            reputationService.decreaseAuthorReputation(authorId, userId, 15);
+            reputationService.updateAuthorReputationAsVoteChanged(authorId, -5);
+        } else {
+            voteAnswerDao.persist(new VoteAnswer(user, answer, VoteType.DOWN_VOTE));
+            reputationService.updateAuthorReputation(authorId, userId, -5);
         }
     }
 }

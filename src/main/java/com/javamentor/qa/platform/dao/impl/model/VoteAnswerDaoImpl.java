@@ -15,14 +15,7 @@ import java.util.Optional;
 public class VoteAnswerDaoImpl extends ReadWriteDaoImpl<VoteAnswer, Long> implements VoteAnswerDao {
 
     @PersistenceContext
-    EntityManager entityManager;
-
-    @Override
-    public Optional<VoteType> hasUserAlreadyVoted(Long answerId, Long userId) {
-        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("SELECT va.vote FROM VoteAnswer va WHERE va.user.id = (:userId) and va.answer.id = (:answerId)", VoteType.class)
-                .setParameter("userId", userId)
-                .setParameter("answerId", answerId));
-    }
+    private EntityManager entityManager;
 
     @Override
     @Transactional
@@ -30,6 +23,24 @@ public class VoteAnswerDaoImpl extends ReadWriteDaoImpl<VoteAnswer, Long> implem
         return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("SELECT va FROM VoteAnswer va WHERE va.user.id = (:userId) and va.answer.id = (:answerId)", VoteAnswer.class)
                 .setParameter("userId", userId)
                 .setParameter("answerId", answerId));
+    }
+
+    @Override
+    public boolean hasUserAlreadyUpVoted(Long answerId, Long userId) {
+        return (Long) entityManager.createQuery("SELECT count(va) FROM VoteAnswer va WHERE va.answer.id = (:answerId) and va.user.id = (:userId) and va.vote = (:voteType)")
+                .setParameter("answerId", answerId)
+                .setParameter("userId", userId)
+                .setParameter("voteType", VoteType.UP_VOTE)
+                .getSingleResult() > 0;
+    }
+
+    @Override
+    public boolean hasUserAlreadyDownVoted(Long answerId, Long userId) {
+        return (Long) entityManager.createQuery("SELECT count(va) FROM VoteAnswer va WHERE va.answer.id = (:answerId) and va.user.id = (:userId) and va.vote = (:voteType)")
+                .setParameter("answerId", answerId)
+                .setParameter("userId", userId)
+                .setParameter("voteType", VoteType.DOWN_VOTE)
+                .getSingleResult() > 0;
     }
 
     @Override
