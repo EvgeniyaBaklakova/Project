@@ -64,6 +64,94 @@ public class TestUserResourceController extends AbstractTestApi {
 
 
     @Test
+    @Sql(value = {"/script/TestUserResourceController/TestGetAllUserDtoSortByPersistDate/Before.sql"}, executionPhase = BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestUserResourceController/TestGetAllUserDtoSortByPersistDate/After.sql"}, executionPhase = AFTER_TEST_METHOD)
+    public void getAllUserDtoSortByPerstistDate() throws Exception {
+
+
+        String USER_TOKEN = getToken("user101@mail.ru", "123");
+
+        mvc.perform(get("/api/user/new")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        mvc.perform(get("/api/user/new")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .param("page","4")
+                        .param("itemsOnPage", "10")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
+                .andExpect(jsonPath("$.items.length()", Is.is(0)));
+
+        mvc.perform(get("/api/user/new")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .param("page","3")
+                        .param("itemsOnPage", "10")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
+                .andExpect(jsonPath("$.items.length()", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(121)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("user121@mail.ru")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("User 121")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("Moscow")));
+
+        mvc.perform(get("/api/user/new")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .param("page","1")
+                        .param("itemsOnPage", "10")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
+                .andExpect(jsonPath("$.items.length()", Is.is(10)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("user104@mail.ru")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("User 104")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("Moscow")));
+
+        mvc.perform(get("/api/user/new")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .param("page","1")
+                        .param("itemsOnPage", "21")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
+                .andExpect(jsonPath("$.items.length()", Is.is(21)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].email", Is.is("user104@mail.ru")))
+                .andExpect(jsonPath("$.items[0].fullName", Is.is("User 104")))
+                .andExpect(jsonPath("$.items[0].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[0].city", Is.is("Moscow")))
+
+                .andExpect(jsonPath("$.items[20].id", Is.is(121)))
+                .andExpect(jsonPath("$.items[20].email", Is.is("user121@mail.ru")))
+                .andExpect(jsonPath("$.items[20].fullName", Is.is("User 121")))
+                .andExpect(jsonPath("$.items[20].imageLink", Is.is("/images/noUserAvatar.png")))
+                .andExpect(jsonPath("$.items[20].city", Is.is("Moscow")));
+
+
+
+    }
+
+
+    @Test
     @Sql(value = {"/script/TestUserResourceController/getAllUserDtoSortDTO/Before.sql"}, executionPhase = BEFORE_TEST_METHOD)
     @Sql(value = {"/script/TestUserResourceController/getAllUserDtoSortDTO/After.sql"}, executionPhase = AFTER_TEST_METHOD)
     public void getAllUserDtoSortDTOTest() throws Exception {
@@ -196,7 +284,7 @@ public class TestUserResourceController extends AbstractTestApi {
     public void getCountAnswers() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/question/week").
-                        header("Authorization", "Bearer " + getToken("test100@mail.ru", "password")))
+                        header("Authorization",   getToken("test100@mail.ru", "password")))
 
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -209,7 +297,7 @@ public class TestUserResourceController extends AbstractTestApi {
     public void getCountAnswersZero() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/question/week").
-                        header("Authorization", "Bearer " + getToken("test101@mail.ru", "password")))
+                        header("Authorization", getToken("test101@mail.ru", "password")))
 
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -223,7 +311,7 @@ public class TestUserResourceController extends AbstractTestApi {
     public void getAllQuestion() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/questions/").
-                        header("Authorization", "Bearer " + getToken("test101@mail.ru", "password")))
+                        header("Authorization", getToken("test101@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -252,7 +340,7 @@ public class TestUserResourceController extends AbstractTestApi {
     public void getAllQuestionNoQuestion() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/questions/").
-                        header("Authorization", "Bearer " + getToken("test100@mail.ru", "password")))
+                        header("Authorization", getToken("test100@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -267,7 +355,7 @@ public class TestUserResourceController extends AbstractTestApi {
     public void getAllDeleteQuestion() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/delete/questions").
-                        header("Authorization", "Bearer " + getToken("test103@mail.ru", "password")))
+                        header("Authorization",  getToken("test103@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -300,29 +388,13 @@ public class TestUserResourceController extends AbstractTestApi {
     public void getAllDeleteQuestionNoQuestion() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/delete/questions").
-                        header("Authorization", "Bearer " + getToken("test100@mail.ru", "password")))
+                        header("Authorization",  getToken("test100@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", Matchers.empty()));
 
 
-    }
-
-    public String getToken(String email, String password) {
-        String token;
-        Map<String, String> map = new HashMap<>();
-        map.put("email", email);
-        map.put("password", password);
-        try {
-            String response = (this.mvc.perform(MockMvcRequestBuilders
-                            .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
-                    .andReturn().getResponse().getContentAsString());
-            token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
-            return token;
-        } catch (Exception e) {
-        }
-        return "";
     }
 
     @Test
@@ -334,7 +406,7 @@ public class TestUserResourceController extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"newPass\": \"test\"}")
-                        .header("Authorization", "Bearer " + getToken("test101@mail.ru", "123")))
+                        .header("Authorization",  getToken("test101@mail.ru", "123")))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("success")));
@@ -350,7 +422,7 @@ public class TestUserResourceController extends AbstractTestApi {
     this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
             .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"newPass\": \"test\"}")
-                        .header("Authorization", "Bearer " + getToken("test103@mail.ru", "123")))
+                        .header("Authorization",  getToken("test103@mail.ru", "123")))
             .andDo(print())
             .andExpect(status().isForbidden());
     }
@@ -364,7 +436,7 @@ public class TestUserResourceController extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"newPass\": \"test\"}")
-                        .header("Authorization", "Bearer " + getToken("test105@mail.ru", "123")))
+                        .header("Authorization",   getToken("test105@mail.ru", "123")))
                 .andDo(print())
                 .andExpect(status().is4xxClientError());
     }
@@ -378,7 +450,7 @@ public class TestUserResourceController extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("")
-                        .header("Authorization", "Bearer " + getToken("test101@mail.ru", "123")))
+                        .header("Authorization",   getToken("test101@mail.ru", "123")))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(emptyString()));
