@@ -66,10 +66,12 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(content().string("User with this id not found"));
     }
 
+
     @Test
     @Sql(value = {"/script/TestUserResourceController/TestGetAllUserDtoSortByPersistDate/Before.sql"}, executionPhase = BEFORE_TEST_METHOD)
     @Sql(value = {"/script/TestUserResourceController/TestGetAllUserDtoSortByPersistDate/After.sql"}, executionPhase = AFTER_TEST_METHOD)
     public void getAllUserDtoSortByPerstistDate() throws Exception {
+
 
         String USER_TOKEN = getToken("user101@mail.ru", "123");
 
@@ -310,6 +312,7 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$[0].tagDtoList[2].name", Is.is("name5")))
                 .andExpect(jsonPath("$[0].tagDtoList[2].description", Is.is("description5")))
                 .andExpect(jsonPath("$[0].tagDtoList[2].persistDateTime", Is.is("2023-04-23T13:01:11.245126")));
+
     }
 
     @Test
