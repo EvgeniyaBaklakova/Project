@@ -35,8 +35,6 @@ public class QuestionDtoResultTransformer implements ResultTransformer {
         LocalDateTime updateDT = (LocalDateTime) tupleMap.get("udt");
 
         QuestionDto questionDto = questionDtoMap.computeIfAbsent(questionId, id -> new QuestionDto(questionId, questionTitle, authorId, authorRep, authorName, authorImage, questionDesc, viewCount, answerCount, valuableCount, persistDT, updateDT, new ArrayList<>()));
-        TagDto tagDto = new TagDto((Long) tupleMap.get("t_id"), (String) tupleMap.get("t_name"), (String) tupleMap.get("t_desc"), (LocalDateTime) tupleMap.get("t_dt"));
-        questionDto.getListTagDto().add(tagDto);
 
         return questionDto;
     }
