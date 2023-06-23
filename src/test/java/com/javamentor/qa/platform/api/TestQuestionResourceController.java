@@ -381,22 +381,6 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$", Is.is("Вопрос успешно добавлен в закладки")));
     }
 
-    public String getToken(String email, String password) {
-        String token;
-        Map<String,String> map = new HashMap<>();
-        map.put("email", email);
-        map.put("password", password);
-        try {
-            String response = (this.mvc.perform(MockMvcRequestBuilders
-                            .post("/api/auth/token").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(map)))
-                    .andReturn().getResponse().getContentAsString());
-            token = response.replace("{\"jwtToken\":\"", "").replace("\"}", "");
-            return token;
-        } catch (Exception e) {
-        }
-        return "";
-    }
-
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionDtoGettingApi/Before.sql",
             executionPhase = BEFORE_TEST_METHOD)
@@ -407,14 +391,14 @@ public class TestQuestionResourceController extends AbstractTestApi {
 
         this.mvc.perform(MockMvcRequestBuilders
                         .get("/api/user/question")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION, token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
 
         this.mvc.perform(MockMvcRequestBuilders
                         .get("/api/user/question")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION, token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
@@ -468,21 +452,21 @@ public class TestQuestionResourceController extends AbstractTestApi {
 
         this.mvc.perform(MockMvcRequestBuilders
                         .get("/api/user/question?page=2")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION, token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(2)));
 
         this.mvc.perform(MockMvcRequestBuilders
                         .get("/api/user/question?items=1")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION, token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.items.length()", Is.is(1)));
 
         this.mvc.perform(MockMvcRequestBuilders
                         .get("/api/user/question?trackedTag=name10")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION, token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
@@ -503,7 +487,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
 
         this.mvc.perform(MockMvcRequestBuilders
                         .get("/api/user/question?ignoredTag=name3")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION, token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
@@ -524,7 +508,7 @@ public class TestQuestionResourceController extends AbstractTestApi {
 
         this.mvc.perform(MockMvcRequestBuilders
                         .get("/api/user/question?trackedTag=name6&ignoredTag=name4")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                        .header(HttpHeaders.AUTHORIZATION, token)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
