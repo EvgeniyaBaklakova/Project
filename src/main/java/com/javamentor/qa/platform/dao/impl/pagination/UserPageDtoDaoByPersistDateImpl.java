@@ -20,8 +20,12 @@ public class UserPageDtoDaoByPersistDateImpl implements PageDtoDao<UserDto> {
         int itemsOnPage = properties.getItemsOnPage();
         int offset = (properties.getCurrentPage() - 1) * itemsOnPage;
 
-        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.user.UserDto (u.id, u.email, u.fullName, u.imageLink, u.city, 0L)" +
-                "  FROM User u ORDER BY u.persistDateTime";
+        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.user.UserDto" +
+                " (u.id, u.email, u.fullName, u.imageLink, u.city, SUM(r.count)) " +
+                "FROM User u LEFT JOIN Reputation r ON r.author.id = u.id " +
+                "GROUP BY u.id " +
+                "ORDER BY u.persistDateTime";
+
 
         TypedQuery<UserDto> query = entityManager.createQuery(hql, UserDto.class)
                 .setMaxResults(itemsOnPage)

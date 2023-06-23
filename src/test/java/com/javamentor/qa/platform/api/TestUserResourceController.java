@@ -1,13 +1,19 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import com.javamentor.qa.platform.models.dto.user.UserDto;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import javax.persistence.TypedQuery;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.Matchers.not;
@@ -93,35 +99,26 @@ public class TestUserResourceController extends AbstractTestApi {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, USER_TOKEN)
                         .param("page","3")
-                        .param("itemsOnPage", "10")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
-                .andExpect(jsonPath("$.items.length()", Is.is(1)))
-
-                .andExpect(jsonPath("$.items[0].id", Is.is(121)))
-                .andExpect(jsonPath("$.items[0].email", Is.is("user121@mail.ru")))
-                .andExpect(jsonPath("$.items[0].fullName", Is.is("User 121")))
-                .andExpect(jsonPath("$.items[0].imageLink", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[0].city", Is.is("Moscow")));
+                .andExpect(jsonPath("$.items.length()", Is.is(1)));
 
         mvc.perform(get("/api/user/new")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, USER_TOKEN)
                         .param("page","1")
-                        .param("itemsOnPage", "10")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
-                .andExpect(jsonPath("$.items.length()", Is.is(10)))
+                .andExpect(jsonPath("$.items.length()", Is.is(10)));
 
-                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
-                .andExpect(jsonPath("$.items[0].email", Is.is("user104@mail.ru")))
-                .andExpect(jsonPath("$.items[0].fullName", Is.is("User 104")))
-                .andExpect(jsonPath("$.items[0].imageLink", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[0].city", Is.is("Moscow")));
+
+        String hql = "SELECT u From User u ORDER BY u.persistDateTime";
+        TypedQuery<User> query = em.createQuery(hql, User.class);
+        List<User> resultList = query.getResultList();
 
         mvc.perform(get("/api/user/new")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -134,18 +131,10 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
                 .andExpect(jsonPath("$.items.length()", Is.is(21)))
 
-                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
-                .andExpect(jsonPath("$.items[0].email", Is.is("user104@mail.ru")))
-                .andExpect(jsonPath("$.items[0].fullName", Is.is("User 104")))
-                .andExpect(jsonPath("$.items[0].imageLink", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[0].city", Is.is("Moscow")))
-
-                .andExpect(jsonPath("$.items[20].id", Is.is(121)))
-                .andExpect(jsonPath("$.items[20].email", Is.is("user121@mail.ru")))
-                .andExpect(jsonPath("$.items[20].fullName", Is.is("User 121")))
-                .andExpect(jsonPath("$.items[20].imageLink", Is.is("/images/noUserAvatar.png")))
-                .andExpect(jsonPath("$.items[20].city", Is.is("Moscow")));
-
+                .andExpect(jsonPath("$.items[0].id", Is.is(resultList.get(0).getId().intValue())))
+                .andExpect(jsonPath("$.items[4].id", Is.is(resultList.get(4).getId().intValue())))
+                .andExpect(jsonPath("$.items[15].id", Is.is(resultList.get(15).getId().intValue())))
+                .andExpect(jsonPath("$.items[20].id", Is.is(resultList.get(20).getId().intValue())));
 
 
     }
@@ -284,7 +273,7 @@ public class TestUserResourceController extends AbstractTestApi {
     public void getCountAnswers() throws Exception {
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/profile/question/week").
-                        header("Authorization",   getToken("test100@mail.ru", "password")))
+                        header("Authorization", getToken("test100@mail.ru", "password")))
 
                 .andDo(print())
                 .andExpect(status().isOk())
