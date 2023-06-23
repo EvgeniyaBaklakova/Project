@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.models.entity.pagination;
 
-import com.javamentor.qa.platform.models.dto.user.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,7 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class    PaginationData {
+public class PaginationData {
     private int currentPage;
     private int itemsOnPage;
     private Map<String, Object> props = new HashMap<>();

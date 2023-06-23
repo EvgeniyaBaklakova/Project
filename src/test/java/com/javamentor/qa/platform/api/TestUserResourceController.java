@@ -1,13 +1,19 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import com.javamentor.qa.platform.models.dto.user.UserDto;
+import com.javamentor.qa.platform.models.entity.user.User;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import javax.persistence.TypedQuery;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.core.StringContains.containsString;
@@ -54,6 +60,77 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("User with this id not found"));
+    }
+
+
+    @Test
+    @Sql(value = {"/script/TestUserResourceController/TestGetAllUserDtoSortByPersistDate/Before.sql"}, executionPhase = BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestUserResourceController/TestGetAllUserDtoSortByPersistDate/After.sql"}, executionPhase = AFTER_TEST_METHOD)
+    public void getAllUserDtoSortByPerstistDate() throws Exception {
+
+
+        String USER_TOKEN = getToken("user101@mail.ru", "123");
+
+        mvc.perform(get("/api/user/new")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        mvc.perform(get("/api/user/new")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .param("page","4")
+                        .param("itemsOnPage", "10")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
+                .andExpect(jsonPath("$.items.length()", Is.is(0)));
+
+        mvc.perform(get("/api/user/new")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .param("page","3")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
+                .andExpect(jsonPath("$.items.length()", Is.is(1)));
+
+        mvc.perform(get("/api/user/new")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .param("page","1")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
+                .andExpect(jsonPath("$.items.length()", Is.is(10)));
+
+
+        String hql = "SELECT u From User u ORDER BY u.persistDateTime";
+        TypedQuery<User> query = em.createQuery(hql, User.class);
+        List<User> resultList = query.getResultList();
+
+        mvc.perform(get("/api/user/new")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .param("page","1")
+                        .param("itemsOnPage", "21")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
+                .andExpect(jsonPath("$.items.length()", Is.is(21)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(resultList.get(0).getId().intValue())))
+                .andExpect(jsonPath("$.items[4].id", Is.is(resultList.get(4).getId().intValue())))
+                .andExpect(jsonPath("$.items[15].id", Is.is(resultList.get(15).getId().intValue())))
+                .andExpect(jsonPath("$.items[20].id", Is.is(resultList.get(20).getId().intValue())));
+
+
     }
 
 

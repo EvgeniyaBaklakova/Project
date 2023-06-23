@@ -39,6 +39,7 @@ public class AuthenticationResourceController {
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody AuthDTO authDTO) throws InvalidKeySpecException, NoSuchAlgorithmException {
         String username = authDTO.getEmail();
         String password = authDTO.getPassword();
+        boolean rememberMe = authDTO.isRememberMe();
         Authentication authentication;
         try {
             authentication = authenticationManager.authenticate(
@@ -52,7 +53,13 @@ public class AuthenticationResourceController {
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = tokenProvider.generateToken(authentication.getName());
+        String jwt;
+        if (rememberMe) {
+            jwt = tokenProvider.generatePersistentToken(authentication.getName());
+        } else {
+            jwt = tokenProvider.generateToken(authentication.getName());
+        }
+
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 }
