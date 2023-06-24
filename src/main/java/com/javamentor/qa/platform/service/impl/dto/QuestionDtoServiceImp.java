@@ -35,6 +35,12 @@ public class QuestionDtoServiceImp implements QuestionDtoService {
     }
 
     @Override
+    public List<QuestionDto> getQuestionDtoByTagId(Long id) {
+        List<QuestionDto> questionDto = questionDtoDao.getQuestionDtoByTagId(id);
+        return questionDto;
+    }
+
+    @Override
     @Transactional
     public List<UserProfileQuestionDto> getUserQuestions(Long id) {
         List<UserProfileQuestionDto> userProfileQuestionDtoList = questionDtoDao.getUserQuestions(id);

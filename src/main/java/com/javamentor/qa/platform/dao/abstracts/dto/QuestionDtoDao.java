@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface QuestionDtoDao {
 
+     List<QuestionDto>getQuestionDtoByTagId(Long id);
      Optional<QuestionDto> getQuestionDtoById(Long id);
      List<UserProfileQuestionDto> getUserQuestions(Long id);
      List<UserProfileQuestionDto> getUserDeleteQuestions(Long id);
