@@ -380,4 +380,76 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is("Вопрос успешно добавлен в закладки")));
     }
+
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/TestVoteQuestion/Before.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestVoteQuestion/After.sql", executionPhase = AFTER_TEST_METHOD)
+    public void upVoteForQuestion() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/104/upvote")      // 1st vote for question
+                        .header("Authorization", getToken("test101@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(1)));
+
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/upvote")      // vote already exists to Up
+                .header("Authorization", getToken("test101@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(3)));
+
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/101/upvote")       // vote for self question to Up
+                        .header("Authorization", getToken("test101@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(1)));
+
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/103/upvote")       // re-vote from Down to Up
+                        .header("Authorization", getToken("test101@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(1)));
+
+
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/105/upvote")       // Not found in question-database
+                        .header("Authorization", getToken("test101@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("Такого вопроса не существует")));
+    }
+
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/TestVoteQuestion/Before.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestVoteQuestion/After.sql", executionPhase = AFTER_TEST_METHOD)
+    public void downVoteForQuestion() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/104/downVote")      // 1st vote for question
+                        .header("Authorization", getToken("test101@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(1)));
+
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/103/downVote")      // vote already exists to Down
+                        .header("Authorization", getToken("test101@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(1)));
+
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/101/downVote")       // vote for self question to Down
+                        .header("Authorization", getToken("test101@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(1)));
+
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/downVote")       // re-vote from Up to Down
+                        .header("Authorization", getToken("test101@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(3)));
+
+
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/105/downVote")       // Not found in question-database
+                        .header("Authorization", getToken("test101@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("Такого вопроса не существует")));
+    }
 }

@@ -5,5 +5,6 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 public interface QuestionDao extends ReadWriteDao<Question, Long>{
     Question getByTitle(String title);
     boolean isNotExistByTitle(String title);
+    public Question getByIdJoinedVoteQuestion(Long id);
 
 }

@@ -25,5 +25,10 @@ public class QuestionDaoImpl extends ReadWriteDaoImpl<Question, Long> implements
         return count == 0;
     }
 
-
+    @Override
+    public Question getByIdJoinedVoteQuestion(Long id) {
+        return entityManager.createQuery("SELECT q from Question q left join fetch q.voteQuestions " +
+                        "WHERE q.id = :id", Question.class)
+                .setParameter("id", id).getSingleResult();
+    }
 }
