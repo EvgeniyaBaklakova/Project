@@ -63,10 +63,10 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
         if (voteAnswerDao.hasUserAlreadyDownVoted(answerId, userId)) {
             VoteAnswer voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(answerId, userId).orElseThrow();
             voteAnswer.setVote(VoteType.UP_VOTE);
-            reputationService.updateAuthorReputationAsVoteChanged(authorId, 10);
+            reputationService.updateAuthorReputationAsVoteChanged(authorId, userId, 10);
         } else {
             voteAnswerDao.persist(new VoteAnswer(user, answer, VoteType.UP_VOTE));
-            reputationService.updateAuthorReputation(authorId, userId, 10);
+            reputationService.setAuthorReputation(authorId, userId, 10);
         }
     }
 
@@ -74,23 +74,23 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
     @Transactional
     public void downVoteAnswer(Long answerId, Long userId) {
         if (answerId == null || userId == null) {
-            throw new IllegalArgumentException("Answer ID or user ID cannot be null");
+            throw new IllegalArgumentException("Answer ID or sender ID cannot be null");
         }
 
         Answer answer = answerDao.getById(answerId)
                 .orElseThrow(() -> new EntityNotFoundException("Answer not found with ID " + answerId));
-        User user = userDao.getById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with ID " + userId));
+        User sender = userDao.getById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Sender not found with ID " + userId));
 
         Long authorId = answerDao.getAnswerAuthorId(answerId);
 
         if (voteAnswerDao.hasUserAlreadyUpVoted(answerId, userId)) {
             VoteAnswer voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(answerId, userId).orElseThrow();
             voteAnswer.setVote(VoteType.DOWN_VOTE);
-            reputationService.updateAuthorReputationAsVoteChanged(authorId, -5);
+            reputationService.updateAuthorReputationAsVoteChanged(authorId, userId,-5);
         } else {
-            voteAnswerDao.persist(new VoteAnswer(user, answer, VoteType.DOWN_VOTE));
-            reputationService.updateAuthorReputation(authorId, userId, -5);
+            voteAnswerDao.persist(new VoteAnswer(sender, answer, VoteType.DOWN_VOTE));
+            reputationService.setAuthorReputation(authorId, userId, -5);
         }
     }
 }
