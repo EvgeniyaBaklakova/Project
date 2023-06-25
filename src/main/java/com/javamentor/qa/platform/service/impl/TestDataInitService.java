@@ -5,6 +5,7 @@ import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.user.BlockChatUserList;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.UserChatPin;
@@ -41,6 +42,7 @@ public class TestDataInitService {
     private final GroupChatService groupChatService;
     private final UserChatPinService userChatPinService;
     private final PasswordEncoder passwordEncoder;
+    private final BlockChatUserList blockChatUserList;
 
     private final Role ROLE_USER = new Role("ROLE_USER");
     private final Role ROLE_ADMIN = new Role("ROLE_ADMIN");
@@ -55,7 +57,8 @@ public class TestDataInitService {
                                SingleChatService singleChatService,
                                GroupChatService groupChatService,
                                UserChatPinService userChatPinService,
-                               PasswordEncoder passwordEncoder) {
+                               PasswordEncoder passwordEncoder,
+                               BlockChatUserList blockChatUserList) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -65,6 +68,7 @@ public class TestDataInitService {
         this.groupChatService = groupChatService;
         this.userChatPinService = userChatPinService;
         this.passwordEncoder = passwordEncoder;
+        this.blockChatUserList = blockChatUserList;
     }
 
     public void initRoles() {
@@ -241,5 +245,21 @@ public class TestDataInitService {
             chatPins.add(userChatPin);
         }
         userChatPinService.persistAll(chatPins);
+    }
+
+    public void initBlockChatUserList() {
+        for (int i = 1; i <= 5; i++) {
+            BlockChatUserList blockChatUserList = new BlockChatUserList();
+            blockChatUserList.setId(i);
+            blockChatUserList.setPersistDate(LocalDateTime.now());
+
+            User userProfile = userService.getById(i);
+            User userBlocked = userService.getById(i + 1);
+            blockChatUserList.setUser(userProfile);
+            blockChatUserList.setIsBlocked(userBlocked);
+
+
+            blockChatUserListService.save(blockChatUserList);
+        }
     }
 }

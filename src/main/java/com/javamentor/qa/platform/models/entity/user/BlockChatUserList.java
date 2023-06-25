@@ -19,7 +19,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "block_chat_user_list")
-public class BlockChatUserList implements Serializable {
+public class BlockChatUserList {
 
     @Id
     @GeneratedValue(generator = "BlockChatUserList_seq")
