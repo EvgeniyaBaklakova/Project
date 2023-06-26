@@ -240,69 +240,22 @@ public class TestDataInitService {
         userChatPinService.persistAll(chatPins);
     }
 
-//    public void initBlockChatUserList() {
-//        for (int i = 1; i <= 5; i++) {
-//            BlockChatUserList blockChatUserList = new BlockChatUserList();
-//            blockChatUserList.setUser(i);
-//            blockChatUserList.setPersistDate(LocalDateTime.now());
-//
-//            User userProfile = userService.getById(i);
-//            User userBlocked = userService.getById(i + 1);
-//            blockChatUserList.setUser(userProfile);
-//            blockChatUserList.setIsBlocked(userBlocked);
-//
-//
-//            blockChatUserListService.save(blockChatUserList);
-//        }
-//    }
-
-
-//    public void blockRandomUsers() {
-//        List<User> users = userService.getAll(); // Получаем список всех пользователей
-//        Random random = new Random();
-//
-//        for (int i = 0; i < 5; i++) {
-//            int userIndex = random.nextInt(users.size()); // Генерируем случайный индекс пользователя
-//            User userToBlock = users.get(userIndex); // Получаем пользователя по сгенерированному индексу
-//
-//            List<SingleChat> singleChats = singleChatService.getAll(); // Получаем список всех одиночных чатов
-//
-//            // Блокируем пользователя в случайном одиночном чате
-//            int chatIndex = random.nextInt(singleChats.size());
-//            SingleChat singleChat = singleChats.get(chatIndex);
-//
-//            BlockChatUserList blockChatUserList = new BlockChatUserList();
-//            blockChatUserList.setId(singleChat.getUserOne().getId());
-//            blockChatUserList.setId(userToBlock.getId());
-//
-//            blockChatUserListService.persist(blockChatUserList); // Сохраняем информацию о блокировке пользователя
-//
-//            users.remove(userIndex); // Удаляем пользователя из списка, чтобы не блокировать его повторно
-//        }
-//    }
-
-    public void blockRandomUsers() {
-        List<User> users = userService.getAll(); // Получаем список всех пользователей
+    public void initBlockChatUserList() {
+        List<User> users = userService.getAll();
         Random random = new Random();
 
         for (int i = 0; i < 5; i++) {
-            int userIndex = random.nextInt(users.size()); // Генерируем случайный индекс пользователя
-            User userToBlock = users.get(userIndex); // Получаем пользователя по сгенерированному индексу
-
-            List<SingleChat> singleChats = singleChatService.getAll(); // Получаем список всех одиночных чатов
-
-            // Блокируем пользователя в случайном одиночном чате
+            int userIndex = random.nextInt(users.size());
+            User userToBlock = users.get(userIndex);
+            List<SingleChat> singleChats = singleChatService.getAll();
             int chatIndex = random.nextInt(singleChats.size());
             SingleChat singleChat = singleChats.get(chatIndex);
-
             BlockChatUserList blockChatUserList = new BlockChatUserList();
-            blockChatUserList.setUser(singleChat.getUserOne()); // Пользователь, от которого блокируют
-            blockChatUserList.setIsBlocked(userToBlock); // Пользователь, который блокируется
-            blockChatUserList.setPersistDate(LocalDateTime.now()); // Устанавливаем текущую дату и время
-
-            blockChatUserListService.persistAll(blockChatUserList); // Сохраняем информацию о блокировке пользователя
-
-            users.remove(userIndex); // Удаляем пользователя из списка, чтобы не блокировать его повторно
+            blockChatUserList.setUser(singleChat.getUserOne());
+            blockChatUserList.setIsBlocked(userToBlock);
+            blockChatUserList.setPersistDate(LocalDateTime.now());
+            blockChatUserListService.persistAll(blockChatUserList);
+            users.remove(userIndex);
         }
     }
 }
