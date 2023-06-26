@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Map;
 
@@ -26,19 +25,8 @@ public class QuestionDtoDaoWithoutAnswersImpl implements PageDtoDao<QuestionDto>
         List<Long> ignoredTagIds = (List<Long>) properties.getProps().get("ignoredTags");
         List<Long> trackedTagIds = (List<Long>) properties.getProps().get("trackedTags");
 
-        String subQuery;
-        if (trackedTagIds != null) {
-            subQuery = "SELECT q.id FROM Question q JOIN q.tags t WHERE t.id IN (:trackedTagIds)";
-            if (ignoredTagIds != null) {
-                subQuery += " AND q.id NOT IN (SELECT q2.id FROM Question q2 JOIN q2.tags t2 WHERE t2.id IN (:ignoredTagIds))";
-            }
-        } else if (ignoredTagIds != null) {
-            subQuery = "SELECT q.id FROM Question q WHERE q.id NOT IN (SELECT q2.id FROM Question q2 JOIN q2.tags t2 WHERE t2.id IN (:ignoredTagIds))";
-        } else {
-            subQuery = "SELECT q.id FROM Question q";
-        }
 
-        String mainQuery = "SELECT NEW com.javamentor.qa.platform.models.dto.question.QuestionDto(q.id, q.title, u.id," +
+        String query = "SELECT NEW com.javamentor.qa.platform.models.dto.question.QuestionDto(q.id, q.title, u.id," +
                 "CAST(rep.count as long), u.fullName, u.imageLink, q.description, " +
                 "(SELECT CAST(COUNT(qv.user.id) as long) FROM QuestionViewed qv WHERE qv.question.id = q.id), " +
                 "COUNT(DISTINCT a.id), " +
@@ -49,23 +37,16 @@ public class QuestionDtoDaoWithoutAnswersImpl implements PageDtoDao<QuestionDto>
                 "LEFT JOIN Answer a on q.id = a.question.id " +
                 "LEFT JOIN Reputation rep on u.id = rep.author.id " +
                 "LEFT JOIN VoteQuestion vq on q.id = vq.question.id " +
-                "WHERE q.id IN (" + subQuery + ") AND a.id IS NULL " +
+                "WHERE q.id in (select q.id from Question q JOIN q.tags as qt WHERE " +
+                "(:trackedTagIds) is null or qt.id in (:trackedTagIds)) and q.id not in (select q.id from Question q JOIN q.tags as qt WHERE " +
+                "qt.id in (:ignoredTagIds)) AND a.id IS NULL " +
                 "GROUP BY q.id, u.id, rep.count " +
                 "ORDER BY q.id";
 
 
-        TypedQuery<QuestionDto> typedQuery = entityManager.createQuery(mainQuery, QuestionDto.class).setFirstResult(offset).setMaxResults(items);
-
-        if (ignoredTagIds != null && trackedTagIds != null) {
-            typedQuery.setParameter("ignoredTagIds", ignoredTagIds)
-                    .setParameter("trackedTagIds", trackedTagIds);
-        } else if (ignoredTagIds != null) {
-            typedQuery.setParameter("ignoredTagIds", ignoredTagIds);
-        } else if (trackedTagIds != null) {
-            typedQuery.setParameter("trackedTagIds", trackedTagIds);
-        }
-
-        return typedQuery.getResultList();
+        return entityManager.createQuery(query, QuestionDto.class).setFirstResult(offset).setMaxResults(items)
+                .setParameter("trackedTagIds", trackedTagIds)
+                .setParameter("ignoredTagIds", ignoredTagIds).getResultList();
     }
 
     @Override
@@ -73,32 +54,13 @@ public class QuestionDtoDaoWithoutAnswersImpl implements PageDtoDao<QuestionDto>
         List<Long> ignoredTagIds = (List<Long>) properties.get("ignoredTags");
         List<Long> trackedTagIds = (List<Long>) properties.get("trackedTags");
 
-        String subQuery;
-        if (trackedTagIds != null) {
-            subQuery = "SELECT q.id FROM Question q JOIN q.tags t WHERE t.id IN (:trackedTagIds)";
-            if (ignoredTagIds != null) {
-                subQuery += " AND q.id NOT IN (SELECT q2.id FROM Question q2 JOIN q2.tags t2 WHERE t2.id IN (:ignoredTagIds))";
-            }
-        } else if (ignoredTagIds != null) {
-            subQuery = "SELECT q.id FROM Question q WHERE q.id NOT IN (SELECT q2.id FROM Question q2 JOIN q2.tags t2 WHERE t2.id IN (:ignoredTagIds))";
-        } else {
-            subQuery = "SELECT q.id FROM Question q";
-        }
+        String query = "select count(q.id) from Question q LEFT JOIN Answer a on q.id = a.question.id " +
+                "WHERE q.id in (select q.id from Question q JOIN q.tags as qt " +
+                "WHERE (:trackedTagIds) is null or qt.id in (:trackedTagIds)) and q.id not in (select q.id from Question q JOIN q.tags as qt " +
+                "WHERE qt.id in (:ignoredTagIds)) and a.id is null";
 
-        String mainQuery = "select count(q.id) from Question q LEFT JOIN Answer a on q.id = a.question.id where q.id in (" + subQuery + ") and a.id is null";
-
-
-        TypedQuery<Long> typedQuery = entityManager.createQuery(mainQuery, Long.class);
-
-        if (ignoredTagIds != null && trackedTagIds != null) {
-            typedQuery.setParameter("ignoredTagIds", ignoredTagIds)
-                    .setParameter("trackedTagIds", trackedTagIds);
-        } else if (ignoredTagIds != null) {
-            typedQuery.setParameter("ignoredTagIds", ignoredTagIds);
-        } else if (trackedTagIds != null) {
-            typedQuery.setParameter("trackedTagIds", trackedTagIds);
-        }
-
-        return typedQuery.getSingleResult();
+        return entityManager.createQuery(query, Long.class)
+                .setParameter("trackedTagIds", trackedTagIds)
+                .setParameter("ignoredTagIds", ignoredTagIds).getSingleResult();
     }
 }
