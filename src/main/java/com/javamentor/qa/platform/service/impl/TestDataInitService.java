@@ -9,14 +9,7 @@ import com.javamentor.qa.platform.models.entity.user.BlockChatUserList;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.UserChatPin;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.RoleService;
-import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.service.abstracts.model.UserChatPinService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,7 +35,7 @@ public class TestDataInitService {
     private final GroupChatService groupChatService;
     private final UserChatPinService userChatPinService;
     private final PasswordEncoder passwordEncoder;
-    private final BlockChatUserList blockChatUserList;
+    private final BlockChatUserListService blockChatUserListService;
 
     private final Role ROLE_USER = new Role("ROLE_USER");
     private final Role ROLE_ADMIN = new Role("ROLE_ADMIN");
@@ -58,7 +51,7 @@ public class TestDataInitService {
                                GroupChatService groupChatService,
                                UserChatPinService userChatPinService,
                                PasswordEncoder passwordEncoder,
-                               BlockChatUserList blockChatUserList) {
+                               BlockChatUserListService blockChatUserListService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -68,7 +61,7 @@ public class TestDataInitService {
         this.groupChatService = groupChatService;
         this.userChatPinService = userChatPinService;
         this.passwordEncoder = passwordEncoder;
-        this.blockChatUserList = blockChatUserList;
+        this.blockChatUserListService = blockChatUserListService;
     }
 
     public void initRoles() {
@@ -247,19 +240,69 @@ public class TestDataInitService {
         userChatPinService.persistAll(chatPins);
     }
 
-    public void initBlockChatUserList() {
-        for (int i = 1; i <= 5; i++) {
+//    public void initBlockChatUserList() {
+//        for (int i = 1; i <= 5; i++) {
+//            BlockChatUserList blockChatUserList = new BlockChatUserList();
+//            blockChatUserList.setUser(i);
+//            blockChatUserList.setPersistDate(LocalDateTime.now());
+//
+//            User userProfile = userService.getById(i);
+//            User userBlocked = userService.getById(i + 1);
+//            blockChatUserList.setUser(userProfile);
+//            blockChatUserList.setIsBlocked(userBlocked);
+//
+//
+//            blockChatUserListService.save(blockChatUserList);
+//        }
+//    }
+
+
+//    public void blockRandomUsers() {
+//        List<User> users = userService.getAll(); // Получаем список всех пользователей
+//        Random random = new Random();
+//
+//        for (int i = 0; i < 5; i++) {
+//            int userIndex = random.nextInt(users.size()); // Генерируем случайный индекс пользователя
+//            User userToBlock = users.get(userIndex); // Получаем пользователя по сгенерированному индексу
+//
+//            List<SingleChat> singleChats = singleChatService.getAll(); // Получаем список всех одиночных чатов
+//
+//            // Блокируем пользователя в случайном одиночном чате
+//            int chatIndex = random.nextInt(singleChats.size());
+//            SingleChat singleChat = singleChats.get(chatIndex);
+//
+//            BlockChatUserList blockChatUserList = new BlockChatUserList();
+//            blockChatUserList.setId(singleChat.getUserOne().getId());
+//            blockChatUserList.setId(userToBlock.getId());
+//
+//            blockChatUserListService.persist(blockChatUserList); // Сохраняем информацию о блокировке пользователя
+//
+//            users.remove(userIndex); // Удаляем пользователя из списка, чтобы не блокировать его повторно
+//        }
+//    }
+
+    public void blockRandomUsers() {
+        List<User> users = userService.getAll(); // Получаем список всех пользователей
+        Random random = new Random();
+
+        for (int i = 0; i < 5; i++) {
+            int userIndex = random.nextInt(users.size()); // Генерируем случайный индекс пользователя
+            User userToBlock = users.get(userIndex); // Получаем пользователя по сгенерированному индексу
+
+            List<SingleChat> singleChats = singleChatService.getAll(); // Получаем список всех одиночных чатов
+
+            // Блокируем пользователя в случайном одиночном чате
+            int chatIndex = random.nextInt(singleChats.size());
+            SingleChat singleChat = singleChats.get(chatIndex);
+
             BlockChatUserList blockChatUserList = new BlockChatUserList();
-            blockChatUserList.setId(i);
-            blockChatUserList.setPersistDate(LocalDateTime.now());
+            blockChatUserList.setUser(singleChat.getUserOne()); // Пользователь, от которого блокируют
+            blockChatUserList.setIsBlocked(userToBlock); // Пользователь, который блокируется
+            blockChatUserList.setPersistDate(LocalDateTime.now()); // Устанавливаем текущую дату и время
 
-            User userProfile = userService.getById(i);
-            User userBlocked = userService.getById(i + 1);
-            blockChatUserList.setUser(userProfile);
-            blockChatUserList.setIsBlocked(userBlocked);
+            blockChatUserListService.persistAll(blockChatUserList); // Сохраняем информацию о блокировке пользователя
 
-
-            blockChatUserListService.save(blockChatUserList);
+            users.remove(userIndex); // Удаляем пользователя из списка, чтобы не блокировать его повторно
         }
     }
 }
