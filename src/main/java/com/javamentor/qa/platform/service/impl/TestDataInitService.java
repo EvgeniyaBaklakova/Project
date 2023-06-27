@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.service.impl;
 
+import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.question.Question;
@@ -16,6 +17,7 @@ import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.UserChatPinService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,8 @@ public class TestDataInitService {
     private final UserChatPinService userChatPinService;
     private final PasswordEncoder passwordEncoder;
 
+    private final GroupBookmarksService groupBookmarksService;
+
     private final Role ROLE_USER = new Role("ROLE_USER");
     private final Role ROLE_ADMIN = new Role("ROLE_ADMIN");
 
@@ -55,7 +59,8 @@ public class TestDataInitService {
                                SingleChatService singleChatService,
                                GroupChatService groupChatService,
                                UserChatPinService userChatPinService,
-                               PasswordEncoder passwordEncoder) {
+                               PasswordEncoder passwordEncoder,
+                               GroupBookmarksService groupBookmarksService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -65,6 +70,7 @@ public class TestDataInitService {
         this.groupChatService = groupChatService;
         this.userChatPinService = userChatPinService;
         this.passwordEncoder = passwordEncoder;
+        this.groupBookmarksService = groupBookmarksService;
     }
 
     public void initRoles() {
@@ -241,5 +247,13 @@ public class TestDataInitService {
             chatPins.add(userChatPin);
         }
         userChatPinService.persistAll(chatPins);
+    }
+
+    public void initGroupBookmarks() {
+        for (int i = 1; i < 5; i++) {
+            GroupBookmark groupBookmark = new GroupBookmark();
+            groupBookmark.setTitle("Title" + i);
+            groupBookmarksService.persistAll(groupBookmark);
+        }
     }
 }
