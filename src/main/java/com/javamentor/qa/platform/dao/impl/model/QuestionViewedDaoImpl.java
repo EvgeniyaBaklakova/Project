@@ -12,7 +12,7 @@ public class QuestionViewedDaoImpl extends ReadWriteDaoImpl<QuestionViewed, Long
     private EntityManager entityManager;
 
     public boolean isViewed(Long userId, Long questionId) {
-        long count = (long) entityManager.createQuery("SELECT COUNT(qv) FROM QuestionViewed qv WHERE qv.question.id =: questionid AND qv.user.id = :userid")
+        long count = (long) entityManager.createQuery("SELECT COUNT(qv) FROM QuestionViewed qv WHERE qv.question.id = :questionid AND qv.user.id = :userid")
                 .setParameter("questionid", questionId).setParameter("userid", userId).getSingleResult();
         return count > 0;
     }
