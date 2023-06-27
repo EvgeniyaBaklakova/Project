@@ -394,8 +394,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/100/upvote")      // vote already exists to Up
                 .header("Authorization", getToken("test101@mail.ru", "password")))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(3)));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("Пользователь уже проголосовал за: UP_VOTE")));
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/101/upvote")       // vote for self question to Up
                         .header("Authorization", getToken("test101@mail.ru", "password")))
@@ -430,8 +430,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/103/downVote")      // vote already exists to Down
                         .header("Authorization", getToken("test101@mail.ru", "password")))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(1)));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$", Is.is("Пользователь уже проголосовал за: DOWN_VOTE")));
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/101/downVote")       // vote for self question to Down
                         .header("Authorization", getToken("test101@mail.ru", "password")))

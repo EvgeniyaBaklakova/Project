@@ -3,18 +3,20 @@ package com.javamentor.qa.platform.service.impl.model;
 import com.javamentor.qa.platform.dao.abstracts.model.QuestionDao;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.abstracts.model.VoteForQuestionDao;
+import com.javamentor.qa.platform.exception.AlreadyVotedException;
 import com.javamentor.qa.platform.exception.UserNotFoundException;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import com.javamentor.qa.platform.models.entity.user.reputation.ReputationType;
+import com.javamentor.qa.platform.service.abstracts.model.ReputationService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteForQuestionService;
 import com.javamentor.qa.platform.webapp.controllers.util.QuestionNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,112 +28,69 @@ public class VoteForQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestio
     private final VoteForQuestionDao voteForQuestionDao;
     private final QuestionDao questionDao;
     private final UserDao userDao;
+    private final ReputationService reputationService;
 
-    public VoteForQuestionServiceImpl(VoteForQuestionDao voteForQuestionDao, QuestionDao questionDao, UserDao userDao) {
+    public VoteForQuestionServiceImpl(VoteForQuestionDao voteForQuestionDao, QuestionDao questionDao, UserDao userDao, ReputationService reputationService) {
         super(voteForQuestionDao);
         this.voteForQuestionDao = voteForQuestionDao;
         this.questionDao = questionDao;
         this.userDao = userDao;
+        this.reputationService = reputationService;
     }
 
     @Override
-    public User getAuthor(Long idQuestion) {
-        return voteForQuestionDao.getAuthor(idQuestion);
+    public void checkAndUpdateVote(VoteQuestion voteQuestion, VoteType existsType, VoteType newType) {
+        if (voteQuestion.getVote().equals(existsType)) {
+            voteQuestion.setVote(newType);
+            update(voteQuestion);
+        } else {
+            throw new AlreadyVotedException("Пользователь уже проголосовал за: " + newType);
+        }
     }
 
     @Override
-    public boolean ifHasReputation(Question question, User sender, ReputationType type, Integer count) {
-        return voteForQuestionDao.ifHasReputation(question,sender,type,count);
-    }
-
-    @Override
-    public Reputation getReputation(User sender, Question question) {
-        return voteForQuestionDao.getReputation(sender,question);
-    }
-
-    @Override
-    public VoteQuestion getVoteQuestionByIds(Long userId, Long idQuestion) {
-        return voteForQuestionDao.getVoteQuestionByIds(userId,idQuestion);
+    public void addVoteQuestion(User sender, Question question, VoteType type) {
+        VoteQuestion vq = new VoteQuestion(sender, question, type);
+        voteForQuestionDao.persist(vq);
     }
 
     @Override
     @Transactional
-    public int upVote(Long idQuestion, User user) {
-        int counterVotes;
-        Optional<Question> question = questionDao.getById(idQuestion);
-        if (question.isEmpty()) {
-            throw new QuestionNotFoundException();
-        }
+    public int upVote(Long questionId, Long userId) {
+        Optional<Question> question = Optional.ofNullable(questionDao.getById(questionId).orElseThrow(QuestionNotFoundException::new));
+        Optional<User> sender = Optional.ofNullable(userDao.getById(userId).orElseThrow(UserNotFoundException::new));
+        int counterVotes = question.get().getVoteQuestions().size();
+        List<VoteQuestion> voteQuestions = question.get().getVoteQuestions();
 
-        Optional<User> sender = userDao.getById(user.getId());
-        if (sender.isEmpty()) {
-            throw new UserNotFoundException();
-        }
-        counterVotes = question.get().getVoteQuestions().size();
-
-        if (question.get().getVoteQuestions().size() == 0) {
-            VoteQuestion vq = new VoteQuestion(sender.get(), question.get(), VoteType.UP_VOTE);
-            persist(vq);
+        if (voteQuestions.size() == 0) {
+            addVoteQuestion(sender.get(),question.get(),VoteType.UP_VOTE);
             counterVotes++;
         } else {
-            VoteQuestion vq = getVoteQuestionByIds(sender.get().getId(), idQuestion);
-            if (vq != null) {
-                if (vq.getVote().equals(VoteType.DOWN_VOTE)) {
-                    vq.setVote(VoteType.UP_VOTE);
-                    update(vq);
-                }
-            } else {
-                vq = new VoteQuestion();
-                vq.setUser(sender.get());
-                vq.setQuestion(question.get());
-                vq.setVote(VoteType.UP_VOTE);
-                persist(vq);
-                counterVotes++;
-            }
+            checkAndUpdateVote(voteForQuestionDao.getVoteQuestionByIds(userId, questionId), VoteType.DOWN_VOTE, VoteType.UP_VOTE);
         }
 
         // add reputation to user
-        voteForQuestionDao.addReputation(question.get(),user,ReputationType.VoteQuestion,10);
+        reputationService.addReputation(questionId, userId,ReputationType.VoteQuestion,10);
         return counterVotes;
     }
+
     @Override
     @Transactional
-    public int downVote(Long idQuestion, User user) {
-        int counterVotes;
-        Optional<Question> question = questionDao.getById(idQuestion);
-        if (question.isEmpty()) {
-            throw new QuestionNotFoundException();
-        }
+    public int downVote(Long questionId, Long userId) {
+        Optional<Question> question = Optional.ofNullable(questionDao.getById(questionId).orElseThrow(QuestionNotFoundException::new));
+        Optional<User> sender = Optional.ofNullable(userDao.getById(userId).orElseThrow(UserNotFoundException::new));
+        int counterVotes = question.get().getVoteQuestions().size();
+        List<VoteQuestion> voteQuestions = question.get().getVoteQuestions();
 
-        Optional<User> sender = userDao.getById(user.getId());
-        if (sender.isEmpty()) {
-            throw new UserNotFoundException();
-        }
-        counterVotes = question.get().getVoteQuestions().size();
-
-        if (question.get().getVoteQuestions().size() == 0) {
-            VoteQuestion vq = new VoteQuestion(sender.get(), question.get(), VoteType.DOWN_VOTE);
-            persist(vq);
+        if (voteQuestions.size() == 0) {
+            addVoteQuestion(sender.get(),question.get(),VoteType.DOWN_VOTE);
             counterVotes++;
         } else {
-            VoteQuestion vq = getVoteQuestionByIds(sender.get().getId(), idQuestion);
-            if (vq != null) {
-                if (!vq.getVote().equals(VoteType.DOWN_VOTE)) {
-                    vq.setVote(VoteType.DOWN_VOTE);
-                    update(vq);
-                }
-            } else {
-                vq = new VoteQuestion();
-                vq.setUser(sender.get());
-                vq.setQuestion(question.get());
-                vq.setVote(VoteType.DOWN_VOTE);
-                persist(vq);
-                counterVotes++;
-            }
+            checkAndUpdateVote(voteForQuestionDao.getVoteQuestionByIds(userId, questionId), VoteType.UP_VOTE, VoteType.DOWN_VOTE);
         }
 
         // add reputation to user
-        voteForQuestionDao.addReputation(question.get(),user,ReputationType.VoteQuestion,-5);
+        reputationService.addReputation(questionId, userId,ReputationType.VoteQuestion,-5);
         return counterVotes;
     }
 

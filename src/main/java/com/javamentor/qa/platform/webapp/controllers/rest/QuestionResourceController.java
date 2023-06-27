@@ -1,7 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
-import com.javamentor.qa.platform.dao.impl.model.VoteForQuestionDaoImpl;
+import com.javamentor.qa.platform.exception.AlreadyVotedException;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
@@ -136,7 +136,11 @@ public class QuestionResourceController {
         if (!questionService.existsById(id)) {
             return new ResponseEntity<>("Такого вопроса не существует", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("" + voteForQuestionService.upVote(id, user), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>("" + voteForQuestionService.upVote(id, user.getId()), HttpStatus.OK);
+        } catch (AlreadyVotedException exception) {
+            return new ResponseEntity<>("" + exception.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/{questionId}/downVote")
@@ -151,6 +155,11 @@ public class QuestionResourceController {
         if (!questionService.existsById(id)) {
             return new ResponseEntity<>("Такого вопроса не существует", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("" + voteForQuestionService.downVote(id, user), HttpStatus.OK);
+
+        try {
+            return new ResponseEntity<>("" + voteForQuestionService.downVote(id, user.getId()), HttpStatus.OK);
+        } catch (AlreadyVotedException exception) {
+            return new ResponseEntity<>("" + exception.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }
