@@ -33,30 +33,28 @@ public class QuestionPageDtoDaoAllImpl implements PageDtoDao<QuestionDto> {
                 "SELECT q.id AS q_id, " +
                 "q.title AS q_title, " +
                 "q.user.id AS user_id, " +
-
-                "CAST((SELECT r.count " +
-                "FROM Reputation r " +
-                "JOIN r.author AS ra " +
-                "WHERE ra.id = q.user.id) AS java.lang.Long) AS rep, " +
+                    "CAST((SELECT r.count " +
+                    "FROM Reputation r " +
+                    "JOIN r.author AS ra " +
+                    "WHERE ra.id = q.user.id) AS java.lang.Long) AS rep, " +
 
                 "q.user.fullName AS u_name, " +
                 "q.user.imageLink AS img, " +
-                "q.description AS desc," +
+                "q.description AS desc, " +
+                    "(SELECT COUNT(qv.id) " +
+                    "FROM QuestionViewed qv " +
+                    "JOIN qv.question AS qvq " +
+                    "WHERE qvq.id = q.id) AS vc," +
 
-                "(SELECT COUNT(qv.id) " +
-                "FROM QuestionViewed qv " +
-                "JOIN qv.question AS qvq " +
-                "WHERE qvq.id = q.id) AS vc," +
+                    "(SELECT count(a.id) " +
+                    "FROM Answer a " +
+                    "JOIN a.question AS aq " +
+                    "WHERE aq.id = q.id) AS ac, " +
 
-                "(SELECT count(a.id) " +
-                "FROM Answer a " +
-                "JOIN a.question AS aq " +
-                "WHERE aq.id = q.id) AS ac, " +
-
-                "(SELECT COUNT(vq.id) " +
-                 "FROM VoteQuestion vq " +
-                 "JOIN vq.question AS vqq " +
-                 "WHERE vqq.id = q.id) AS valc, " +
+                    "(SELECT COUNT(vq.id) " +
+                    "FROM VoteQuestion vq " +
+                    "JOIN vq.question AS vqq " +
+                    "WHERE vqq.id = q.id) AS valc, " +
 
                 "q.persistDateTime AS pdt, " +
                 "q.lastUpdateDateTime AS udt " +
