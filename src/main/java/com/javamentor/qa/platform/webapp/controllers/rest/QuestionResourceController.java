@@ -161,17 +161,15 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "QuestionDto не найдены")
     })
     public ResponseEntity<String> getAllQuestionDtoByCreatingDate(
-            @RequestParam(required =  true, defaultValue = "1") Integer page
+              @RequestParam(required =  true, defaultValue = "1") Integer page
             , @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage
-
             , @RequestParam(required = false) List<String> ignoredTag
             , @RequestParam(required = false) List<String> trackedTag) {
 
-//
-//        PaginationData data = new PaginationData(
-//                page, itemsOnPage,
-//                QuestionPageDtoDaoByPersistDateImpl.class.getSimpleName());
-//        return new ResponseEntity<>(userDtoService.getPageDto(data), HttpStatus.OK);
+        PaginationData data = new PaginationData(
+                page, itemsOnPage,
+                QuestionPageDtoDaoByPersistDateImpl.class.getSimpleName());
+        return new ResponseEntity<>(userDtoService.getPageDto(data), HttpStatus.OK);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
