@@ -208,12 +208,18 @@ public class TestDataInitService {
                 group.add(users.get(random.nextInt(20)));
             }
             groupChat.setUsers(group);
+            groupChat.setImage(
+                "https://variety.com/wp-content/uploads/2021/07/Rick-Astley-Never-Gonna-Give-You-Up.png");
             groupChat.setIsGlobal(false);
             groupChatList.add(groupChat);
         }
         GroupChat globalChat = new GroupChat();
         Set<User> globalChatUsers = new HashSet<>(users);
         globalChat.setUsers(globalChatUsers);
+
+        globalChat.setImage(
+                "https://variety.com/wp-content/uploads/2021/07/Rick-Astley-Never-Gonna-Give-You-Up.png");
+
         globalChat.setIsGlobal(true);
         groupChatList.add(globalChat);
         groupChatService.persistAll(groupChatList);
