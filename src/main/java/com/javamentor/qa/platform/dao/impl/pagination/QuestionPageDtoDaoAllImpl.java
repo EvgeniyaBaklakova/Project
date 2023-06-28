@@ -18,65 +18,37 @@ public class QuestionPageDtoDaoAllImpl implements PageDtoDao<QuestionDto> {
     @PersistenceContext
     private EntityManager entityManager;
 
+    private final String hqlToGetQuestions =
+            "SELECT q.id AS q_id, " +
+                    "q.title AS q_title, " +
+                    "q.user.id AS user_id, " +
+
+                    "CAST((SELECT r.count FROM Reputation r JOIN r.author AS ra WHERE ra.id = q.user.id) AS java.lang.Long) AS rep, " +
+
+                    "q.user.fullName AS u_name, " +
+                    "q.user.imageLink AS img, " +
+                    "q.description AS desc, " +
+
+                    "(SELECT COUNT(qv.id) FROM QuestionViewed qv JOIN qv.question AS qvq WHERE qvq.id = q.id) AS vc," +
+                    "(SELECT count(a.id) FROM Answer a JOIN a.question AS aq WHERE aq.id = q.id) AS ac, " +
+                    "(SELECT COUNT(vq.id) FROM VoteQuestion vq JOIN vq.question AS vqq WHERE vqq.id = q.id) AS valc, " +
+
+                    "q.persistDateTime AS pdt, " +
+                    "q.lastUpdateDateTime AS udt " +
+
+                    "FROM Question q " +
+                    "WHERE q.id IN (SELECT q.id " +
+                                    "FROM Question q " +
+                                    "JOIN q.tags AS qt " +
+                                    "WHERE :tt IS NULL OR " +
+                                        "qt.name IN (:tt)) AND q.id NOT IN (SELECT q.id " +
+                                                                            "FROM Question q " +
+                                                                            "JOIN q.tags AS qt " +
+                                                                            "WHERE qt.name IN (:it))";
+
     @Override
     public List<QuestionDto> getItems(PaginationData properties) {
-        List<String> trackedTag = (List<String>)
-                properties.getProps().getOrDefault("trackedTag", null);
-        List<String> ignoredTag = (List<String>)
-                properties.getProps().getOrDefault("ignoredTag", null);
-
-        int items = properties.getItemsOnPage();
-        int offset = (properties.getCurrentPage() - 1) * items;
-
-        String hql =
-                "SELECT q.id AS q_id, " +
-                "q.title AS q_title, " +
-                "q.user.id AS user_id, " +
-                    "CAST((SELECT r.count " +
-                    "FROM Reputation r " +
-                    "JOIN r.author AS ra " +
-                    "WHERE ra.id = q.user.id) AS java.lang.Long) AS rep, " +
-
-                "q.user.fullName AS u_name, " +
-                "q.user.imageLink AS img, " +
-                "q.description AS desc, " +
-                    "(SELECT COUNT(qv.id) " +
-                    "FROM QuestionViewed qv " +
-                    "JOIN qv.question AS qvq " +
-                    "WHERE qvq.id = q.id) AS vc," +
-
-                    "(SELECT count(a.id) " +
-                    "FROM Answer a " +
-                    "JOIN a.question AS aq " +
-                    "WHERE aq.id = q.id) AS ac, " +
-
-                    "(SELECT COUNT(vq.id) " +
-                    "FROM VoteQuestion vq " +
-                    "JOIN vq.question AS vqq " +
-                    "WHERE vqq.id = q.id) AS valc, " +
-
-                "q.persistDateTime AS pdt, " +
-                "q.lastUpdateDateTime AS udt " +
-
-                "FROM Question q " +
-                "WHERE q.id IN (SELECT q.id " +
-                                "FROM Question q " +
-                                "JOIN q.tags AS qt " +
-                                "WHERE :tt IS NULL OR " +
-                    "qt.name IN (:tt)) AND q.id NOT IN (SELECT q.id " +
-                                                        "FROM Question q " +
-                                                        "JOIN q.tags AS qt " +
-                                                        "WHERE qt.name IN (:it))";
-
-        Query query = entityManager.createQuery(hql)
-                .setFirstResult(offset)
-                .setMaxResults(items)
-                .setParameter("tt", trackedTag)
-                .setParameter("it", ignoredTag)
-                .unwrap(org.hibernate.query.Query.class)
-                .setResultTransformer(new QuestionDtoResultTransformer());
-
-        return query.getResultList();
+        return getQueryResult(properties, hqlToGetQuestions);
     }
 
     @Override
@@ -99,5 +71,29 @@ public class QuestionPageDtoDaoAllImpl implements PageDtoDao<QuestionDto> {
                 .setParameter("it", ignoredTag);
 
         return (Long) query.getSingleResult();
+    }
+
+    public List<QuestionDto> getQueryResult(PaginationData properties, String hql) {
+        List<String> trackedTag = (List<String>)
+                properties.getProps().getOrDefault("trackedTag", null);
+        List<String> ignoredTag = (List<String>)
+                properties.getProps().getOrDefault("ignoredTag", null);
+
+        int items = properties.getItemsOnPage();
+        int offset = (properties.getCurrentPage() - 1) * items;
+
+        Query query = entityManager.createQuery(hql)
+                .setFirstResult(offset)
+                .setMaxResults(items)
+                .setParameter("tt", trackedTag)
+                .setParameter("it", ignoredTag)
+                .unwrap(org.hibernate.query.Query.class)
+                .setResultTransformer(new QuestionDtoResultTransformer());
+
+        return query.getResultList();
+    };
+
+    public String getHqlToGetQuestions() {
+        return hqlToGetQuestions;
     }
 }

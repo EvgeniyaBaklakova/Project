@@ -167,12 +167,12 @@ public class QuestionResourceController {
             , @RequestParam(required = false) List<String> ignoredTag
             , @RequestParam(required = false) List<String> trackedTag) {
 
-        Map<String, Object> props = new HashMap<>();
-        props.put("trackedTag", trackedTag);
-        props.put("ignoredTag", ignoredTag);
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("trackedTag", trackedTag);
+        properties.put("ignoredTag", ignoredTag);
+
         PaginationData data = new PaginationData(
-                page, itemsOnPage,
-                QuestionPageDtoDaoByPersistDateImpl.class.getSimpleName());
+            page, itemsOnPage, QuestionPageDtoDaoByPersistDateImpl.class.getSimpleName(), properties);
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
 }
