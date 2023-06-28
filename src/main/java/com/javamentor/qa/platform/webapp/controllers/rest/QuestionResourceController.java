@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoByPersistDateImpl;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
@@ -160,16 +161,18 @@ public class QuestionResourceController {
             @ApiResponse(code = 200, message = "Success", response = PageDto.class),
             @ApiResponse(code = 400, message = "QuestionDto не найдены")
     })
-    public ResponseEntity<String> getAllQuestionDtoByCreatingDate(
+    public ResponseEntity<PageDto<QuestionDto>> getAllQuestionDtoByCreatingDate(
               @RequestParam(required =  true, defaultValue = "1") Integer page
             , @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage
             , @RequestParam(required = false) List<String> ignoredTag
             , @RequestParam(required = false) List<String> trackedTag) {
 
+        Map<String, Object> props = new HashMap<>();
+        props.put("trackedTag", trackedTag);
+        props.put("ignoredTag", ignoredTag);
         PaginationData data = new PaginationData(
                 page, itemsOnPage,
                 QuestionPageDtoDaoByPersistDateImpl.class.getSimpleName());
-        return new ResponseEntity<>(userDtoService.getPageDto(data), HttpStatus.OK);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
 }
