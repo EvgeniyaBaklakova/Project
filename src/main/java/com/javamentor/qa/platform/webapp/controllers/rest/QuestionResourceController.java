@@ -136,11 +136,7 @@ public class QuestionResourceController {
         if (!questionService.existsById(id)) {
             return new ResponseEntity<>("Такого вопроса не существует", HttpStatus.BAD_REQUEST);
         }
-        try {
-            return new ResponseEntity<>("" + voteForQuestionService.upVote(id, user.getId()), HttpStatus.OK);
-        } catch (AlreadyVotedException exception) {
-            return new ResponseEntity<>("" + exception.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>("" + voteForQuestionService.upVote(id, user.getId()), HttpStatus.OK);
     }
 
     @PostMapping("/{questionId}/downVote")
@@ -155,11 +151,6 @@ public class QuestionResourceController {
         if (!questionService.existsById(id)) {
             return new ResponseEntity<>("Такого вопроса не существует", HttpStatus.BAD_REQUEST);
         }
-
-        try {
-            return new ResponseEntity<>("" + voteForQuestionService.downVote(id, user.getId()), HttpStatus.OK);
-        } catch (AlreadyVotedException exception) {
-            return new ResponseEntity<>("" + exception.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>("" + voteForQuestionService.downVote(id, user.getId()), HttpStatus.OK);
     }
 }
