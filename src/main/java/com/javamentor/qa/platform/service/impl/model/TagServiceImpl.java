@@ -31,6 +31,10 @@ public class TagServiceImpl extends ReadWriteServiceImpl<Tag, Long> implements T
         return saveTags(questionTags, tagsFromDb, tags);
     }
 
+    public List<Tag> getTagsByNames(List<String> names) {
+        return tagDao.getTagsByNames(names);
+    }
+
     private List<Tag> saveTags(List<Tag> questionTags, List<Tag> tagsFromDb, List<Tag> tags) {
         questionTags.forEach(questionTag -> {
             boolean isExist = tagsFromDb
