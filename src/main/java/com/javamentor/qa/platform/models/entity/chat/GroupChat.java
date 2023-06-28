@@ -26,6 +26,8 @@ public class GroupChat{
     @MapsId
     private Chat chat = new Chat(ChatType.GROUP);
 
+    @Column(name = "image")
+    private String image;
     @Column(name = "isGlobal")
     private Boolean isGlobal;
 
@@ -59,12 +61,13 @@ public class GroupChat{
         GroupChat groupChat = (GroupChat) o;
         return Objects.equals(id, groupChat.id) &&
                 Objects.equals(chat, groupChat.chat) &&
+                Objects.equals(image, groupChat.image) &&
                 Objects.equals(users, groupChat.users) &&
                 Objects.equals(isGlobal, groupChat.isGlobal);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, chat, users, isGlobal);
+        return Objects.hash(id, chat, image, users, isGlobal);
     }
 }
