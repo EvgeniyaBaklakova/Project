@@ -28,6 +28,7 @@ public class GroupChat{
 
     @Column(name = "image")
     private String image;
+
     @Column(name = "isGlobal")
     private Boolean isGlobal;
 
