@@ -135,6 +135,35 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[20].id", Is.is(resultList.get(20).getId().intValue())));
     }
 
+    @Test
+    @Sql(value = {"/script/TestUserResourceController/getUsersByReputation/Before.sql"}, executionPhase = BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestUserResourceController/getUsersByReputation/After.sql"}, executionPhase = AFTER_TEST_METHOD)
+    public void getUsersByReputation() throws Exception {
+
+
+        String USER_TOKEN = getToken("user101@mail.ru", "123");
+
+        mvc.perform(get("/api/user/reputation")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        mvc.perform(get("/api/user/reputation")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .param("page", "1")
+                        .param("itemsOnPage", "10")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
+                .andExpect(jsonPath("$.items.length()", Is.is(10)))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(100)))
+                .andExpect(jsonPath("$.items[9].reputation", Is.is(8000)));
+    }
+
 
     @Test
     @Sql(value = {"/script/TestUserResourceController/getAllUserDtoSortDTO/Before.sql"}, executionPhase = BEFORE_TEST_METHOD)
