@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionDtoDaoWithoutAnswersImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllImpl;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
@@ -151,6 +152,26 @@ public class QuestionResourceController {
         props.put("ignoredTag", ignoredTag);
         PaginationData data = new PaginationData(page, items,
                 QuestionPageDtoDaoAllImpl.class.getSimpleName(), props);
+        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "Получение всех QuestionDto, на которые нет ответов")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Вопросы успешно получены"),
+            @ApiResponse(code = 400, message = "Некорректный запрос"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен"),
+            @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")})
+    @GetMapping("/noAnswer")
+    public ResponseEntity<PageDto<QuestionDto>> getAllQuestionsWithoutAnswers(@RequestParam(defaultValue = "1") Integer page,
+                                                                              @RequestParam(required = false, defaultValue = "10") Integer items,
+                                                                              @RequestParam(required = false) List<Long> trackedTag,
+                                                                              @RequestParam(required = false) List<Long> ignoredTag) {
+        Map<String, Object> props = new HashMap<>();
+        props.put("trackedTags", trackedTag);
+        props.put("ignoredTags", ignoredTag);
+
+        PaginationData data = new PaginationData(page, items, QuestionDtoDaoWithoutAnswersImpl.class.getSimpleName(), props);
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
 }
