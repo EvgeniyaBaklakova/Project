@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -15,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuestionDto {
+
     private Long id;
     private String title;
     private Long authorId;
@@ -43,4 +45,23 @@ public class QuestionDto {
         this.persistDateTime = persistDateTime;
         this.lastUpdateDateTime = lastUpdateDateTime;
     }
+
+    public QuestionDto(Long id, String title, Long authorId, Long authorReputation, String authorName, String authorImage, String description, Long viewCount, Long countAnswer, Long countValuable, LocalDateTime persistDateTime, LocalDateTime lastUpdateDateTime, List<TagDto> listTagDto) {
+        this.id = id;
+        this.title = title;
+        this.authorId = authorId;
+        this.authorReputation = authorReputation;
+        this.authorName = authorName;
+        this.authorImage = authorImage;
+        this.description = description;
+        this.viewCount = Math.toIntExact(viewCount);
+        this.countAnswer = Math.toIntExact(countAnswer);
+        this.countValuable = Math.toIntExact(countValuable);
+        this.persistDateTime = persistDateTime;
+        this.lastUpdateDateTime = lastUpdateDateTime;
+        this.listTagDto = listTagDto;
+    }
+
+
+
 }

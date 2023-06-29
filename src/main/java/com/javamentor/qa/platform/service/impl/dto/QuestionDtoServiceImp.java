@@ -13,10 +13,10 @@ import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Map;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,11 +24,14 @@ public class QuestionDtoServiceImp extends PageDtoServiceImpl<QuestionDto> imple
     private final TagDtoDao tagDtoDao;
     private final QuestionDtoDao questionDtoDao;
 
+
     public QuestionDtoServiceImp(TagDtoDao tagDtoDao, QuestionDtoDao questionDtoDao, Map<String, PageDtoDao<QuestionDto>> daoMap) {
         super(daoMap);
         this.tagDtoDao = tagDtoDao;
         this.questionDtoDao = questionDtoDao;
+
     }
+
 
     @Override
     public Optional<QuestionDto> getQuestionDtoById(Long id) {
@@ -63,27 +66,19 @@ public class QuestionDtoServiceImp extends PageDtoServiceImpl<QuestionDto> imple
     }
 
     @Override
-    public PageDto<QuestionDto> getPageDto(PaginationData data) {
-        PageDto<QuestionDto> pageDto = super.getPageDto(data);
-        List<QuestionDto> questionDtoList = pageDto.getItems();
-
-        pageDto.setItems(applyTagsToQuestions(questionDtoList));
+    public PageDto<QuestionDto> getPageDto(PaginationData properties) {
+        PageDto<QuestionDto> pageDto = super.getPageDto(properties);
+        List<QuestionDto> items = pageDto.getItems();
+        List<Long> ids = new ArrayList<>();
+        items.forEach(item -> ids.add(item.getId()));
+        List<TagQuestion> tagQuestions = tagDtoDao.getTagsByQuestionsIds(ids);
+        Map<Long, List<TagDto>> tagMap = tagQuestions.stream()
+                .collect(Collectors.groupingBy(TagQuestion::getQuestionId,
+                        Collectors.mapping(TagQuestion::getTagDto, Collectors.toList())));
+        items.forEach(item -> item.setListTagDto(tagMap.get(item.getId())));
+        pageDto.setItems(items);
         return pageDto;
     }
 
-    private List<QuestionDto> applyTagsToQuestions(List<QuestionDto> questionDtoList) {
-        List<Long> questionIds = questionDtoList.stream().map(QuestionDto::getId).collect(Collectors.toList());
-        Map<Long, List<TagQuestion>> questionTagsMap = tagDtoDao.getTagsByQuestionsIds(questionIds).stream().collect(Collectors.groupingBy(TagQuestion::getQuestionId));
-
-        return questionDtoList.stream()
-                .map(questionDto -> {
-                    List<TagQuestion> questionTags = questionTagsMap.getOrDefault(questionDto.getId(), Collections.emptyList());
-                    List<TagDto> tagList = questionTags.stream()
-                            .map(TagQuestion::getTagDto)
-                            .collect(Collectors.toList());
-                    questionDto.setListTagDto(tagList);
-                    return questionDto;
-                })
-                .collect(Collectors.toList());
-    }
 }
+
