@@ -10,15 +10,13 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 
-
 public class TagDto {
     private Long id;
     private String name;
     private String description;
     private LocalDateTime persistDateTime;
 
-
-    public TagDto(Long id, String name, String description, LocalDateTime persistDateTime) {
+    public TagDto(Long id,String name,String description,LocalDateTime persistDateTime) {
         this.id = id;
         this.name = name;
         this.description = description;

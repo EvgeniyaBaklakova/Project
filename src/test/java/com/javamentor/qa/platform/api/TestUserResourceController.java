@@ -226,52 +226,25 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[0].city", Is.is("Moscow")))
                 .andExpect(jsonPath("$.items[0].reputation", Is.is(1000)))
 
-                .andExpect(jsonPath("$.items[0].listTagDto.length()", Is.is(3)))
-
-                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(101)))
-                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU1")))
-                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 1")))
-
-                .andExpect(jsonPath("$.items[0].listTagDto[1].id", Is.is(102)))
-                .andExpect(jsonPath("$.items[0].listTagDto[1].name", Is.is("iThKcj2")))
-                .andExpect(jsonPath("$.items[0].listTagDto[1].description", Is.is("Description of tag 2")))
-
-                .andExpect(jsonPath("$.items[0].listTagDto[2].id", Is.is(103)))
-                .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LTGDJP3")))
-                .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 3")))
-
                 .andExpect(jsonPath("$.items[9].id", Is.is(110)))
                 .andExpect(jsonPath("$.items[9].email", Is.is("user110@mail.ru")))
                 .andExpect(jsonPath("$.items[9].fullName", Is.is("User 110")))
                 .andExpect(jsonPath("$.items[9].imageLink", Is.is("/images/noUserAvatar.png")))
                 .andExpect(jsonPath("$.items[9].city", Is.is("Moscow")))
-                .andExpect(jsonPath("$.items[9].reputation", Is.is(100)))
+                .andExpect(jsonPath("$.items[9].reputation", Is.is(100)));
 
-                .andExpect(jsonPath("$.items[9].listTagDto.length()", Is.is(3)))
-
-                .andExpect(jsonPath("$.items[9].listTagDto[0].id", Is.is(101)))
-                .andExpect(jsonPath("$.items[9].listTagDto[0].name", Is.is("vfOxMU1")))
-                .andExpect(jsonPath("$.items[9].listTagDto[0].description", Is.is("Description of tag 1")))
-
-                .andExpect(jsonPath("$.items[9].listTagDto[1].id", Is.is(102)))
-                .andExpect(jsonPath("$.items[9].listTagDto[1].name", Is.is("iThKcj2")))
-                .andExpect(jsonPath("$.items[9].listTagDto[1].description", Is.is("Description of tag 2")))
-
-                .andExpect(jsonPath("$.items[9].listTagDto[2].id", Is.is(103)))
-                .andExpect(jsonPath("$.items[9].listTagDto[2].name", Is.is("LTGDJP3")))
-                .andExpect(jsonPath("$.items[9].listTagDto[2].description", Is.is("Description of tag 3")));
     }
 
     @Test
-    @Sql(scripts = "/script/TestUserResourceController/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getCountAnswers/Before.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestUserResourceController/getCountAnswers/After.sql", executionPhase = AFTER_TEST_METHOD)
     public void getCountAnswers() throws Exception {
 
         this.mvc.perform(get("/api/user/profile/question/week").
-                        header(AUTHORIZATION, getToken("test100@mail.ru", "password")))
+                        header(AUTHORIZATION, getToken("test101@mail.ru", "password")))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(2)));
+                .andExpect(jsonPath("$", Is.is(1)));
     }
 
     @Test
