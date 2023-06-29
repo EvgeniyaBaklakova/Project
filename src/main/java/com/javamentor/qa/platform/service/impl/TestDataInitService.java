@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.service.impl;
 
+import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 import com.javamentor.qa.platform.models.entity.chat.SingleChat;
@@ -19,8 +20,8 @@ import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.abstracts.model.UserChatPinService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarksService;
+import com.javamentor.qa.platform.service.abstracts.model.BookMarksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,7 @@ public class TestDataInitService {
     private final PasswordEncoder passwordEncoder;
     private final BlockChatUserListService blockChatUserListService;
     private final GroupBookmarksService groupBookmarksService;
+    private final BookMarksService bookMarksService;
 
     private final Role ROLE_USER = new Role("ROLE_USER");
     private final Role ROLE_ADMIN = new Role("ROLE_ADMIN");
@@ -64,7 +66,8 @@ public class TestDataInitService {
                                UserChatPinService userChatPinService,
                                PasswordEncoder passwordEncoder,
                                BlockChatUserListService blockChatUserListService,
-                               GroupBookmarksService groupBookmarksService) {
+                               GroupBookmarksService groupBookmarksService,
+                               BookMarksService bookMarksService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -76,6 +79,7 @@ public class TestDataInitService {
         this.passwordEncoder = passwordEncoder;
         this.blockChatUserListService = blockChatUserListService;
         this.groupBookmarksService = groupBookmarksService;
+        this.bookMarksService = bookMarksService;
     }
 
     public void initRoles() {
@@ -273,10 +277,39 @@ public class TestDataInitService {
         }
     }
 
-    public void initGroupBookmarks() {
+    public void initBookmarks() {
         for (int i = 1; i < 5; i++) {
+            BookMarks bookMarks = new BookMarks();
+            bookMarks.setUser(userService.getAll().get(i));
+            bookMarks.setQuestion(questionService.getAll().get(i));
+            bookMarksService.persistAll(bookMarks);
+        }
+    }
+
+    public void initGroupBookmarks() {
+        GroupBookmark groupBookmark1 = new GroupBookmark();
+        groupBookmark1.setTitle("Title1");
+        Set<BookMarks> bookMarksSet1 = new HashSet<>();
+        bookMarksSet1.add(bookMarksService.getAll().get(0));
+        groupBookmark1.setBookMarks(bookMarksSet1);
+        groupBookmarksService.persistAll(groupBookmark1);
+
+        GroupBookmark groupBookmark2 = new GroupBookmark();
+        groupBookmark2.setTitle("Title2");
+        Set<BookMarks> bookMarksSet2 = new HashSet<>();
+        bookMarksSet2.add(bookMarksService.getAll().get(1));
+        groupBookmark2.setBookMarks(bookMarksSet2);
+        groupBookmarksService.persistAll(groupBookmark2);
+
+
+        for (int i = 3; i < 6; i++) {
             GroupBookmark groupBookmark = new GroupBookmark();
             groupBookmark.setTitle("Title" + i);
+            Set<BookMarks> bookMarksSet = new HashSet<>();
+            for (int j = 0; j < 3; j++) {
+                bookMarksSet.add(bookMarksService.getAll().get(j));
+            }
+            groupBookmark.setBookMarks(bookMarksSet);
             groupBookmarksService.persistAll(groupBookmark);
         }
     }
