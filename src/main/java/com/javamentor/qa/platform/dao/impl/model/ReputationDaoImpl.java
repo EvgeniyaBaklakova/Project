@@ -17,7 +17,7 @@ public class ReputationDaoImpl extends ReadWriteDaoImpl<Reputation, Long> implem
 
     @Override
     public Optional<Reputation> getByAuthorIdAndSenderId(Long authorId, Long senderId) {
-        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("SELECT r FROM Reputation r WHERE author.id = (:authorId) and sender.id = (:senderId)", Reputation.class)
+        return SingleResultUtil.getSingleResultOrNull(entityManager.createQuery("SELECT r FROM Reputation r WHERE author.id = (:authorId) and sender.id = (:senderId) and type = 'Answer'", Reputation.class)
                 .setParameter("authorId", authorId)
                 .setParameter("senderId", senderId));
     }

@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
+import com.javamentor.qa.platform.exception.UserAlreadyVotedException;
 import com.javamentor.qa.platform.webapp.controllers.util.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +29,16 @@ public class ExceptionController {
      }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleUserAlreadyVotedException(UserAlreadyVotedException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handleNotFoundException(UserNotFoundException exception){
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("User with this id not found");
     }
-
 }

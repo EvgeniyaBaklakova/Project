@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.Optional;
 
 @Repository
 public class AnswerDaoImpl extends ReadWriteDaoImpl<Answer, Long> implements AnswerDao {
@@ -28,22 +28,6 @@ public class AnswerDaoImpl extends ReadWriteDaoImpl<Answer, Long> implements Ans
         return (long) entityManager.createQuery("SELECT COUNT(a.user.id) FROM Answer a  WHERE a.user.id = :id " +
                         "and a.persistDateTime > date(current_date - 7)")
                 .setParameter("id", id).getSingleResult();
-    }
-
-    @Override
-    public Optional<Map<String, Object>> getAnswerAndAuthorId(Long answerId) {
-        List<Object[]> result = entityManager.createQuery("SELECT a, a.user.id FROM Answer a WHERE a.id = (:answerId)", Object[].class)
-                .setParameter("answerId", answerId).getResultList();
-
-        if (result.isEmpty()) {
-            return Optional.empty();
-        }
-
-        Map<String, Object> answerAndAuthorId = new HashMap<>();
-        Object[] objects = result.get(0);
-        answerAndAuthorId.put("answerEntity", objects[0]);
-        answerAndAuthorId.put("authorId", objects[1]);
-        return Optional.of(answerAndAuthorId);
     }
 
 

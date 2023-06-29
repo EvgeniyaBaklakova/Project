@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import com.javamentor.qa.platform.exception.UserAlreadyVotedException;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
@@ -13,6 +14,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -181,7 +184,9 @@ public class TestAnswerResourceController extends AbstractTestApi {
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/upVote")
                         .header("Authorization", getToken("email@mail.ru", "test")))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof UserAlreadyVotedException))
+                .andExpect(result -> Assertions.assertEquals("User already up-voted this answer", Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
     @Test
@@ -207,7 +212,9 @@ public class TestAnswerResourceController extends AbstractTestApi {
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/downVote")
                         .header("Authorization", getToken("email@mail.ru", "test")))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof UserAlreadyVotedException))
+                .andExpect(result -> Assertions.assertEquals("User already down-voted this answer", Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 
     @Test

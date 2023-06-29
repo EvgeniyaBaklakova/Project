@@ -31,7 +31,7 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long
 
     @Override
     @Transactional
-    public void setAuthorReputation(Long authorId, Long senderId, Integer count) {
+    public void addReputationForAnswer(Long authorId, Long senderId, Integer count) {
         if (authorId == null) {
             throw new IllegalArgumentException("Author ID is null");
         }
@@ -54,9 +54,8 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long
 
     @Override
     @Transactional
-    public void updateAuthorReputationAsVoteChanged(Long authorId, Long senderId, Integer count) {
+    public void updateAuthorReputationForAnswerAsVoteChanged(Long authorId, Long senderId, Integer count) {
         Reputation reputation = reputationDao.getByAuthorIdAndSenderId(authorId, senderId).orElseThrow(() -> new EntityNotFoundException("Reputation table not found by author id: " + authorId));
-        reputation.setQuestion(null);
         reputation.setCount(count);
         reputationDao.update(reputation);
     }

@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.service.impl.model;
 import com.javamentor.qa.platform.dao.abstracts.model.AnswerDao;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.abstracts.model.VoteAnswerDao;
+import com.javamentor.qa.platform.exception.UserAlreadyVotedException;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -37,16 +37,6 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
         return voteAnswerDao.getTotalVotesCount(answerId);
     }
 
-    @Override
-    public boolean hasUserAlreadyUpVoted(Long answerId, Long userId) {
-        return voteAnswerDao.hasUserAlreadyUpVoted(answerId, userId);
-    }
-
-    @Override
-    public boolean hasUserAlreadyDownVoted(Long answerId, Long userId) {
-        return voteAnswerDao.hasUserAlreadyDownVoted(answerId, userId);
-    }
-
 
     @Override
     @Transactional
@@ -55,44 +45,54 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
             throw new IllegalArgumentException("Answer ID or user ID cannot be null");
         }
 
-        User user = userDao.getById(userId)
+        User sender = userDao.getById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID " + userId));
 
-        Map<String, Object> answerAndAuthorId = answerDao.getAnswerAndAuthorId(answerId)
+        Answer answer = answerDao.getById(answerId)
                 .orElseThrow(() -> new EntityNotFoundException("Answer is not found with answer ID: " + answerId));
 
         Optional<VoteAnswer> voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(answerId, userId);
 
+        if (voteAnswerDao.hasUserAlreadyUpVoted(answerId, userId)) {
+            throw new UserAlreadyVotedException("User already up-voted this answer");
+        }
+
         if (voteAnswer.isPresent()) {
             voteAnswer.get().setVote(VoteType.UP_VOTE);
-            reputationService.updateAuthorReputationAsVoteChanged((Long) answerAndAuthorId.get("authorId"), userId, 10);
-        } else {
-            voteAnswerDao.persist(new VoteAnswer(user,(Answer) answerAndAuthorId.get("answerEntity"), VoteType.UP_VOTE));
-            reputationService.setAuthorReputation((Long) answerAndAuthorId.get("authorId"), userId, 10);
+            reputationService.updateAuthorReputationForAnswerAsVoteChanged(answer.getUser().getId(), userId, 10);
+            return;
         }
+
+        voteAnswerDao.persist(new VoteAnswer(sender, answer, VoteType.UP_VOTE));
+        reputationService.addReputationForAnswer(answer.getUser().getId(), userId, 10);
     }
 
     @Override
     @Transactional
     public void downVoteAnswer(Long answerId, Long userId) {
         if (answerId == null || userId == null) {
-            throw new IllegalArgumentException("Answer ID or sender ID cannot be null");
+            throw new IllegalArgumentException("Answer ID or user ID cannot be null");
         }
 
         User sender = userDao.getById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Sender not found with ID " + userId));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID " + userId));
 
-        Map<String, Object> answerAndAuthorId = answerDao.getAnswerAndAuthorId(answerId)
+        Answer answer = answerDao.getById(answerId)
                 .orElseThrow(() -> new EntityNotFoundException("Answer is not found with answer ID: " + answerId));
 
         Optional<VoteAnswer> voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(answerId, userId);
 
+        if (voteAnswerDao.hasUserAlreadyDownVoted(answerId, userId)) {
+            throw new UserAlreadyVotedException("User already down-voted this answer");
+        }
+
         if (voteAnswer.isPresent()) {
             voteAnswer.get().setVote(VoteType.DOWN_VOTE);
-            reputationService.updateAuthorReputationAsVoteChanged((Long) answerAndAuthorId.get("authorId"), userId,-5);
-        } else {
-            voteAnswerDao.persist(new VoteAnswer(sender,(Answer) answerAndAuthorId.get("answerEntity"), VoteType.DOWN_VOTE));
-            reputationService.setAuthorReputation((Long) answerAndAuthorId.get("authorId"), userId, -5);
+            reputationService.updateAuthorReputationForAnswerAsVoteChanged(answer.getUser().getId(), userId, -5);
+            return;
         }
+
+        voteAnswerDao.persist(new VoteAnswer(sender, answer, VoteType.DOWN_VOTE));
+        reputationService.addReputationForAnswer(answer.getUser().getId(), userId, -5);
     }
 }

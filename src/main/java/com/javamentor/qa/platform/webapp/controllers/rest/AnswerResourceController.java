@@ -78,10 +78,6 @@ public class AnswerResourceController {
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
     @PostMapping("/{id}/upVote")
     public ResponseEntity<Object> upVoteAnswer(@PathVariable("id") Long answerId, @AuthenticationPrincipal User user) {
-        if (voteAnswerService.hasUserAlreadyUpVoted(answerId, user.getId())) {
-            return new ResponseEntity<>("Невозможно проголосовать за ответ дважды!", HttpStatus.BAD_REQUEST);
-        }
-
         voteAnswerService.upVoteAnswer(answerId, user.getId());
         return new ResponseEntity<>(voteAnswerService.totalVotesCount(answerId), HttpStatus.OK);
     }
@@ -94,10 +90,6 @@ public class AnswerResourceController {
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
     @PostMapping("/{id}/downVote")
     public ResponseEntity<Object> downVoteAnswer(@PathVariable("id") Long answerId, @AuthenticationPrincipal User user) {
-        if (voteAnswerService.hasUserAlreadyDownVoted(answerId, user.getId())) {
-            return new ResponseEntity<>("Невозможно проголосовать против ответа дважды!", HttpStatus.BAD_REQUEST);
-        }
-
         voteAnswerService.downVoteAnswer(answerId, user.getId());
         return new ResponseEntity<>(voteAnswerService.totalVotesCount(answerId), HttpStatus.OK);
     }
