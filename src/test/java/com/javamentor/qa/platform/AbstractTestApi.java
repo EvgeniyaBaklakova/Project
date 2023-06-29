@@ -32,17 +32,17 @@ public abstract class AbstractTestApi {
     @Autowired
     protected ObjectMapper objectMapper;
 
-    private AuthDTO setUserAuth(String userName, String password){
+    private AuthDTO setUserAuth(String email, String password){
         AuthDTO authenticationRequest = new AuthDTO();
         authenticationRequest.setPassword(password);
-        authenticationRequest.setEmail(userName);
+        authenticationRequest.setEmail(email);
         return authenticationRequest;
     }
 
-    public String getToken(String userName, String password) throws Exception {
+    public String getToken(String email, String password) throws Exception {
         String USER_TOKEN = mvc.perform(
                         post("/api/auth/token/")
-                                .content(new ObjectMapper().writeValueAsString(this.setUserAuth(userName,password)))
+                                .content(new ObjectMapper().writeValueAsString(this.setUserAuth(email,password)))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
