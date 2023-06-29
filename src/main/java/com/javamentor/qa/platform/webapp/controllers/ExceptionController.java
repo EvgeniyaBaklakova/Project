@@ -27,6 +27,7 @@ public class ExceptionController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleAlreadyVotedException(AlreadyVotedException exception){

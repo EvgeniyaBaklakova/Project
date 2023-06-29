@@ -12,6 +12,5 @@ import com.javamentor.qa.platform.models.entity.user.User;
 public interface VoteForQuestionService {
     int upVote(Long questionId, Long userId);
     int downVote(Long questionId, Long userId);
-    void checkAndUpdateVote(VoteQuestion voteQuestion, VoteType existsType, VoteType newType);
     void addVoteQuestion(User sender, Question question, VoteType type);
 }

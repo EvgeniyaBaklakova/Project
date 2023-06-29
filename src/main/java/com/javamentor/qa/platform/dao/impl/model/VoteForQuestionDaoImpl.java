@@ -20,16 +20,11 @@ public class VoteForQuestionDaoImpl extends ReadWriteDaoImpl<VoteQuestion, Long>
     private EntityManager entityManager;
     @Override
     public VoteQuestion getVoteQuestionByIds(Long userId, Long idQuestion) {
-        List<VoteQuestion> voteQuestions =  entityManager.createQuery("FROM VoteQuestion vq WHERE vq.user in " +
+        return  entityManager.createQuery("FROM VoteQuestion vq WHERE vq.user in " +
                         "(FROM User u WHERE u.id = :userId) AND vq.question in " +
-                        "(FROM Question q WHERE q.id = :questionId)")
+                        "(FROM Question q WHERE q.id = :questionId)", VoteQuestion.class)
                 .setParameter("userId", userId)
                 .setParameter("questionId", idQuestion)
-                .getResultList();
-        if (voteQuestions.size() == 0) {
-            return null;
-        } else {
-            return voteQuestions.get(0);
-        }
+                .getSingleResult();
     }
 }

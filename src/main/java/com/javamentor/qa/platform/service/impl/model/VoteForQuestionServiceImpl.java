@@ -38,7 +38,6 @@ public class VoteForQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestio
         this.reputationService = reputationService;
     }
 
-    @Override
     public void checkAndUpdateVote(VoteQuestion voteQuestion, VoteType existsType, VoteType newType) {
         if (voteQuestion.getVote().equals(existsType)) {
             voteQuestion.setVote(newType);
