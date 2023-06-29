@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long> implements VoteAnswerService {
@@ -53,20 +55,20 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
             throw new IllegalArgumentException("Answer ID or user ID cannot be null");
         }
 
-        Answer answer = answerDao.getById(answerId)
-                .orElseThrow(() -> new EntityNotFoundException("Answer not found with ID " + answerId));
         User user = userDao.getById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID " + userId));
 
-        Long authorId = answerDao.getAnswerAuthorId(answerId);
+        Map<String, Object> answerAndAuthorId = answerDao.getAnswerAndAuthorId(answerId)
+                .orElseThrow(() -> new EntityNotFoundException("Answer is not found with answer ID: " + answerId));
 
-        if (voteAnswerDao.hasUserAlreadyDownVoted(answerId, userId)) {
-            VoteAnswer voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(answerId, userId).orElseThrow();
-            voteAnswer.setVote(VoteType.UP_VOTE);
-            reputationService.updateAuthorReputationAsVoteChanged(authorId, userId, 10);
+        Optional<VoteAnswer> voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(answerId, userId);
+
+        if (voteAnswer.isPresent()) {
+            voteAnswer.get().setVote(VoteType.UP_VOTE);
+            reputationService.updateAuthorReputationAsVoteChanged((Long) answerAndAuthorId.get("authorId"), userId, 10);
         } else {
-            voteAnswerDao.persist(new VoteAnswer(user, answer, VoteType.UP_VOTE));
-            reputationService.setAuthorReputation(authorId, userId, 10);
+            voteAnswerDao.persist(new VoteAnswer(user,(Answer) answerAndAuthorId.get("answerEntity"), VoteType.UP_VOTE));
+            reputationService.setAuthorReputation((Long) answerAndAuthorId.get("authorId"), userId, 10);
         }
     }
 
@@ -77,20 +79,20 @@ public class VoteAnswerServiceImpl extends ReadWriteServiceImpl<VoteAnswer, Long
             throw new IllegalArgumentException("Answer ID or sender ID cannot be null");
         }
 
-        Answer answer = answerDao.getById(answerId)
-                .orElseThrow(() -> new EntityNotFoundException("Answer not found with ID " + answerId));
         User sender = userDao.getById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("Sender not found with ID " + userId));
 
-        Long authorId = answerDao.getAnswerAuthorId(answerId);
+        Map<String, Object> answerAndAuthorId = answerDao.getAnswerAndAuthorId(answerId)
+                .orElseThrow(() -> new EntityNotFoundException("Answer is not found with answer ID: " + answerId));
 
-        if (voteAnswerDao.hasUserAlreadyUpVoted(answerId, userId)) {
-            VoteAnswer voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(answerId, userId).orElseThrow();
-            voteAnswer.setVote(VoteType.DOWN_VOTE);
-            reputationService.updateAuthorReputationAsVoteChanged(authorId, userId,-5);
+        Optional<VoteAnswer> voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(answerId, userId);
+
+        if (voteAnswer.isPresent()) {
+            voteAnswer.get().setVote(VoteType.DOWN_VOTE);
+            reputationService.updateAuthorReputationAsVoteChanged((Long) answerAndAuthorId.get("authorId"), userId,-5);
         } else {
-            voteAnswerDao.persist(new VoteAnswer(sender, answer, VoteType.DOWN_VOTE));
-            reputationService.setAuthorReputation(authorId, userId, -5);
+            voteAnswerDao.persist(new VoteAnswer(sender,(Answer) answerAndAuthorId.get("answerEntity"), VoteType.DOWN_VOTE));
+            reputationService.setAuthorReputation((Long) answerAndAuthorId.get("authorId"), userId, -5);
         }
     }
 }

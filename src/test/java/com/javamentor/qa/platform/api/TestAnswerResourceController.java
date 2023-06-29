@@ -1,18 +1,18 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
-import com.javamentor.qa.platform.dao.abstracts.model.ReputationDao;
-import com.javamentor.qa.platform.dao.abstracts.model.VoteAnswerDao;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteAnswer;
 import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import com.javamentor.qa.platform.models.entity.user.reputation.Reputation;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -21,11 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class TestAnswerResourceController extends AbstractTestApi {
 
-    @Autowired
-    VoteAnswerDao voteAnswerDao;
-
-    @Autowired
-    ReputationDao reputationDao;
+    @PersistenceContext
+    EntityManager entityManager;
 
     @Test
     @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerDeleteId/Before.sql",
@@ -129,8 +126,8 @@ public class TestAnswerResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(1)));
 
-        VoteAnswer voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(301L, 111L).orElseThrow();
-        Reputation reputation = reputationDao.getByAuthorId(112L).orElseThrow();
+        VoteAnswer voteAnswer = (VoteAnswer) entityManager.createQuery("FROM VoteAnswer va WHERE va.vote = 'UP_VOTE' and va.user.id = 111 and va.answer.id = 301").getSingleResult();
+        Reputation reputation = (Reputation) entityManager.createQuery("FROM Reputation r WHERE r.sender.id = 111 and r.author.id = 112").getSingleResult();
 
         Assertions.assertNotNull(voteAnswer);
         Assertions.assertNotNull(reputation);
@@ -151,8 +148,8 @@ public class TestAnswerResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(-1)));
 
-        VoteAnswer voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(301L, 111L).orElseThrow();
-        Reputation reputation = reputationDao.getByAuthorId(112L).orElseThrow();
+        VoteAnswer voteAnswer = (VoteAnswer) entityManager.createQuery("FROM VoteAnswer va WHERE va.vote = 'DOWN_VOTE' and va.user.id = 111 and va.answer.id = 301").getSingleResult();
+        Reputation reputation = (Reputation) entityManager.createQuery("FROM Reputation r WHERE r.sender.id = 111 and r.author.id = 112").getSingleResult();
 
         Assertions.assertNotNull(voteAnswer);
         Assertions.assertNotNull(reputation);
@@ -162,45 +159,82 @@ public class TestAnswerResourceController extends AbstractTestApi {
     }
 
     @Test
-    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/Before1.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void tryToVoteAnswerUpTwoTimes() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/upVote")
                         .header("Authorization", getToken("email@mail.ru", "test")))
-                .andExpect(status().isConflict());
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(1)));
+
+        VoteAnswer voteAnswer = (VoteAnswer) entityManager.createQuery("FROM VoteAnswer va WHERE va.vote = 'UP_VOTE' and va.user.id = 111 and va.answer.id = 301").getSingleResult();
+        Reputation reputation = (Reputation) entityManager.createQuery("FROM Reputation r WHERE r.sender.id = 111 and r.author.id = 112").getSingleResult();
+
+        Assertions.assertNotNull(voteAnswer);
+        Assertions.assertNotNull(reputation);
+
+        Assertions.assertEquals(VoteType.UP_VOTE, voteAnswer.getVote());
+        Assertions.assertEquals(reputation.getCount(), 10);
+
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/upVote")
+                        .header("Authorization", getToken("email@mail.ru", "test")))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/Before2.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void tryToVoteAnswerDownTwoTimes() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/downVote")
                         .header("Authorization", getToken("email@mail.ru", "test")))
-                .andExpect(status().isConflict());
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(-1)));
+
+        VoteAnswer voteAnswer = (VoteAnswer) entityManager.createQuery("FROM VoteAnswer va WHERE va.vote = 'DOWN_VOTE' and va.user.id = 111 and va.answer.id = 301").getSingleResult();
+        Reputation reputation = (Reputation) entityManager.createQuery("FROM Reputation r WHERE r.sender.id = 111 and r.author.id = 112").getSingleResult();
+
+        Assertions.assertNotNull(voteAnswer);
+        Assertions.assertNotNull(reputation);
+
+        Assertions.assertEquals(VoteType.DOWN_VOTE, voteAnswer.getVote());
+        Assertions.assertEquals(reputation.getCount(), -5);
+
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/downVote")
+                        .header("Authorization", getToken("email@mail.ru", "test")))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/Before1.sql",
+    @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/Before.sql",
             executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerUpVoteDownVote/After.sql",
             executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void tryToVoteAnswerUpAndDown() throws Exception {
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/upVote")
+                        .header("Authorization", getToken("email@mail.ru", "test")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Is.is(1)));
+
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/question/201/answer/301/downVote")
                         .header("Authorization", getToken("email@mail.ru", "test")))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Is.is(-1)));
 
-        VoteAnswer voteAnswer = voteAnswerDao.getVoteAnswerByAnswerIdAndUserId(301L, 111L).orElseThrow();
-        Reputation reputation = reputationDao.getByAuthorId(112L).orElseThrow();
+
+        VoteAnswer voteAnswer = (VoteAnswer) entityManager.createQuery("FROM VoteAnswer va WHERE va.vote = 'DOWN_VOTE' and va.user.id = 111 and va.answer.id = 301").getSingleResult();
+        Reputation reputation = (Reputation) entityManager.createQuery("FROM Reputation r WHERE r.sender.id = 111 and r.author.id = 112").getSingleResult();
 
         Assertions.assertNotNull(voteAnswer);
         Assertions.assertNotNull(reputation);
 
-        Assertions.assertEquals(reputation.getCount(), -5);
         Assertions.assertEquals(VoteType.DOWN_VOTE, voteAnswer.getVote());
+        Assertions.assertEquals(reputation.getCount(), -5);
     }
 }
