@@ -60,6 +60,15 @@ public class Reputation implements Serializable {
     private Answer answer;
 
 
+    public Reputation(LocalDateTime persistDate, User author, User sender, Integer count, ReputationType type, Question question) {
+        this.persistDate = persistDate;
+        this.author = author;
+        this.sender = sender;
+        this.count = count;
+        this.type = type;
+        this.question = question;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

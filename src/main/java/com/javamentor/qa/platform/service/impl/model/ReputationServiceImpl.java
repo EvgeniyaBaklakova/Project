@@ -30,6 +30,11 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl <Reputation,Long
         this.userDao = userDao;
     }
 
+    public void createAndPersistReputation(Long questionId, Long senderId, Integer count, ReputationType type) {
+        persist(new Reputation(LocalDateTime.now(), questionDao.getAuthorByQuestionId(questionId),
+                userDao.getById(senderId).get(), count, type, questionDao.getById(questionId).get()));
+    }
+
     public boolean checkReputationForTypeAndPoints(Reputation reputation, ReputationType type, Integer count) {
         return (reputation.getType().equals(type) && reputation.getCount().equals(count)) ? true : false;
     }
@@ -48,18 +53,9 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl <Reputation,Long
                 reputation.setCount(count);
                 reputation.setType(type);
                 update(reputation);
+                return;
            }
-       } else {
-           // optional пустой, создаю новую репутацию
-
-            reputation = new Reputation();
-            reputation.setPersistDate(LocalDateTime.now());
-            reputation.setCount(count);
-            reputation.setType(type);
-            reputation.setQuestion(questionDao.getById(questionId).get());
-            reputation.setAuthor(questionDao.getAuthorByQuestionId(questionId));
-            reputation.setSender(userDao.getById(senderId).get());
-            persist(reputation);
        }
+       createAndPersistReputation(questionId,senderId, count, type);
     }
 }

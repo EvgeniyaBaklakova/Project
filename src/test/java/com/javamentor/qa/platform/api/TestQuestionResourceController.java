@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigInteger;
 
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;

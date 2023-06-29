@@ -43,9 +43,9 @@ public class VoteForQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestio
         if (voteQuestion.getVote().equals(existsType)) {
             voteQuestion.setVote(newType);
             update(voteQuestion);
-        } else {
-            throw new AlreadyVotedException("Пользователь уже проголосовал за: " + newType);
+            return;
         }
+        throw new AlreadyVotedException("Пользователь уже проголосовал за: " + newType);
     }
 
     @Override
@@ -57,12 +57,12 @@ public class VoteForQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestio
     @Override
     @Transactional
     public int upVote(Long questionId, Long userId) {
-        Optional<Question> question = Optional.ofNullable(questionDao.getById(questionId).orElseThrow(QuestionNotFoundException::new));
+        Optional<Question> question = Optional.ofNullable(questionDao.getByIdJoinedVoteQuestion(questionId).orElseThrow(QuestionNotFoundException::new));
         Optional<User> sender = Optional.ofNullable(userDao.getById(userId).orElseThrow(UserNotFoundException::new));
         int counterVotes = question.get().getVoteQuestions().size();
         List<VoteQuestion> voteQuestions = question.get().getVoteQuestions();
 
-        if (voteQuestions.size() == 0) {
+        if (voteQuestions.isEmpty()) {
             addVoteQuestion(sender.get(),question.get(),VoteType.UP_VOTE);
             counterVotes++;
         } else {
@@ -77,12 +77,12 @@ public class VoteForQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestio
     @Override
     @Transactional
     public int downVote(Long questionId, Long userId) {
-        Optional<Question> question = Optional.ofNullable(questionDao.getById(questionId).orElseThrow(QuestionNotFoundException::new));
+        Optional<Question> question = Optional.ofNullable(questionDao.getByIdJoinedVoteQuestion(questionId).orElseThrow(QuestionNotFoundException::new));
         Optional<User> sender = Optional.ofNullable(userDao.getById(userId).orElseThrow(UserNotFoundException::new));
         int counterVotes = question.get().getVoteQuestions().size();
         List<VoteQuestion> voteQuestions = question.get().getVoteQuestions();
 
-        if (voteQuestions.size() == 0) {
+        if (voteQuestions.isEmpty()) {
             addVoteQuestion(sender.get(),question.get(),VoteType.DOWN_VOTE);
             counterVotes++;
         } else {

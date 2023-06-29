@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.exception.AlreadyVotedException;
+
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionDtoDaoWithoutAnswersImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllImpl;
 import com.javamentor.qa.platform.models.dto.PageDto;
@@ -12,11 +12,7 @@ import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.BookMarksService;
-import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 import com.javamentor.qa.platform.webapp.converter.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -53,11 +49,12 @@ public class QuestionResourceController {
     private final UserService userService;
     private final CommentQuestionService commentQuestionService;
     private final QuestionConverter questionConverter;
+    private final VoteForQuestionService voteForQuestionService;
 
     @Autowired
     public QuestionResourceController(BookMarksService bookMarksService, QuestionViewedService questionViewedService,
                                       QuestionService questionService, UserService userService, CommentQuestionService commentQuestionService,
-                                      QuestionConverter questionConverter, QuestionDtoService questionDtoService) {
+                                      QuestionConverter questionConverter, QuestionDtoService questionDtoService, VoteForQuestionService voteForQuestionService) {
         this.bookMarksService = bookMarksService;
         this.questionService = questionService;
         this.questionDtoService = questionDtoService;
@@ -65,6 +62,7 @@ public class QuestionResourceController {
         this.userService = userService;
         this.commentQuestionService = commentQuestionService;
         this.questionConverter = questionConverter;
+        this.voteForQuestionService = voteForQuestionService;
     }
 
     @PostMapping("/{id}/view")
@@ -187,11 +185,7 @@ public class QuestionResourceController {
         if (!questionService.existsById(id)) {
             return new ResponseEntity<>("Такого вопроса не существует", HttpStatus.BAD_REQUEST);
         }
-        try {
-            return new ResponseEntity<>("" + voteForQuestionService.upVote(id, user.getId()), HttpStatus.OK);
-        } catch (AlreadyVotedException exception) {
-            return new ResponseEntity<>("" + exception.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>("" + voteForQuestionService.upVote(id, user.getId()), HttpStatus.OK);
     }
 
     @PostMapping("/{questionId}/downVote")
@@ -206,11 +200,6 @@ public class QuestionResourceController {
         if (!questionService.existsById(id)) {
             return new ResponseEntity<>("Такого вопроса не существует", HttpStatus.BAD_REQUEST);
         }
-
-        try {
-            return new ResponseEntity<>("" + voteForQuestionService.downVote(id, user.getId()), HttpStatus.OK);
-        } catch (AlreadyVotedException exception) {
-            return new ResponseEntity<>("" + exception.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>("" + voteForQuestionService.downVote(id, user.getId()), HttpStatus.OK);
     }
 }
