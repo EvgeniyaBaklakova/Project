@@ -5,17 +5,19 @@ import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
+import com.javamentor.qa.platform.models.entity.user.BlockChatUserList;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.UserChatPin;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
+import com.javamentor.qa.platform.service.abstracts.model.BlockChatUserListService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.RoleService;
-import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.service.abstracts.model.UserChatPinService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
+import com.javamentor.qa.platform.service.abstracts.model.UserChatPinService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,6 +43,7 @@ public class TestDataInitService {
     private final GroupChatService groupChatService;
     private final UserChatPinService userChatPinService;
     private final PasswordEncoder passwordEncoder;
+    private final BlockChatUserListService blockChatUserListService;
 
     private final Role ROLE_USER = new Role("ROLE_USER");
     private final Role ROLE_ADMIN = new Role("ROLE_ADMIN");
@@ -55,7 +58,8 @@ public class TestDataInitService {
                                SingleChatService singleChatService,
                                GroupChatService groupChatService,
                                UserChatPinService userChatPinService,
-                               PasswordEncoder passwordEncoder) {
+                               PasswordEncoder passwordEncoder,
+                               BlockChatUserListService blockChatUserListService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -65,6 +69,7 @@ public class TestDataInitService {
         this.groupChatService = groupChatService;
         this.userChatPinService = userChatPinService;
         this.passwordEncoder = passwordEncoder;
+        this.blockChatUserListService = blockChatUserListService;
     }
 
     public void initRoles() {
@@ -241,5 +246,24 @@ public class TestDataInitService {
             chatPins.add(userChatPin);
         }
         userChatPinService.persistAll(chatPins);
+    }
+
+    public void initBlockChatUserList() {
+        List<User> users = userService.getAll();
+        Random random = new Random();
+
+        for (int i = 0; i < 5; i++) {
+            int userIndex = random.nextInt(users.size());
+            User userToBlock = users.get(userIndex);
+            List<SingleChat> singleChats = singleChatService.getAll();
+            int chatIndex = random.nextInt(singleChats.size());
+            SingleChat singleChat = singleChats.get(chatIndex);
+            BlockChatUserList blockChatUserList = new BlockChatUserList();
+            blockChatUserList.setUser(singleChat.getUserOne());
+            blockChatUserList.setIsBlocked(userToBlock);
+            blockChatUserList.setPersistDate(LocalDateTime.now());
+            blockChatUserListService.persistAll(blockChatUserList);
+            users.remove(userIndex);
+        }
     }
 }
