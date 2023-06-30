@@ -27,6 +27,7 @@ public class ProfileUserResourceController {
         this.answerService = answerService;
         this.questionDtoService = questionDtoService;
     }
+
     @ApiOperation(value = "Возвращает список всех вопросов аутентифицированного пользователя")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Вопросы успешно получены"),
@@ -55,5 +56,13 @@ public class ProfileUserResourceController {
     @ApiOperation(value = "Возвращает общее количество ответов за неделю которые написал аутентифицированный пользователь")
     public ResponseEntity<Long> getCountAnswers(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(answerService.countAnswerOfWeek(user.getId()));
+    }
+
+    @GetMapping(value = "")
+    @ApiOperation(value = " ")
+    public ResponseEntity<HttpStatus> getProfile(@AuthenticationPrincipal User user) {
+            //return UserProfileDto
+
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 }
