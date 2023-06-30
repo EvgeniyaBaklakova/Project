@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.impl.pagination.UserPageDtoDaoByReputationImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.UserPageDtoDaoByPersistDateImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.UserPageDtoDaoByVoteImpl;
 import com.javamentor.qa.platform.models.dto.PageDto;
@@ -56,6 +57,18 @@ public class UserResourceController {
     public ResponseEntity<PageDto<UserDto>> getUsersByPersistDate(@RequestParam Integer page,
                                                                   @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage) {
         PaginationData data = new PaginationData(page, itemsOnPage, UserPageDtoDaoByPersistDateImpl.class.getSimpleName());
+        return new ResponseEntity<>(userDtoService.getPageDto(data), HttpStatus.OK);
+    }
+
+    @GetMapping("/reputation")
+    @ApiOperation(value = "Получение всех UserDTO с пагинацией отсортированных по репутации")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = PageDto.class),
+            @ApiResponse(code = 400, message = "UserDTO не найдены")
+    })
+    public ResponseEntity<PageDto<UserDto>> getUsersByReputation(@RequestParam Integer page,
+                                                                  @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage) {
+        PaginationData data = new PaginationData(page, itemsOnPage, UserPageDtoDaoByReputationImpl.class.getSimpleName());
         return new ResponseEntity<>(userDtoService.getPageDto(data), HttpStatus.OK);
     }
 
