@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TestAnswerResourceController extends AbstractTestApi {
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Test
     @Sql(scripts = "/script/TestAnswerResourceController/TestAnswerDeleteId/Before.sql",
