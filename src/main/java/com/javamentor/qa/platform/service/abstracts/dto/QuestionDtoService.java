@@ -6,7 +6,7 @@ import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import java.util.List;
 import java.util.Optional;
 
-public interface QuestionDtoService {
+public interface QuestionDtoService extends PageDtoService<QuestionDto>{
 
     List<QuestionDto> getQuestionDtoByTagId(Long id);
     Optional<QuestionDto> getQuestionDtoById(Long id);

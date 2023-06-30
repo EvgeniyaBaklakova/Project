@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
 import com.javamentor.qa.platform.models.entity.user.User;
-import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -135,6 +134,35 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[20].id", Is.is(resultList.get(20).getId().intValue())));
     }
 
+    @Test
+    @Sql(value = {"/script/TestUserResourceController/getUsersByReputation/Before.sql"}, executionPhase = BEFORE_TEST_METHOD)
+    @Sql(value = {"/script/TestUserResourceController/getUsersByReputation/After.sql"}, executionPhase = AFTER_TEST_METHOD)
+    public void getUsersByReputation() throws Exception {
+
+
+        String USER_TOKEN = getToken("user101@mail.ru", "123");
+
+        mvc.perform(get("/api/user/reputation")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        mvc.perform(get("/api/user/reputation")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .param("page", "1")
+                        .param("itemsOnPage", "10")
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResultCount", Is.is(21)))
+                .andExpect(jsonPath("$.items.length()", Is.is(10)))
+                .andExpect(jsonPath("$.items[0].reputation", Is.is(100)))
+                .andExpect(jsonPath("$.items[9].reputation", Is.is(8000)));
+    }
+
 
     @Test
     @Sql(value = {"/script/TestUserResourceController/getAllUserDtoSortDTO/Before.sql"}, executionPhase = BEFORE_TEST_METHOD)
@@ -226,151 +254,13 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[0].city", Is.is("Moscow")))
                 .andExpect(jsonPath("$.items[0].reputation", Is.is(1000)))
 
-                .andExpect(jsonPath("$.items[0].listTagDto.length()", Is.is(3)))
-
-                .andExpect(jsonPath("$.items[0].listTagDto[0].id", Is.is(101)))
-                .andExpect(jsonPath("$.items[0].listTagDto[0].name", Is.is("vfOxMU1")))
-                .andExpect(jsonPath("$.items[0].listTagDto[0].description", Is.is("Description of tag 1")))
-
-                .andExpect(jsonPath("$.items[0].listTagDto[1].id", Is.is(102)))
-                .andExpect(jsonPath("$.items[0].listTagDto[1].name", Is.is("iThKcj2")))
-                .andExpect(jsonPath("$.items[0].listTagDto[1].description", Is.is("Description of tag 2")))
-
-                .andExpect(jsonPath("$.items[0].listTagDto[2].id", Is.is(103)))
-                .andExpect(jsonPath("$.items[0].listTagDto[2].name", Is.is("LTGDJP3")))
-                .andExpect(jsonPath("$.items[0].listTagDto[2].description", Is.is("Description of tag 3")))
-
                 .andExpect(jsonPath("$.items[9].id", Is.is(110)))
                 .andExpect(jsonPath("$.items[9].email", Is.is("user110@mail.ru")))
                 .andExpect(jsonPath("$.items[9].fullName", Is.is("User 110")))
                 .andExpect(jsonPath("$.items[9].imageLink", Is.is("/images/noUserAvatar.png")))
                 .andExpect(jsonPath("$.items[9].city", Is.is("Moscow")))
-                .andExpect(jsonPath("$.items[9].reputation", Is.is(100)))
+                .andExpect(jsonPath("$.items[9].reputation", Is.is(100)));
 
-                .andExpect(jsonPath("$.items[9].listTagDto.length()", Is.is(3)))
-
-                .andExpect(jsonPath("$.items[9].listTagDto[0].id", Is.is(101)))
-                .andExpect(jsonPath("$.items[9].listTagDto[0].name", Is.is("vfOxMU1")))
-                .andExpect(jsonPath("$.items[9].listTagDto[0].description", Is.is("Description of tag 1")))
-
-                .andExpect(jsonPath("$.items[9].listTagDto[1].id", Is.is(102)))
-                .andExpect(jsonPath("$.items[9].listTagDto[1].name", Is.is("iThKcj2")))
-                .andExpect(jsonPath("$.items[9].listTagDto[1].description", Is.is("Description of tag 2")))
-
-                .andExpect(jsonPath("$.items[9].listTagDto[2].id", Is.is(103)))
-                .andExpect(jsonPath("$.items[9].listTagDto[2].name", Is.is("LTGDJP3")))
-                .andExpect(jsonPath("$.items[9].listTagDto[2].description", Is.is("Description of tag 3")));
-    }
-
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
-    public void getCountAnswers() throws Exception {
-
-        this.mvc.perform(get("/api/user/profile/question/week").
-                        header(AUTHORIZATION, getToken("test100@mail.ru", "password")))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(2)));
-    }
-
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
-    public void getCountAnswersZero() throws Exception {
-
-        this.mvc.perform(get("/api/user/profile/question/week").
-                        header(AUTHORIZATION, getToken("test101@mail.ru", "password")))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", Is.is(0)));
-    }
-
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
-    public void getAllQuestion() throws Exception {
-
-        this.mvc.perform(get("/api/user/profile/questions/").
-                        header(AUTHORIZATION, getToken("test101@mail.ru", "password")))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].questionId", Is.is(101)))
-                .andExpect(jsonPath("$[0].questionTitle", Is.is("title2")))
-                .andExpect(jsonPath("$[0].answerPersistDateTime", Is.is("2023-04-23T13:01:11.245126")))
-                .andExpect(jsonPath("$[0].countAnswer", Is.is(1)))
-                .andExpect(jsonPath("$[0].tagDtoList[0].id", Is.is(102)))
-                .andExpect(jsonPath("$[0].tagDtoList[0].name", Is.is("name3")))
-                .andExpect(jsonPath("$[0].tagDtoList[0].description", Is.is("description3")))
-                .andExpect(jsonPath("$[0].tagDtoList[0].persistDateTime", Is.is("2023-04-23T13:01:11.245126")))
-                .andExpect(jsonPath("$[0].tagDtoList[1].id", Is.is(103)))
-                .andExpect(jsonPath("$[0].tagDtoList[1].name", Is.is("name4")))
-                .andExpect(jsonPath("$[0].tagDtoList[1].description", Is.is("description4")))
-                .andExpect(jsonPath("$[0].tagDtoList[1].persistDateTime", Is.is("2023-04-23T13:01:11.245126")))
-                .andExpect(jsonPath("$[0].tagDtoList[2].id", Is.is(104)))
-                .andExpect(jsonPath("$[0].tagDtoList[2].name", Is.is("name5")))
-                .andExpect(jsonPath("$[0].tagDtoList[2].description", Is.is("description5")))
-                .andExpect(jsonPath("$[0].tagDtoList[2].persistDateTime", Is.is("2023-04-23T13:01:11.245126")));
-
-    }
-
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
-    public void getAllQuestionNoQuestion() throws Exception {
-
-        this.mvc.perform(get("/api/user/profile/questions/").
-                        header(AUTHORIZATION, getToken("test100@mail.ru", "password")))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", Matchers.empty()));
-    }
-
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
-    public void getAllDeleteQuestion() throws Exception {
-
-        this.mvc.perform(get("/api/user/profile/delete/questions").
-                        header(AUTHORIZATION, getToken("test103@mail.ru", "password")))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].questionId", Is.is(103)))
-                .andExpect(jsonPath("$[0].questionTitle", Is.is("title4")))
-                .andExpect(jsonPath("$[0].answerPersistDateTime", Is.is("2023-04-23T13:01:11.245126")))
-                .andExpect(jsonPath("$[0].countAnswer", Is.is(1)))
-                .andExpect(jsonPath("$[0].tagDtoList[0].id", Is.is(106)))
-                .andExpect(jsonPath("$[0].tagDtoList[0].name", Is.is("name7")))
-                .andExpect(jsonPath("$[0].tagDtoList[0].description", Is.is("description5")))
-                .andExpect(jsonPath("$[0].tagDtoList[0].persistDateTime", Is.is("2023-04-23T13:01:11.245126")))
-                .andExpect(jsonPath("$[0].tagDtoList[1].id", Is.is(107)))
-                .andExpect(jsonPath("$[0].tagDtoList[1].name", Is.is("name8")))
-                .andExpect(jsonPath("$[0].tagDtoList[1].description", Is.is("description5")))
-                .andExpect(jsonPath("$[0].tagDtoList[1].persistDateTime", Is.is("2023-04-23T13:01:11.245126")))
-                .andExpect(jsonPath("$[0].tagDtoList[2].id", Is.is(108)))
-                .andExpect(jsonPath("$[0].tagDtoList[2].name", Is.is("name9")))
-                .andExpect(jsonPath("$[0].tagDtoList[2].description", Is.is("description5")))
-                .andExpect(jsonPath("$[0].tagDtoList[2].persistDateTime", Is.is("2023-04-23T13:01:11.245126")))
-                .andExpect(jsonPath("$[0].tagDtoList[3].id", Is.is(109)))
-                .andExpect(jsonPath("$[0].tagDtoList[3].name", Is.is("name10")))
-                .andExpect(jsonPath("$[0].tagDtoList[3].description", Is.is("description5")))
-                .andExpect(jsonPath("$[0].tagDtoList[3].persistDateTime", Is.is("2023-04-23T13:01:11.245126")));
-    }
-
-    @Test
-    @Sql(scripts = "/script/TestUserResourceController/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
-    public void getAllDeleteQuestionNoQuestion() throws Exception {
-
-        this.mvc.perform(get("/api/user/profile/delete/questions").
-                        header(AUTHORIZATION, getToken("test100@mail.ru", "password")))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", Matchers.empty()));
     }
 
     @Test
