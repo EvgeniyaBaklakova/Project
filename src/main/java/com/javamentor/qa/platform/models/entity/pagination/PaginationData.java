@@ -19,8 +19,6 @@ public class PaginationData {
     private String daoName;
     private String filter;
 
-
-
     public PaginationData(int currentPage, int itemsOnPage, String daoName) {
         this.currentPage = currentPage;
         this.itemsOnPage = itemsOnPage;
@@ -28,6 +26,12 @@ public class PaginationData {
         this.props = new HashMap<>();
     }
 
+    public PaginationData(int currentPage, int itemsOnPage, String daoName, Map<String,Object> props) {
+        this.currentPage = currentPage;
+        this.itemsOnPage = itemsOnPage;
+        this.daoName = daoName;
+        this.props = props;
+    }
     public PaginationData(int currentPage, int itemsOnPage, String daoName, String filter) {
         this.currentPage = currentPage;
         this.itemsOnPage = itemsOnPage;
@@ -35,7 +39,4 @@ public class PaginationData {
         this.props = new HashMap<>();
         this.filter = filter;
     }
-
-
-
 }
