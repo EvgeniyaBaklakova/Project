@@ -10,11 +10,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class SequenceWordsExcludeSearchFilter implements SearchFilter {
+public class KeyWordsIncludeSearchFilter implements SearchFilter {
     private final Pattern pattern;
 
-    public SequenceWordsExcludeSearchFilter() {
-        pattern = Pattern.compile("\\s\\\"(.*?)\\\"");
+    public KeyWordsIncludeSearchFilter() {
+        pattern = Pattern.compile("\\b(\\S+)\\b");
     }
 
     @Override
@@ -26,20 +26,19 @@ public class SequenceWordsExcludeSearchFilter implements SearchFilter {
         }
         matcher.reset();
 
-        List<String> sequences = new ArrayList<>();
+        List<String> words = new ArrayList<>();
         while (matcher.find()) {
             String match = matcher.group(1);
-            sequences.add(match.trim());
+            words.add(match.trim());
         }
 
         StringBuilder sql = new StringBuilder("q.id IN (SELECT DISTINCT q.id FROM Question q WHERE");
 
-        for (String sequence : sequences) {
-            sql.append("q.description").append(sequence).append(" LIKE ").append(sequence).append(" OR ");
-            sql.append("q.title").append(sequence).append(" LIKE ").append(sequence).append(" OR ");
+        for (String word : words) {
+            sql.append("q.description").append(word).append(" LIKE ").append(word).append(" OR ");
+            sql.append("q.title").append(word).append(" LIKE ").append(word).append(" OR ");
 
         }
-
 
         sql.delete(sql.length() - 3, sql.length());
         sql.append(") AND ");
@@ -47,10 +46,12 @@ public class SequenceWordsExcludeSearchFilter implements SearchFilter {
         questionQuery.setQuery(matcher.replaceAll(""));
         questionQuery.getStringBuilder().append(sql);
 
-        questionQuery.getOutput().append("exclude sentences: ");
-        for(String sequence : sequences) {
+        questionQuery.getOutput().append("include words: ");
+        for(String sequence : words) {
             questionQuery.getOutput().append(sequence).append(", ");
         }
         questionQuery.getOutput().append("; ");
+
+
     }
 }

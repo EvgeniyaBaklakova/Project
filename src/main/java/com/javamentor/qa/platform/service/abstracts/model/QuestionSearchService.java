@@ -5,5 +5,5 @@ import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import java.util.List;
 
 public interface QuestionSearchService {
-    String search(String query);
+    String createSQLQuery(String query);
 }

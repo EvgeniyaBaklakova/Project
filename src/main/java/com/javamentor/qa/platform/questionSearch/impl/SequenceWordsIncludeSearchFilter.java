@@ -32,13 +32,12 @@ public class SequenceWordsIncludeSearchFilter implements SearchFilter {
             sequences.add(match.trim());
         }
 
-        StringBuilder sql = new StringBuilder("id IN (SELECT question_id FROM question WHERE ");
+        StringBuilder sql = new StringBuilder("q.id IN (SELECT DISTINCT q.id FROM Question q WHERE");
 
         for (String sequence : sequences) {
-            sql.append("'").append(sequence).append("'").append(" ~~ ").append("description").append(" OR ");
-        }
-        for (String sequence : sequences) {
-            sql.append("'").append(sequence).append("'").append(" ~~ ").append("title").append(" OR ");
+            sql.append("q.description").append(sequence).append(" LIKE ").append(sequence).append(" OR ");
+            sql.append("q.title").append(sequence).append(" LIKE ").append(sequence).append(" OR ");
+
         }
 
         sql.delete(sql.length() - 3, sql.length());

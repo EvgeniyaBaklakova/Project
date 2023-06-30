@@ -1,19 +1,19 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoBySearchImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.UserPageDtoDaoByPersistDateImpl;
 import com.javamentor.qa.platform.exception.UserNotFoundException;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.model.BookMarksService;
-import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.service.impl.model.QuestionSearchServiceImpl;
 import com.javamentor.qa.platform.webapp.converter.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,12 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -52,7 +47,8 @@ public class QuestionResourceController {
     @Autowired
     public QuestionResourceController(BookMarksService bookMarksService, QuestionViewedService questionViewedService,
                                       QuestionService questionService, UserService userService, CommentQuestionService commentQuestionService,
-                                      QuestionConverter questionConverter, QuestionDtoService questionDtoService) {
+                                      QuestionConverter questionConverter, QuestionDtoService questionDtoService
+                                      ) {
         this.bookMarksService = bookMarksService;
         this.questionService = questionService;
         this.questionDtoService = questionDtoService;
@@ -129,5 +125,16 @@ public class QuestionResourceController {
                                                          @AuthenticationPrincipal User user) {
         bookMarksService.addBookMarks(user, id);
         return ResponseEntity.ok("Вопрос успешно добавлен в закладки");
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<?> getSearchReuslt(@RequestParam Integer page,
+                                             @RequestParam Integer itemsOnPage,
+                                             @RequestParam String query,
+                                             @RequestParam String order) {
+        PaginationData data = new PaginationData(page, itemsOnPage, QuestionPageDtoDaoBySearchImpl.class.getSimpleName(), query + order);
+        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
+
+
     }
 }

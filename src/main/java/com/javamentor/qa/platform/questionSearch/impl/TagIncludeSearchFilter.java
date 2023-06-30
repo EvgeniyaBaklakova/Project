@@ -38,7 +38,7 @@ public class TagIncludeSearchFilter implements SearchFilter {
 
         List<Tag> tags = tagService.getTagsByNames(names);
 
-        StringBuilder sql = new StringBuilder("id IN (SELECT question_id FROM question_has_tag WHERE ");
+        StringBuilder sql = new StringBuilder("q.id IN (SELECT question_id FROM (SELECT a.id FROM Question a JOIN Tag b ON a.id = b.question_id) WHERE ");
 
         for (Tag tag : tags) {
             sql.append("tag_id = ").append(tag.getId()).append(" AND");
