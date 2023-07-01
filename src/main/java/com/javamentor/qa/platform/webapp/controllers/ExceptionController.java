@@ -1,6 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers;
 
-import com.javamentor.qa.platform.exception.AlreadyVotedException;
+import com.javamentor.qa.platform.exception.UserAlreadyVotedException;
 import com.javamentor.qa.platform.webapp.controllers.util.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +9,7 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.javamentor.qa.platform.exception.AlreadyVotedException;
 
 
 @RestControllerAdvice
@@ -26,11 +27,11 @@ public class ExceptionController {
     public ResponseEntity<String> handleDisabledException(DisabledException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
-    }
+     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleAlreadyVotedException(AlreadyVotedException exception){
+    public ResponseEntity<String> handleUserAlreadyVotedException(UserAlreadyVotedException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
@@ -40,6 +41,13 @@ public class ExceptionController {
     public ResponseEntity<String> handleNotFoundException(UserNotFoundException exception){
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("User with this id not found");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleAlreadyVotedException(AlreadyVotedException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
     }
 
 }
