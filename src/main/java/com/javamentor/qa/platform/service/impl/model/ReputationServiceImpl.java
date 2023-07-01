@@ -78,11 +78,10 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long
     @Transactional
     public void addReputation(Long questionId, Long senderId, ReputationType type, Integer count) {
         Optional<Reputation> optionalReputation = reputationDao.getReputationByUserIdQuestionId(senderId, questionId, questionDao.getAuthorByQuestionId(questionId).getId());
-        Reputation reputation;
 
         // проверка Optional на null
         if (optionalReputation.isPresent()) {
-            reputation = optionalReputation.get();
+            Reputation reputation = optionalReputation.get();
 
             // проверка репутации на количество баллов и тип репутации
             if (!checkReputationForTypeAndPoints(reputation,type,count)) {

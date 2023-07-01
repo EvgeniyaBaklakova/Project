@@ -9,7 +9,6 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.javamentor.qa.platform.exception.AlreadyVotedException;
 
 
 @RestControllerAdvice
@@ -41,13 +40,6 @@ public class ExceptionController {
     public ResponseEntity<String> handleNotFoundException(UserNotFoundException exception){
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("User with this id not found");
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<String> handleAlreadyVotedException(AlreadyVotedException exception){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(exception.getMessage());
     }
 
 }

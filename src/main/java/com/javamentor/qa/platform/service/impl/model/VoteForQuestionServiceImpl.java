@@ -3,7 +3,7 @@ package com.javamentor.qa.platform.service.impl.model;
 import com.javamentor.qa.platform.dao.abstracts.model.QuestionDao;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.abstracts.model.VoteForQuestionDao;
-import com.javamentor.qa.platform.exception.AlreadyVotedException;
+import com.javamentor.qa.platform.exception.UserAlreadyVotedException;
 import com.javamentor.qa.platform.exception.UserNotFoundException;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.VoteQuestion;
@@ -44,7 +44,8 @@ public class VoteForQuestionServiceImpl extends ReadWriteServiceImpl<VoteQuestio
             update(voteQuestion);
             return;
         }
-        throw new AlreadyVotedException("Пользователь уже проголосовал за: " + newType);
+        throw new UserAlreadyVotedException
+                ("Пользователь уже проголосовал за: " + newType);
     }
 
     @Override
