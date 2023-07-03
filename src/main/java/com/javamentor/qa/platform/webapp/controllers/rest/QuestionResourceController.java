@@ -120,18 +120,6 @@ public class QuestionResourceController {
 
     }
 
-    @GetMapping("/tag1/{id}")
-    @ApiOperation(value = "Получение QuestionDto по TagId", tags = {"Получение QuestionDto"})
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
-            @ApiResponse(code = 400, message = "QuestionDto с таким TagId не найден"),
-            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
-            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
-        public ResponseEntity<?> getQuestionDtoByTagId1(@RequestParam(defaultValue = "1") Integer page,
-                                                   @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage, @PathVariable Long id) {
-        return new ResponseEntity<>(questionDtoService.getQuestionDtoByTagId(id),HttpStatus.OK);
-    }
-
 
     @GetMapping("/tag/{id}")
     @ApiOperation(value = "Получение QuestionDto по TagId", tags = {"Получение QuestionDto"})
@@ -149,7 +137,7 @@ public class QuestionResourceController {
         QuestionPageDtoDaoByTagId questionPageDtoDaoByTagId = new QuestionPageDtoDaoByTagId();
         questionPageDtoDaoByTagId.setId(id);
 
-        if (questionDtoService.getQuestionDtoByTagId(id).isEmpty()) {
+        if (questionDtoService.getPageDto(data).getItemsOnPage() == 0) {
             return new ResponseEntity<>("Тега с ID " + id + " не существует!", HttpStatus.BAD_REQUEST);
         }
 
