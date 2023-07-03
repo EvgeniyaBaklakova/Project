@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigInteger;
@@ -526,6 +527,138 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
                 .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)));
 
+    }
+
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionDtoGettingApi/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionDtoGettingApi/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void getAllQuestionDtoByPersistDate() throws Exception {
+
+        String token = getToken("test101@mail.ru", "password");
+
+        this.mvc.perform(getRequestBuilder("/api/user/question/new", token))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        this.mvc.perform(getRequestBuilder("/api/user/question/new", token))
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(4)))
+                .andExpect(jsonPath("$.items.length()", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("title3")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(5)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("name3")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("http://imagelink3.com")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description3")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)))
+
+                .andExpect(jsonPath("$.items[1].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[1].title", Is.is("title5")))
+                .andExpect(jsonPath("$.items[1].authorId", Is.is(104)))
+                .andExpect(jsonPath("$.items[1].authorReputation", Is.is(6)))
+                .andExpect(jsonPath("$.items[1].authorName", Is.is("name5")))
+                .andExpect(jsonPath("$.items[1].authorImage", Is.is("http://imagelink5.com")))
+                .andExpect(jsonPath("$.items[1].description", Is.is("description5")))
+                .andExpect(jsonPath("$.items[1].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[1].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.items[1].countValuable", Is.is(0)))
+
+                .andExpect(jsonPath("$.items[2].id", Is.is(101)))
+                .andExpect(jsonPath("$.items[2].title", Is.is("title2")))
+                .andExpect(jsonPath("$.items[2].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[2].authorReputation", Is.is(4)))
+                .andExpect(jsonPath("$.items[2].authorName", Is.is("name2")))
+                .andExpect(jsonPath("$.items[2].authorImage", Is.is("http://imagelink2.com")))
+                .andExpect(jsonPath("$.items[2].description", Is.is("description2")))
+                .andExpect(jsonPath("$.items[2].viewCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[2].countAnswer", Is.is(3)))
+                .andExpect(jsonPath("$.items[2].countValuable", Is.is(4)))
+
+                .andExpect(jsonPath("$.items[3].id", Is.is(103)))
+                .andExpect(jsonPath("$.items[3].title", Is.is("title4")))
+                .andExpect(jsonPath("$.items[3].authorId", Is.is(103)))
+                .andExpect(jsonPath("$.items[3].authorReputation", Is.is(7)))
+                .andExpect(jsonPath("$.items[3].authorName", Is.is("name4")))
+                .andExpect(jsonPath("$.items[3].authorImage", Is.is("http://imagelink4.com")))
+                .andExpect(jsonPath("$.items[3].description", Is.is("description4")))
+                .andExpect(jsonPath("$.items[3].viewCount", Is.is(1)))
+                .andExpect(jsonPath("$.items[3].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.items[3].countValuable", Is.is(0)));
+
+        this.mvc.perform(getRequestBuilder("/api/user/question/new?page=2", token))
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(2)));
+
+        this.mvc.perform(getRequestBuilder("/api/user/question/new?items=1", token))
+                .andDo(print())
+                .andExpect(jsonPath("$.items.length()", Is.is(4)));
+
+        this.mvc.perform(getRequestBuilder("/api/user/question/new?trackedTag=name10", token))
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(1)))
+                .andExpect(jsonPath("$.items.length()", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("title5")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(6)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("name5")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("http://imagelink5.com")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description5")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)));
+
+        this.mvc.perform(getRequestBuilder("/api/user/question/new?ignoredTag=name3", token))
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(1)))
+                .andExpect(jsonPath("$.items.length()", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("title5")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(104)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(6)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("name5")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("http://imagelink5.com")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description5")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)));
+
+        this.mvc.perform(
+                getRequestBuilder("/api/user/question/new?trackedTag=name6&ignoredTag=name4", token))
+                .andDo(print())
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(1)))
+                .andExpect(jsonPath("$.items.length()", Is.is(1)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("title3")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(102)))
+                .andExpect(jsonPath("$.items[0].authorReputation", Is.is(5)))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("name3")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("http://imagelink3.com")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("description3")))
+                .andExpect(jsonPath("$.items[0].viewCount", Is.is(2)))
+                .andExpect(jsonPath("$.items[0].countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.items[0].countValuable", Is.is(0)));
+    }
+
+    private RequestBuilder getRequestBuilder(String url, String token) {
+        return get(url).header(AUTHORIZATION, token).contentType(MediaType.APPLICATION_JSON);
     }
 
     @Test
