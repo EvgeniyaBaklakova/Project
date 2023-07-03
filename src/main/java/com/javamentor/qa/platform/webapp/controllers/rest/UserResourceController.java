@@ -45,9 +45,12 @@ public class UserResourceController {
             @ApiResponse(code = 200, message = "Success", response = PageDto.class),
             @ApiResponse(code = 400, message = "UserDTO не найдены")
     })
-    public ResponseEntity<PageDto<UserDto>> getUsersByPersistDate(@RequestParam Integer page,
-                                                                  @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage) {
-        PaginationData data = new PaginationData(page, itemsOnPage, UserPageDtoDaoByPersistDateImpl.class.getSimpleName());
+    public ResponseEntity<PageDto<UserDto>> getUsersByPersistDate(
+            @RequestParam(defaultValue =  "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage) {
+
+        PaginationData data = new PaginationData(
+                page, itemsOnPage, UserPageDtoDaoByPersistDateImpl.class.getSimpleName());
         return new ResponseEntity<>(userDtoService.getPageDto(data), HttpStatus.OK);
     }
 
