@@ -55,11 +55,12 @@ public class QuestionResourceController {
     private final UserService userService;
     private final CommentQuestionService commentQuestionService;
     private final QuestionConverter questionConverter;
+    private final VoteForQuestionService voteForQuestionService;
 
     @Autowired
     public QuestionResourceController(BookMarksService bookMarksService, QuestionViewedService questionViewedService,
                                       QuestionService questionService, UserService userService, CommentQuestionService commentQuestionService,
-                                      QuestionConverter questionConverter, QuestionDtoService questionDtoService) {
+                                      QuestionConverter questionConverter, QuestionDtoService questionDtoService, VoteForQuestionService voteForQuestionService) {
         this.bookMarksService = bookMarksService;
         this.questionService = questionService;
         this.questionDtoService = questionDtoService;
@@ -67,6 +68,7 @@ public class QuestionResourceController {
         this.userService = userService;
         this.commentQuestionService = commentQuestionService;
         this.questionConverter = questionConverter;
+        this.voteForQuestionService = voteForQuestionService;
     }
 
     @PostMapping("/{id}/view")
