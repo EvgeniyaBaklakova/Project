@@ -4,7 +4,6 @@ import com.javamentor.qa.platform.dao.abstracts.dto.QuestionDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
-import com.javamentor.qa.platform.models.dto.tag.TagDto;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;

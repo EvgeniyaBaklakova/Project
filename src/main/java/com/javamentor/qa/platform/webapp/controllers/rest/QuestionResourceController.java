@@ -2,8 +2,13 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
 
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionDtoDaoWithoutAnswersImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoByTagId;
+import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
+import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.QuestionViewed;
@@ -23,12 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 
 import javax.validation.Valid;
@@ -120,6 +120,19 @@ public class QuestionResourceController {
 
     }
 
+    @GetMapping("/tag1/{id}")
+    @ApiOperation(value = "Получение QuestionDto по TagId", tags = {"Получение QuestionDto"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
+            @ApiResponse(code = 400, message = "QuestionDto с таким TagId не найден"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
+        public ResponseEntity<?> getQuestionDtoByTagId1(@RequestParam(defaultValue = "1") Integer page,
+                                                   @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage, @PathVariable Long id) {
+        return new ResponseEntity<>(questionDtoService.getQuestionDtoByTagId(id),HttpStatus.OK);
+    }
+
+
     @GetMapping("/tag/{id}")
     @ApiOperation(value = "Получение QuestionDto по TagId", tags = {"Получение QuestionDto"})
     @ApiResponses(value = {
@@ -127,13 +140,23 @@ public class QuestionResourceController {
             @ApiResponse(code = 400, message = "QuestionDto с таким TagId не найден"),
             @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
+    public ResponseEntity<?> getQuestionDtoByTagId(
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer items,
+            @PathVariable Long id) {
+        PaginationData data = new PaginationData(page, items, QuestionDtoDaoWithoutAnswersImpl.class.getSimpleName());
 
-    public ResponseEntity<?> getQuestionDtoByTagId(@RequestParam(defaultValue = "1") Integer page,
-                                                   @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage, @PathVariable Long id) {
-//        PaginationData data = new PaginationData(page,itemsOnPage,
-//                TagPageDtoDaoByDateImpl.class.getSimpleName());
-        return new ResponseEntity<>(questionDtoService.getQuestionDtoByTagId(id),HttpStatus.OK);
+        QuestionPageDtoDaoByTagId questionPageDtoDaoByTagId = new QuestionPageDtoDaoByTagId();
+        questionPageDtoDaoByTagId.setId(id);
+
+        if (questionDtoService.getQuestionDtoByTagId(id).isEmpty()) {
+            return new ResponseEntity<>("Тега с ID " + id + " не существует!", HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
+
+
 
     @PostMapping("/{id}/bookmark")
     @ApiOperation(value = "Добавление вопроcа в закладки текущего аутентифицированного пользователя")
