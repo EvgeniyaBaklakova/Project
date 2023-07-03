@@ -14,7 +14,7 @@ public class KeyWordsIncludeSearchFilter implements SearchFilter {
     private final Pattern pattern;
 
     public KeyWordsIncludeSearchFilter() {
-        pattern = Pattern.compile("\\b(\\S+)\\b");
+        pattern = Pattern.compile("[^\\-]\\b(\\S+)\\b");
     }
 
     @Override
@@ -32,11 +32,11 @@ public class KeyWordsIncludeSearchFilter implements SearchFilter {
             words.add(match.trim());
         }
 
-        StringBuilder sql = new StringBuilder("q.id IN (SELECT DISTINCT q.id FROM Question q WHERE");
+        StringBuilder sql = new StringBuilder(" ( ");
 
         for (String word : words) {
-            sql.append("q.description").append(word).append(" LIKE ").append(word).append(" OR ");
-            sql.append("q.title").append(word).append(" LIKE ").append(word).append(" OR ");
+            sql.append("q.description").append(" LIKE '%").append(word).append("%' OR ");
+            sql.append("q.title").append(" LIKE '%").append(word).append("%' OR ");
 
         }
 

@@ -18,13 +18,12 @@ public class TagIncludeSearchFilter implements SearchFilter {
 
     public TagIncludeSearchFilter(TagService tagService) {
         this.tagService = tagService;
-        pattern = Pattern.compile("\\[(.*?)\\]");
+        pattern = Pattern.compile("[^\\-]\\[(.*?)\\]");
     }
 
     @Override
     public void doFilter(QuestionQuery questionQuery) {
         Matcher matcher = pattern.matcher(questionQuery.getQuery());
-
         if (!matcher.find()) {
             return;
         }
@@ -38,22 +37,21 @@ public class TagIncludeSearchFilter implements SearchFilter {
 
         List<Tag> tags = tagService.getTagsByNames(names);
 
-        StringBuilder sql = new StringBuilder("q.id IN (SELECT question_id FROM (SELECT a.id FROM Question a JOIN Tag b ON a.id = b.question_id) WHERE ");
+        StringBuilder hql = new StringBuilder("q.id IN (SELECT a.id FROM Question a JOIN a.tags b WHERE ");
 
         for (Tag tag : tags) {
-            sql.append("tag_id = ").append(tag.getId()).append(" AND");
+            hql.append("b.id = ").append(tag.getId().longValue()).append(" AND");
         }
-
-        questionQuery.getStringBuilder().delete(questionQuery.getStringBuilder().length() - 3, questionQuery.getStringBuilder().length());
-        questionQuery.getStringBuilder().append(")");
+        hql.delete(hql.length() - 3, hql.length());
+        hql.append(") AND ");
 
         questionQuery.setQuery(matcher.replaceAll(""));
-
         questionQuery.getOutput().append("include tags: ");
         for(Tag tag : tags) {
             questionQuery.getOutput().append(tag.getName()).append(", ");
         }
         questionQuery.getOutput().append("; ");
+        questionQuery.getStringBuilder().append(hql);
 
     }
 }

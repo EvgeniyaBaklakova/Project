@@ -38,21 +38,21 @@ public class TagExcludeSearchFilter implements SearchFilter {
 
         List<Tag> tags = tagService.getTagsByNames(names);
 
-        StringBuilder sql = new StringBuilder("q.id NOT IN (SELECT question_id FROM (SELECT a.id FROM Question a JOIN Tag b ON a.id = b.question_id) WHERE ");
+        StringBuilder hql = new StringBuilder("q.id NOT IN (SELECT a.id FROM Question a JOIN a.tags b WHERE  ");
 
 
         for (Tag tag : tags) {
-            sql.append("tag_id = ").append(tag.getId()).append(" AND");
+            hql.append("b.id = ").append(tag.getId()).append(" AND");
         }
 
-        sql.delete(sql.length() - 3, sql.length());
-        sql.append(") AND ");
+        hql.delete(hql.length() - 3, hql.length());
+        hql.append(") AND ");
 
         questionQuery.setQuery(matcher.replaceAll(""));
-        questionQuery.getStringBuilder().append(sql);
+        questionQuery.getStringBuilder().append(hql);
 
         questionQuery.getOutput().append("exclude tags: ");
-        for(Tag tag : tags) {
+        for (Tag tag : tags) {
             questionQuery.getOutput().append(tag.getName()).append(", ");
         }
         questionQuery.getOutput().append("; ");

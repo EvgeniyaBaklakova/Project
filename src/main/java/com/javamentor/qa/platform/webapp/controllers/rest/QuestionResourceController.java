@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionDtoDaoWithoutAnswersImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoBySearchImpl;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
@@ -176,14 +177,12 @@ public class QuestionResourceController {
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
 
-    @PostMapping("/search")
+    @GetMapping("/search")
     public ResponseEntity<?> getSearchReuslt(@RequestParam Integer page,
-                                             @RequestParam Integer itemsOnPage,
+                                             @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage,
                                              @RequestParam String query,
-                                             @RequestParam String order) {
-        PaginationData data = new PaginationData(page, itemsOnPage, QuestionPageDtoDaoBySearchImpl.class.getSimpleName(), query + order);
+                                             @RequestParam(defaultValue = "newest") String order) {
+        PaginationData data = new PaginationData(page, itemsOnPage, QuestionPageDtoDaoBySearchImpl.class.getSimpleName(), query + " " + order);
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
-
-
     }
 }

@@ -14,7 +14,7 @@ public class KeyWordsExcludeSearchFilter implements SearchFilter {
     private final Pattern pattern;
 
     public KeyWordsExcludeSearchFilter() {
-        pattern = Pattern.compile("\\b(\\S+)\\b");
+        pattern = Pattern.compile("\\-\\b(\\S+)\\b");
     }
 
     @Override
@@ -32,19 +32,19 @@ public class KeyWordsExcludeSearchFilter implements SearchFilter {
             words.add(match.trim());
         }
 
-        StringBuilder sql = new StringBuilder("q.id NOT IN (SELECT DISTINCT q.id FROM Question q WHERE");
+        StringBuilder hql = new StringBuilder(" NOT ( ");
 
         for (String word : words) {
-            sql.append("q.description").append(word).append(" LIKE ").append(word).append(" OR ");
-            sql.append("q.title").append(word).append(" LIKE ").append(word).append(" OR ");
+            hql.append("q.description").append(" LIKE '%").append(word).append("%' OR ");
+            hql.append("q.title").append(" LIKE '%").append(word).append("%' OR ");
 
         }
 
-        sql.delete(sql.length() - 3, sql.length());
-        sql.append(") AND ");
+        hql.delete(hql.length() - 3, hql.length());
+        hql.append(") AND ");
 
         questionQuery.setQuery(matcher.replaceAll(""));
-        questionQuery.getStringBuilder().append(sql);
+        questionQuery.getStringBuilder().append(hql);
 
         questionQuery.getOutput().append("include words: ");
         for(String sequence : words) {
