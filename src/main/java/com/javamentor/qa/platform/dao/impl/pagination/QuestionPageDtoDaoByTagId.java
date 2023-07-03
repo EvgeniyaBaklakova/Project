@@ -18,16 +18,12 @@ public class QuestionPageDtoDaoByTagId implements PageDtoDao<QuestionDto> {
 
     @PersistenceContext
     private EntityManager entityManager;
-    private Long id;
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     @Override
     public List<QuestionDto> getItems(PaginationData properties) {
         int items = properties.getItemsOnPage();
         int offset = (properties.getCurrentPage() - 1) * items;
+        Long id = (Long) properties.getProps().get("id");
 
 
 

@@ -4,7 +4,6 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionDtoDaoWithoutAnswersImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllImpl;
-import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoByTagId;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
@@ -28,7 +27,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 
 import javax.validation.Valid;
@@ -132,10 +138,9 @@ public class QuestionResourceController {
             @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer items,
             @PathVariable Long id) {
-        PaginationData data = new PaginationData(page, items, QuestionDtoDaoWithoutAnswersImpl.class.getSimpleName());
-
-        QuestionPageDtoDaoByTagId questionPageDtoDaoByTagId = new QuestionPageDtoDaoByTagId();
-        questionPageDtoDaoByTagId.setId(id);
+        Map<String, Object> props = new HashMap<>();
+        props.put("id", id);
+        PaginationData data = new PaginationData(page, items, QuestionDtoDaoWithoutAnswersImpl.class.getSimpleName(), props);
 
         if (questionDtoService.getPageDto(data).getItemsOnPage() == 0) {
             return new ResponseEntity<>("Тега с ID " + id + " не существует!", HttpStatus.BAD_REQUEST);
