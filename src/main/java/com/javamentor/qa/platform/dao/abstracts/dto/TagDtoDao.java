@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.dao.abstracts.dto;
 
+import com.javamentor.qa.platform.models.dto.tag.FavoriteUserTagDto;
 import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
@@ -19,4 +20,5 @@ public interface TagDtoDao {
 
     List<TagDto> getTagsByQuestionId(Long id);
     List<TagQuestion> getTagsByQuestionsIds(List<Long> id);
+    List<FavoriteUserTagDto> getFavoriteUserTags(Integer id);
 }

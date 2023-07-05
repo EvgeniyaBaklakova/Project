@@ -38,7 +38,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 "(SELECT COUNT(q.id) AS countQuestion FROM Question q WHERE q.user.id = u.id), " +
                 "" +
 
-
++
                 ") " +
                 "FROM User u " +
                 "WHERE u.id = :id";
