@@ -1,4 +1,4 @@
-package com.javamentor.qa.platform.models.dto;
+package com.javamentor.qa.platform.models.dto.tag;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserTagFavoriteDto {
+public class FavoriteUserTagDto {
     Integer tagId;
     String name;
     Long countMessage;

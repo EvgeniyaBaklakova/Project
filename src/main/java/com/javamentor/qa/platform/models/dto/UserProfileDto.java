@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.models.dto;
 
+import com.javamentor.qa.platform.models.dto.tag.FavoriteUserTagDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +18,13 @@ public class UserProfileDto {
     private Long countAnswer;
     private Long countQuestion;
     private Long countView;
-    private List<UserTagFavoriteDto> userTagFavoriteDtoList;
+    private List<FavoriteUserTagDto> favoriteUserTagDtoList;
+
+    public UserProfileDto(Long id, Integer reputation, Long countAnswer, Long countQuestion, Long countView) {
+        this.id = id;
+        this.reputation = reputation;
+        this.countAnswer = countAnswer;
+        this.countQuestion = countQuestion;
+        this.countView = countView;
+    }
 }

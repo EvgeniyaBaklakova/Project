@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.UserProfileDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
@@ -59,10 +60,19 @@ public class ProfileUserResourceController {
     }
 
     @GetMapping(value = "")
-    @ApiOperation(value = " ")
-    public ResponseEntity<HttpStatus> getProfile(@AuthenticationPrincipal User user) {
-            //return UserProfileDto
+    @ApiOperation(value = "Возвращает UserProfileDto по User id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "UserProfileDto успешно получено"),
+            @ApiResponse(code = 400, message = "Пользователь с таким ID не найден"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен"),
+            @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
+    })
+    public ResponseEntity<UserProfileDto> getProfile(@AuthenticationPrincipal User user) {
 
-        return ResponseEntity.ok(HttpStatus.OK);
+
+
+
+        return new UserProfileDto();
     }
 }
