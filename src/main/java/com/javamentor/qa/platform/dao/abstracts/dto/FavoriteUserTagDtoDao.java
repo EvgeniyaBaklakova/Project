@@ -5,5 +5,5 @@ import com.javamentor.qa.platform.models.dto.tag.FavoriteUserTagDto;
 import java.util.List;
 
 public interface FavoriteUserTagDtoDao {
-    List<FavoriteUserTagDto> getUserFavoriteTags(Integer id);
+    List<FavoriteUserTagDto> getFavoriteUserTags(Integer id);
 }

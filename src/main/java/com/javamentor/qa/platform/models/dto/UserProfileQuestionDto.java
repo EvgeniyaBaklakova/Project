@@ -11,7 +11,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class UserProfileQuestionDto {
     private Long questionId;
     private String questionTitle;

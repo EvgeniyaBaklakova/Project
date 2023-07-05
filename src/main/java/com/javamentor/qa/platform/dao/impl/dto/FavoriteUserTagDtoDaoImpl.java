@@ -13,13 +13,12 @@ public class FavoriteUserTagDtoDaoImpl implements FavoriteUserTagDtoDao {
     private EntityManager entityManager;
 
     @Override
-    public List<FavoriteUserTagDto> getUserFavoriteTags(Integer id) {
+    public List<FavoriteUserTagDto> getFavoriteUserTags(Integer id) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.FavoriteUserTagDto(" +
-                "q.id, q.title, q.persistDateTime," +
-                    "(SELECT COUNT(a.id) AS countAnswer " +
-                    "FROM Answer a " +
-                    "WHERE a.question.id = q.id)) " +
-                "FROM Question q WHERE user.id = :id";
-        return entityManager.createQuery(hql, UserProfileQuestionDto.class).setParameter("id", id).getResultList();
+                "t.id, t.name, " +
+                    "SUM((SELECT COUNT(a.id) AS countAnswer FROM Answer a WHERE a.user.id = t.id), " +
+                        "(SELECT COUNT(q.id) AS countQuestion FROM Question q WHERE q.user.id = t.id))) " +
+                "FROM Tag t WHERE t.id = :id";
+        return entityManager.createQuery(hql, FavoriteUserTagDto.class).setParameter("id", id).getResultList();
     }
 }
