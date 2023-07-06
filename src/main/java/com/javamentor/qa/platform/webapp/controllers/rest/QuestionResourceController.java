@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionDtoDaoWithoutAnswersImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllImpl;
 import com.javamentor.qa.platform.models.dto.PageDto;
@@ -16,7 +15,6 @@ import com.javamentor.qa.platform.service.abstracts.model.BookMarksService;
 import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.webapp.converter.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,19 +48,17 @@ public class QuestionResourceController {
     private final QuestionService questionService;
     private final QuestionDtoService questionDtoService;
     private final QuestionViewedService questionViewedService;
-    private final UserService userService;
     private final CommentQuestionService commentQuestionService;
     private final QuestionConverter questionConverter;
 
     @Autowired
     public QuestionResourceController(BookMarksService bookMarksService, QuestionViewedService questionViewedService,
-                                      QuestionService questionService, UserService userService, CommentQuestionService commentQuestionService,
+                                      QuestionService questionService, CommentQuestionService commentQuestionService,
                                       QuestionConverter questionConverter, QuestionDtoService questionDtoService) {
         this.bookMarksService = bookMarksService;
         this.questionService = questionService;
         this.questionDtoService = questionDtoService;
         this.questionViewedService = questionViewedService;
-        this.userService = userService;
         this.commentQuestionService = commentQuestionService;
         this.questionConverter = questionConverter;
     }

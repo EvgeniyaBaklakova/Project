@@ -33,22 +33,16 @@ public class UserDtoDaoImpl implements UserDtoDao {
     public UserProfileDto getUserProfile(Long id) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.UserProfileDto" +
                 "(u.id, (SELECT SUM(r.count) FROM Reputation r WHERE r.author.id = u.id), " +
-                "(SELECT COUNT(a.id) AS countAnswer FROM Answer a WHERE a.user.id = u.id), " +
-                "(SELECT COUNT(q.id) AS countQuestion FROM Question q WHERE q.user.id = u.id), " +
 
-                "(SELECT COUNT(a.id) AS countAnswer " +
-                "FROM Answer a " +
-                "LEFT JOIN Question q " +
-                "WHERE a.user.id = u.id)" +
+                "(SELECT COUNT(a.id) AS countAnswer FROM Answer a WHERE a.question.id = q.id), " +
+                "(SELECT COUNT(qextra.id) AS countQuestion FROM Question qextra WHERE qextra.user.id = q.id), " +
 
-
-
-                ") " +
-                "FROM User u " +
+                "(SELECT COUNT(a.id) FROM Answer a WHERE a.question.id = " +
+                    "(SELECT COUNT(qv.question.id) FROM QuestionViewed qv ))) " +
+                "FROM Question q " +
+                "LEFT JOIN User u ON u.id = q.user.id " +
                 "WHERE u.id = :id";
 
         return entityManager.createQuery(hql, UserProfileDto.class).setParameter("id", id).getSingleResult();
     }
 }
-//  Long countView - (сколько людей просмотрело его ответов и вопросов т.е.
-//  если кто-то зашел на вопрос с его ответом ты мы добавляем +1 к просмотру, нужна сумма)
