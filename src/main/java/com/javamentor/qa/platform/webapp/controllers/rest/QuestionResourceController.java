@@ -4,10 +4,10 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionDtoDaoWithoutAnswersImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoBySearchImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoByPersistDateImpl;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
-import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.CommentQuestion;
 import com.javamentor.qa.platform.models.entity.question.Question;
@@ -19,6 +19,7 @@ import com.javamentor.qa.platform.service.abstracts.model.CommentQuestionService
 import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.VoteForQuestionService;
 import com.javamentor.qa.platform.webapp.converter.QuestionConverter;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,11 +53,12 @@ public class QuestionResourceController {
     private final UserService userService;
     private final CommentQuestionService commentQuestionService;
     private final QuestionConverter questionConverter;
+    private final VoteForQuestionService voteForQuestionService;
 
     @Autowired
     public QuestionResourceController(BookMarksService bookMarksService, QuestionViewedService questionViewedService,
                                       QuestionService questionService, UserService userService, CommentQuestionService commentQuestionService,
-                                      QuestionConverter questionConverter, QuestionDtoService questionDtoService) {
+                                      QuestionConverter questionConverter, QuestionDtoService questionDtoService, VoteForQuestionService voteForQuestionService) {
         this.bookMarksService = bookMarksService;
         this.questionService = questionService;
         this.questionDtoService = questionDtoService;
@@ -64,6 +66,7 @@ public class QuestionResourceController {
         this.userService = userService;
         this.commentQuestionService = commentQuestionService;
         this.questionConverter = questionConverter;
+        this.voteForQuestionService = voteForQuestionService;
     }
 
     @PostMapping("/{id}/view")
@@ -174,6 +177,58 @@ public class QuestionResourceController {
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
 
+    @GetMapping("/new")
+    @ApiOperation(value = "Получение всех QuestionDto с пагинацией, отсортированные по дате добавления")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = PageDto.class),
+            @ApiResponse(code = 400, message = "QuestionDto не найдены")
+    })
+    public ResponseEntity<PageDto<QuestionDto>> getAllQuestionDtoByCreatingDate(
+              @RequestParam(required =  true, defaultValue = "1") Integer page
+            , @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage
+            , @RequestParam(required = false) List<String> ignoredTag
+            , @RequestParam(required = false) List<String> trackedTag) {
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("trackedTag", trackedTag);
+        properties.put("ignoredTag", ignoredTag);
+
+        PaginationData data = new PaginationData(
+            page, itemsOnPage, QuestionPageDtoDaoByPersistDateImpl.class.getSimpleName(), properties);
+        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
+    }
+
+    @PostMapping("/{questionId}/upvote")
+    @ApiOperation(value = "Проголосовать за вопрос")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Голос к вопросу принят"),
+            @ApiResponse(code = 400, message = "Вопрос с таким ID не найден"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
+    public ResponseEntity<String> upVoteForQuestion(@PathVariable("questionId") Long id,
+                                                    @AuthenticationPrincipal User user) {
+        if (!questionService.existsById(id)) {
+            return new ResponseEntity<>("Такого вопроса не существует", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("" + voteForQuestionService.upVote(id, user.getId()), HttpStatus.OK);
+    }
+
+    @PostMapping("/{questionId}/downVote")
+    @ApiOperation(value = "Проголосовать за вопрос")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Голос к вопросу принят"),
+            @ApiResponse(code = 400, message = "Вопрос с таким ID не найден"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
+    public ResponseEntity<String> downVoteForQuestion(@PathVariable("questionId") Long id,
+                                                      @AuthenticationPrincipal User user) {
+        if (!questionService.existsById(id)) {
+            return new ResponseEntity<>("Такого вопроса не существует", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("" + voteForQuestionService.downVote(id, user.getId()), HttpStatus.OK);
+    }
+
+
     @ApiOperation(value = "Получение QuestionDto в соответствии с запросом")
 
     @GetMapping("/search")
@@ -197,7 +252,7 @@ public class QuestionResourceController {
                                              @ApiParam(value = "Сортировка может принимать значения: \n" +
                                                      "- newest - сортировка по новизне\n" +
                                                      "- votes - сортировка по рейтингу. ", defaultValue = "newest")
-                                                 @RequestParam(defaultValue = "newest") String order) {
+                                             @RequestParam(defaultValue = "newest") String order) {
         PaginationData data = new PaginationData(page, itemsOnPage, QuestionPageDtoDaoBySearchImpl.class.getSimpleName(), query + " " + order);
         return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
