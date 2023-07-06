@@ -9,6 +9,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class QuestionQuery {
     String query;
+    String order;
     StringBuilder stringBuilder;
     StringBuilder output;
 }

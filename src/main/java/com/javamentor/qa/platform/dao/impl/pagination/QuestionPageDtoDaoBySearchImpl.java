@@ -24,12 +24,11 @@ public class QuestionPageDtoDaoBySearchImpl implements PageDtoDao<QuestionDto> {
     private EntityManager entityManager;
 
     private QuestionSearchService questionSearchService;
-    private QuestionConverter questionConverter;
     private String filter;
 
-    public QuestionPageDtoDaoBySearchImpl(QuestionSearchService questionSearchService, QuestionConverter questionConverter) {
+    public QuestionPageDtoDaoBySearchImpl(QuestionSearchService questionSearchService) {
         this.questionSearchService = questionSearchService;
-        this.questionConverter = questionConverter;
+
     }
 
     @Transactional

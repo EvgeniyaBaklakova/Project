@@ -1,7 +1,8 @@
-package com.javamentor.qa.platform.questionSearch.impl;
+package com.javamentor.qa.platform.questionSearch.impl.search;
 
 import com.javamentor.qa.platform.questionSearch.QuestionQuery;
 import com.javamentor.qa.platform.questionSearch.abstracts.SearchFilter;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -10,11 +11,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-public class KeyWordsExcludeSearchFilter implements SearchFilter {
+@Order(value = 2)
+public class SequenceWordsExcludeSearchFilter implements SearchFilter {
     private final Pattern pattern;
 
-    public KeyWordsExcludeSearchFilter() {
-        pattern = Pattern.compile("\\-\\b(\\S+)\\b");
+    public SequenceWordsExcludeSearchFilter() {
+        pattern = Pattern.compile("\\s\\\"(.+?)\\\"");
     }
 
     @Override
@@ -26,19 +28,20 @@ public class KeyWordsExcludeSearchFilter implements SearchFilter {
         }
         matcher.reset();
 
-        List<String> words = new ArrayList<>();
+        List<String> sequences = new ArrayList<>();
         while (matcher.find()) {
             String match = matcher.group(1);
-            words.add(match.trim());
+            sequences.add(match.trim().toLowerCase());
         }
 
-        StringBuilder hql = new StringBuilder(" NOT ( ");
+        StringBuilder hql = new StringBuilder(" ( ");
 
-        for (String word : words) {
-            hql.append("q.description").append(" LIKE '%").append(word).append("%' OR ");
-            hql.append("q.title").append(" LIKE '%").append(word).append("%' OR ");
+        for (String sequence : sequences) {
+            hql.append("lower(q.description)").append(" LIKE '%").append(sequence).append("%' OR ");
+            hql.append("lower(q.title)").append(" LIKE '%").append(sequence).append("%' OR ");
 
         }
+
 
         hql.delete(hql.length() - 3, hql.length());
         hql.append(") AND ");
@@ -46,12 +49,11 @@ public class KeyWordsExcludeSearchFilter implements SearchFilter {
         questionQuery.setQuery(matcher.replaceAll(""));
         questionQuery.getStringBuilder().append(hql);
 
-        questionQuery.getOutput().append("include words: ");
-        for(String sequence : words) {
+        questionQuery.getOutput().append("exclude sentences: ");
+        for(String sequence : sequences) {
             questionQuery.getOutput().append(sequence).append(", ");
         }
+        questionQuery.getOutput().delete(questionQuery.getOutput().length() - 2 , questionQuery.getOutput().length());
         questionQuery.getOutput().append("; ");
-
-
     }
 }

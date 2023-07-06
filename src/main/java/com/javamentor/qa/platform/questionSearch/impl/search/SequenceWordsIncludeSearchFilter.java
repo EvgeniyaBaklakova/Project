@@ -1,7 +1,8 @@
-package com.javamentor.qa.platform.questionSearch.impl;
+package com.javamentor.qa.platform.questionSearch.impl.search;
 
 import com.javamentor.qa.platform.questionSearch.QuestionQuery;
 import com.javamentor.qa.platform.questionSearch.abstracts.SearchFilter;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -10,11 +11,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
+@Order(value = 2)
 public class SequenceWordsIncludeSearchFilter implements SearchFilter {
     private final Pattern pattern;
 
     public SequenceWordsIncludeSearchFilter() {
-        pattern = Pattern.compile("\\s\\\"(.*?)\\\"");
+        pattern = Pattern.compile("\\s\\\"(.+?)\\\"");
     }
 
     @Override
@@ -29,27 +31,28 @@ public class SequenceWordsIncludeSearchFilter implements SearchFilter {
         List<String> sequences = new ArrayList<>();
         while (matcher.find()) {
             String match = matcher.group(1);
-            sequences.add(match.trim());
+            sequences.add(match.trim().toLowerCase());
         }
 
-        StringBuilder sql = new StringBuilder(" ( ");
+        StringBuilder hql = new StringBuilder(" ( ");
 
         for (String sequence : sequences) {
-            sql.append("q.description").append(sequence).append(" LIKE '%").append(sequence).append("%' OR ");
-            sql.append("q.title").append(sequence).append(" LIKE '%").append(sequence).append("%' OR ");
+            hql.append("lower(q.description)").append(" LIKE '%").append(sequence).append("%' OR ");
+            hql.append("lower(q.title)").append(" LIKE '%").append(sequence).append("%' OR ");
 
         }
 
-        sql.delete(sql.length() - 3, sql.length());
-        sql.append(") AND ");
+        hql.delete(hql.length() - 3, hql.length());
+        hql.append(") AND ");
 
         questionQuery.setQuery(matcher.replaceAll(""));
-        questionQuery.getStringBuilder().append(sql);
+        questionQuery.getStringBuilder().append(hql);
 
-        questionQuery.getOutput().append("exclude sentences: ");
+        questionQuery.getOutput().append("include sentences: ");
         for(String sequence : sequences) {
             questionQuery.getOutput().append(sequence).append(", ");
         }
+        questionQuery.getOutput().delete(questionQuery.getOutput().length() - 2 , questionQuery.getOutput().length());
         questionQuery.getOutput().append("; ");
     }
 }

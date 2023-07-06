@@ -823,9 +823,25 @@ public class TestQuestionResourceController extends AbstractTestApi {
 
     @Test
     @Sql(scripts = "/script/TestQuestionResourceController/TestSearchQuestions/Before.sql", executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestQuestionResourceController/TestSearchQuestions/After.sql",
-            executionPhase = AFTER_TEST_METHOD)
+    //@Sql(scripts = "/script/TestQuestionResourceController/TestSearchQuestions/After.sql",
+            //executionPhase = AFTER_TEST_METHOD)
     public void searchQuestions() throws Exception {
+
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/search")
+                        .header(AUTHORIZATION, getToken("myemail@mail.ru", "test"))
+                        .param("page", "1")
+                        .param("itemsOnPage", "10")
+                        .param("query", "[dfgs] [ret] -[sprsdsing] hgjghj -yyy  asdf [] -[] \"\"  \"asdfa\" -\"asdfasd\" ")
+                        .param("order", "newest")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(0)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(0)));
+
 
         TypedQuery<Question> query = em.createQuery("SELECT DISTINCT q" +
                 " FROM Question q" +
@@ -872,7 +888,9 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(resultList.size())))
-                .andExpect(jsonPath("$.items[0].id", Is.is(resultList.get(0).getId().intValue())));
+                .andExpect(jsonPath("$.items[0].id", Is.is(resultList.get(0).getId().intValue())))
+                .andExpect(jsonPath("$.items[1].id", Is.is(resultList.get(1).getId().intValue())))
+                .andExpect(jsonPath("$.items[4].id", Is.is(resultList.get(4).getId().intValue())));
 
         TypedQuery<QuestionDto> queryDto = em.createQuery("SELECT NEW com.javamentor.qa.platform.models.dto.question.QuestionDto(q.id, q.title, u.id," +
                 "CAST(rep.count as long), u.fullName, u.imageLink, q.description, " +
@@ -938,6 +956,35 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.totalResultCount", Is.is(queryDtoResultList.size())))
                 .andExpect(jsonPath("$.items[0].id", Is.is(queryDtoResultList.get(0).getId().intValue())))
                 .andExpect(jsonPath("$.items[5].id", Is.is(queryDtoResultList.get(5).getId().intValue())));
+
+
+        queryDto = em.createQuery("SELECT NEW com.javamentor.qa.platform.models.dto.question.QuestionDto" +
+                "(q.id, q.title, u.id, CAST(rep.count as long), u.fullName, u.imageLink, q.description," +
+                " (SELECT CAST(COUNT(qv.user.id) as long) FROM QuestionViewed qv WHERE qv.question.id = q.id)," +
+                " COUNT(DISTINCT a.id), SUM(CASE WHEN vq.vote = 'UP_VOTE' THEN 1 WHEN vq.vote = 'DOWN_VOTE' THEN -1 ELSE 0 END)," +
+                " q.persistDateTime, q.lastUpdateDateTime)" +
+                " FROM Question q LEFT JOIN User u on q.user.id = u.id LEFT JOIN Answer a on q.id = a.question.id" +
+                " LEFT JOIN Reputation rep on u.id = rep.author.id" +
+                " LEFT JOIN VoteQuestion vq on q.id = vq.question.id" +
+                "  WHERE q.id IN (SELECT a.id FROM Question a JOIN a.tags b WHERE" +
+                "  b.name in ('java', 'spring') group by a.id having count(distinct b) = 2)  GROUP BY q.id, u.id, rep.count " +
+                "  ORDER BY SUM(CASE WHEN vq.vote = 'UP_VOTE' THEN 1 WHEN vq.vote = 'DOWN_VOTE' THEN -1 ELSE 0 END) ", QuestionDto.class) ;
+
+        queryDtoResultList = queryDto.getResultList();
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/search")
+                        .header(AUTHORIZATION, getToken("myemail@mail.ru", "test"))
+                        .param("page", "1")
+                        .param("itemsOnPage", "10")
+                        .param("query", "[java] [spring]")
+                        .param("order", "votes")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(queryDtoResultList.size())))
+                .andExpect(jsonPath("$.items[0].id", Is.is(queryDtoResultList.get(0).getId().intValue())))
+                .andExpect(jsonPath("$.items[2].id", Is.is(queryDtoResultList.get(2).getId().intValue())));
 
         this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/search")
                         .header(AUTHORIZATION, getToken("myemail@mail.ru", "test"))

@@ -1,12 +1,11 @@
 package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.questionSearch.QuestionQuery;
+import com.javamentor.qa.platform.questionSearch.abstracts.OrderFilter;
 import com.javamentor.qa.platform.questionSearch.abstracts.SearchFilter;
-import com.javamentor.qa.platform.questionSearch.impl.*;
 import com.javamentor.qa.platform.service.abstracts.model.QuestionSearchService;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,20 +13,13 @@ import java.util.regex.Pattern;
 @Service
 public class QuestionSearchServiceImpl implements QuestionSearchService {
 
-    private final List<SearchFilter> searchFilters = new ArrayList<>();
+    private final List<SearchFilter> searchFilters;
+    private final List<OrderFilter> orderFilters;
 
-    public QuestionSearchServiceImpl(TagIncludeSearchFilter tagIncludeSearchFilter,
-                                     TagExcludeSearchFilter tagExcludeSearchFilter,
-                                     SequenceWordsIncludeSearchFilter sequenceWordsIncludeSearchFilter,
-                                     SequenceWordsExcludeSearchFilter sequenceWordsExcludeSearchFilter,
-                                     KeyWordsIncludeSearchFilter keyWordsIncludeSearchFilter,
-                                     KeyWordsExcludeSearchFilter keyWordsExcludeSearchFilter) {
-        searchFilters.add(tagIncludeSearchFilter);
-        searchFilters.add(tagExcludeSearchFilter);
-        searchFilters.add(sequenceWordsIncludeSearchFilter);
-        searchFilters.add(sequenceWordsExcludeSearchFilter);
-        searchFilters.add(keyWordsIncludeSearchFilter);
-        searchFilters.add(keyWordsExcludeSearchFilter);
+    public QuestionSearchServiceImpl(List<SearchFilter> searchFilters,
+                                     List<OrderFilter> orderFilters) {
+        this.searchFilters = searchFilters;
+        this.orderFilters = orderFilters;
 
     }
 
@@ -42,8 +34,7 @@ public class QuestionSearchServiceImpl implements QuestionSearchService {
 
         query = query.substring(0, query.length() - orderBy.length());
 
-
-        QuestionQuery questionQuery = new QuestionQuery(" " + query, new StringBuilder(), new StringBuilder());
+        QuestionQuery questionQuery = new QuestionQuery(" " + query, orderBy, new StringBuilder(), new StringBuilder());
         questionQuery.getStringBuilder().append("SELECT NEW com.javamentor.qa.platform.models.dto.question.QuestionDto(q.id, q.title, u.id, " +
                 "CAST(rep.count as long), u.fullName, u.imageLink, q.description, " +
                 "(SELECT CAST(COUNT(qv.user.id) as long) FROM QuestionViewed qv WHERE qv.question.id = q.id), " +
@@ -58,29 +49,26 @@ public class QuestionSearchServiceImpl implements QuestionSearchService {
 
         if (!questionQuery.getQuery().trim().equals("")) {
             questionQuery.getStringBuilder().append(" WHERE ");
+            int length = questionQuery.getStringBuilder().length();
             for (SearchFilter filter : searchFilters) {
                 filter.doFilter(questionQuery);
             }
-            questionQuery.getStringBuilder().delete(questionQuery.getStringBuilder().length() - 4, questionQuery.getStringBuilder().length());
+
+            if (length == questionQuery.getStringBuilder().length()) {
+                questionQuery.getStringBuilder().delete(questionQuery.getStringBuilder().length() - 7, questionQuery.getStringBuilder().length());
+
+            } else {
+                questionQuery.getStringBuilder().delete(questionQuery.getStringBuilder().length() - 4, questionQuery.getStringBuilder().length());
+
+            }
 
         }
-
         questionQuery.getStringBuilder().append(" GROUP BY q.id, u.id, rep.count ");
-
-        String order;
-
-        switch (orderBy) {
-            case ("newest"):
-                order = " ORDER BY q.persistDateTime ";
-                break;
-            case ("votes"):
-                order = " ORDER BY SUM(CASE WHEN vq.vote = 'UP_VOTE' THEN 1 WHEN vq.vote = 'DOWN_VOTE' THEN -1 ELSE 0 END) ";
-                break;
-            default:
-                order = "";
+        for (OrderFilter orderFilter : orderFilters) {
+            orderFilter.doFilter(questionQuery);
         }
 
-        questionQuery.getStringBuilder().append(order);
+        System.out.println(questionQuery.getStringBuilder().toString());
 
         return questionQuery.getStringBuilder().toString();
     }
