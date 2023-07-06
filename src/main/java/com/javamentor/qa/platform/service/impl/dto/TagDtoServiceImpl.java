@@ -2,16 +2,14 @@ package com.javamentor.qa.platform.service.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
-import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.tag.*;
-import com.javamentor.qa.platform.models.dto.user.UserDto;
-import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class TagDtoServiceImpl extends PageDtoServiceImpl<TagViewDto> implements TagDtoService {
@@ -45,7 +43,7 @@ public class TagDtoServiceImpl extends PageDtoServiceImpl<TagViewDto> implements
 
     @Override
     public List<FavoriteUserTagDto> getFavoriteUserTags(Integer id) {
-        return tagDtoDao.getFavoriteUserTags(id);
+        return tagDtoDao.getFavoriteUserTags(id).stream().sorted().limit(15).collect(Collectors.toList());
     }
 
 }

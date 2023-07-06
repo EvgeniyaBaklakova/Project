@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,7 +21,7 @@ public class UserDtoDaoImpl implements UserDtoDao {
     public Optional<UserDto> getById(long id) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.user.UserDto" +
                 "(u.id, u.email, u.fullName, u.imageLink, u.city, " +
-                "(SELECT SUM(r.count) FROM Reputation r WHERE r.author.id = u.id)) " +
+                "CAST((SELECT SUM(r.count) FROM Reputation r WHERE r.author.id = u.id) AS java.lang.Long)) " +
                 "FROM User u " +
                 "WHERE u.id = :id";
 
@@ -36,9 +35,14 @@ public class UserDtoDaoImpl implements UserDtoDao {
                 "(u.id, (SELECT SUM(r.count) FROM Reputation r WHERE r.author.id = u.id), " +
                 "(SELECT COUNT(a.id) AS countAnswer FROM Answer a WHERE a.user.id = u.id), " +
                 "(SELECT COUNT(q.id) AS countQuestion FROM Question q WHERE q.user.id = u.id), " +
-                "(SELECT )" +
 
-+
+                "(SELECT COUNT(a.id) AS countAnswer " +
+                "FROM Answer a " +
+                "LEFT JOIN Question q " +
+                "WHERE a.user.id = u.id)" +
+
+
+
                 ") " +
                 "FROM User u " +
                 "WHERE u.id = :id";
@@ -46,3 +50,5 @@ public class UserDtoDaoImpl implements UserDtoDao {
         return entityManager.createQuery(hql, UserProfileDto.class).setParameter("id", id).getSingleResult();
     }
 }
+//  Long countView - (сколько людей просмотрело его ответов и вопросов т.е.
+//  если кто-то зашел на вопрос с его ответом ты мы добавляем +1 к просмотру, нужна сумма)
