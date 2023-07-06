@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface UserDtoDao {
     Optional<UserDto> getById(long id);
-    List<UserProfileDto> getUserProfiles(Long id);
+    UserProfileDto getUserProfile(Long id);
 }

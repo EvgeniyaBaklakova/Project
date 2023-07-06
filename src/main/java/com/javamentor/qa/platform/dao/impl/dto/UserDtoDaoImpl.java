@@ -31,18 +31,18 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public List<UserProfileDto> getUserProfiles(Long id) {
+    public UserProfileDto getUserProfile(Long id) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.UserProfileDto" +
                 "(u.id, (SELECT SUM(r.count) FROM Reputation r WHERE r.author.id = u.id), " +
                 "(SELECT COUNT(a.id) AS countAnswer FROM Answer a WHERE a.user.id = u.id), " +
                 "(SELECT COUNT(q.id) AS countQuestion FROM Question q WHERE q.user.id = u.id), " +
-                "" +
+                "(SELECT )" +
 
 +
                 ") " +
                 "FROM User u " +
                 "WHERE u.id = :id";
 
-        return entityManager.createQuery(hql, UserProfileDto.class).setParameter("id", id).getResultList();
+        return entityManager.createQuery(hql, UserProfileDto.class).setParameter("id", id).getSingleResult();
     }
 }

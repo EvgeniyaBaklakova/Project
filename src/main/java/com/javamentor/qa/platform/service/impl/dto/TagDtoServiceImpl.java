@@ -3,10 +3,7 @@ package com.javamentor.qa.platform.service.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.TagDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
-import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
-import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
-import com.javamentor.qa.platform.models.dto.tag.TagDto;
-import com.javamentor.qa.platform.models.dto.tag.TagViewDto;
+import com.javamentor.qa.platform.models.dto.tag.*;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
@@ -44,6 +41,11 @@ public class TagDtoServiceImpl extends PageDtoServiceImpl<TagViewDto> implements
     @Override
     public List<IgnoredTagsDto> getIgnoredTags(Long userId) {
         return tagDtoDao.getIgnoredTags(userId);
+    }
+
+    @Override
+    public List<FavoriteUserTagDto> getFavoriteUserTags(Integer id) {
+        return tagDtoDao.getFavoriteUserTags(id);
     }
 
 }

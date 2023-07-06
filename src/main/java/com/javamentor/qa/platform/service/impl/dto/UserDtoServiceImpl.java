@@ -30,8 +30,8 @@ public class UserDtoServiceImpl extends PageDtoServiceImpl<UserDto> implements U
     }
 
     @Override
-    public List<UserProfileDto> getUserProfiles(Long id) {
-        return userDtoDao.getUserProfiles(id);
+    public UserProfileDto getUserProfile(Long id) {
+        return userDtoDao.getUserProfile(id);
     }
 
     @Override

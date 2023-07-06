@@ -5,15 +5,14 @@ import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -21,10 +20,14 @@ import java.util.List;
 @RequestMapping("/api/user/profile")
 public class ProfileUserResourceController {
 
+    private final UserService userService;
     private final AnswerService answerService;
     private final QuestionDtoService questionDtoService;
 
-    public ProfileUserResourceController(AnswerService answerService,QuestionDtoService questionDtoService) {
+    public ProfileUserResourceController(UserService userService
+            , AnswerService answerService
+            , QuestionDtoService questionDtoService) {
+        this.userService = userService;
         this.answerService = answerService;
         this.questionDtoService = questionDtoService;
     }
@@ -59,20 +62,15 @@ public class ProfileUserResourceController {
         return ResponseEntity.ok(answerService.countAnswerOfWeek(user.getId()));
     }
 
-    @GetMapping(value = "")
-    @ApiOperation(value = "Возвращает UserProfileDto по User id")
+    @GetMapping
+    @ApiOperation(value = "Возвращает информацию о пользователе по User id который был аутентифицирован")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "UserProfileDto успешно получено"),
-            @ApiResponse(code = 400, message = "Пользователь с таким ID не найден"),
+            @ApiResponse(code = 200, message = "Информация была успешно получена"),
             @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен"),
             @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
     })
     public ResponseEntity<UserProfileDto> getProfile(@AuthenticationPrincipal User user) {
-
-
-
-
-        return new UserProfileDto();
+        return ResponseEntity.ok(userService.getUserProfile(user.getId()));
     }
 }
