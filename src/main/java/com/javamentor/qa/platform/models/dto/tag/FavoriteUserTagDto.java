@@ -17,5 +17,5 @@ public class FavoriteUserTagDto {
     Long countMessage;
 
     public static final Comparator<FavoriteUserTagDto>
-            COMPARE_BY_COUNT_MESSAGE = (x, y) -> (int)(x.getCountMessage() - y.getCountMessage());
+            COMPARE_BY_COUNT_MESSAGE = (x, y) -> (int)(y.getCountMessage() - x.getCountMessage());
 }
