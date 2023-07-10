@@ -1,11 +1,10 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 
-
-import com.javamentor.qa.platform.dao.impl.pagination.*;
-import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionDtoDaoWithoutAnswersImpl;
 import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoAllImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoBySearchImpl;
+import com.javamentor.qa.platform.dao.impl.pagination.QuestionPageDtoDaoByPersistDateImpl;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionCreateDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
@@ -24,6 +23,7 @@ import com.javamentor.qa.platform.service.abstracts.model.VoteForQuestionService
 import com.javamentor.qa.platform.webapp.converter.QuestionConverter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
-
 
 
 import javax.validation.Valid;
@@ -256,5 +255,34 @@ public class QuestionResourceController {
             return new ResponseEntity<>("Такого вопроса не существует", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>("" + voteForQuestionService.downVote(id, user.getId()), HttpStatus.OK);
+    }
+
+
+    @ApiOperation(value = "Получение QuestionDto в соответствии с запросом")
+
+    @GetMapping("/search")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success", response = QuestionDto.class),
+            @ApiResponse(code = 400, message = "Не указан запрос")
+    })
+    public ResponseEntity<?> getSearchResult(@ApiParam(value = "Номер страницы" ) @RequestParam Integer page,
+
+                                             @ApiParam(value = "Количество элементов на странице", defaultValue = "10")
+                                             @RequestParam(required = false, defaultValue = "10") Integer itemsOnPage,
+
+                                             @ApiParam(value = "Запрос. \n" +
+                                                     "- В квадратных скобках поиск по тегу, пример: [java] - найдет все вопросы с тегом java,\n" +
+                                                     "- Апострофы поиск точного совпадения, пример: \"всем привет\" - найдет все вопросы со словосочетанием всем привет \n" +
+                                                     "- Просто текст, пример: просто текст - найдет все вопросы в которых будут слова \"просто\" или \"текст\" \n" +
+                                                     "- Знак минуса исключает из запроса, пример: -[java] - найдет все вопросы без тега java \n" +
+                                                     "- Запрос [java] -[spring] -исключение \"Выведите текст\" найдет вопросы с тегом java, без тега spring, без слова исключение и со словосочетанием Выведите текст \n",
+                                                     required = true) @RequestParam String query,
+
+                                             @ApiParam(value = "Сортировка может принимать значения: \n" +
+                                                     "- newest - сортировка по новизне\n" +
+                                                     "- votes - сортировка по рейтингу. ", defaultValue = "newest")
+                                             @RequestParam(defaultValue = "newest") String order) {
+        PaginationData data = new PaginationData(page, itemsOnPage, QuestionPageDtoDaoBySearchImpl.class.getSimpleName(), query + " " + order);
+        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
     }
 }
