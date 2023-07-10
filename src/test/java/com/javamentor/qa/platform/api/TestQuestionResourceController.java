@@ -1027,6 +1027,82 @@ public class TestQuestionResourceController extends AbstractTestApi {
     }
 
     @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionDtoGetByTagId/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionDtoGetByTagId/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void questionGetByTagId() throws Exception {
+
+        this.mvc.perform(MockMvcRequestBuilders.get("/api/user/question/tag/401")
+                        .header(AUTHORIZATION,getToken("test100@mail.ru","123")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
+                .andExpect(jsonPath("$.totalResultCount", Is.is(4)))
+                .andExpect(jsonPath("$.items", hasSize(4)))
+
+                .andExpect(jsonPath("$.items[0].id", Is.is(206)))
+                .andExpect(jsonPath("$.items[0].title", Is.is("question6")))
+                .andExpect(jsonPath("$.items[0].authorId", Is.is(101)))
+                .andExpect(jsonPath("$.items[0].authorReputation").value(100500))
+                .andExpect(jsonPath("$.items[0].authorName", Is.is("name")))
+                .andExpect(jsonPath("$.items[0].authorImage", Is.is("link")))
+                .andExpect(jsonPath("$.items[0].description", Is.is("question6")))
+                .andExpect(jsonPath("$.items[0].viewCount").value(0))
+                .andExpect(jsonPath("$.items[0].countAnswer").value(0))
+                .andExpect(jsonPath("$.items[0].countValuable").value(0))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].id").value(403))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].name").value("gradle"))
+                .andExpect(jsonPath("$.items[0].listTagDto[0].description").value("gradle"))
+
+                .andExpect(jsonPath("$.items[1].id").value(207))
+                .andExpect(jsonPath("$.items[1].title").value("question7"))
+                .andExpect(jsonPath("$.items[1].authorId").value(101))
+                .andExpect(jsonPath("$.items[1].authorReputation").value(100500))
+                .andExpect(jsonPath("$.items[1].authorName").value("name"))
+                .andExpect(jsonPath("$.items[1].authorImage").value("link"))
+                .andExpect(jsonPath("$.items[1].description").value("question7"))
+                .andExpect(jsonPath("$.items[1].viewCount").value(1))
+                .andExpect(jsonPath("$.items[1].countAnswer").value(0))
+                .andExpect(jsonPath("$.items[1].countValuable").value(1))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].id").value(404))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].name").value("hibernate"))
+                .andExpect(jsonPath("$.items[1].listTagDto[0].description").value("hibernate"))
+
+                .andExpect(jsonPath("$.items[2].id").value(208))
+                .andExpect(jsonPath("$.items[2].title").value("question8"))
+                .andExpect(jsonPath("$.items[2].authorId").value(101))
+                .andExpect(jsonPath("$.items[2].authorReputation").value(100500))
+                .andExpect(jsonPath("$.items[2].authorName").value("name"))
+                .andExpect(jsonPath("$.items[2].authorImage").value("link"))
+                .andExpect(jsonPath("$.items[2].description").value("question8"))
+                .andExpect(jsonPath("$.items[2].viewCount").value(0))
+                .andExpect(jsonPath("$.items[2].countAnswer").value(0))
+                .andExpect(jsonPath("$.items[2].countValuable").value(0))
+                .andExpect(jsonPath("$.items[2].listTagDto[0].id").value(404))
+                .andExpect(jsonPath("$.items[2].listTagDto[0].name").value("hibernate"))
+                .andExpect(jsonPath("$.items[2].listTagDto[0].description").value("hibernate"))
+
+                .andExpect(jsonPath("$.itemsOnPage", Is.is(4)));
+    }
+
+    @Test
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionDtoGetByTagId/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestQuestionResourceController/TestQuestionDtoGetByTagId/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void noQuestionGetByTagId() throws Exception {
+
+        this.mvc.perform(get("/api/user/question/{id}", 111)
+                        .header(AUTHORIZATION, getToken("test100@mail.ru","123") ))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
     @Sql(scripts = "/script/TestQuestionResourceController/TestSearchQuestions/Before.sql", executionPhase = BEFORE_TEST_METHOD)
     @Sql(scripts = "/script/TestQuestionResourceController/TestSearchQuestions/After.sql",
             executionPhase = AFTER_TEST_METHOD)

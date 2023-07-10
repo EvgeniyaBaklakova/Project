@@ -21,7 +21,10 @@ import com.javamentor.qa.platform.service.abstracts.model.QuestionViewedService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import com.javamentor.qa.platform.service.abstracts.model.VoteForQuestionService;
 import com.javamentor.qa.platform.webapp.converter.QuestionConverter;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -125,6 +128,31 @@ public class QuestionResourceController {
         return new ResponseEntity<>(questionDtoService.getQuestionDtoById(id), HttpStatus.OK);
 
     }
+
+
+    @GetMapping("/tag/{id}")
+    @ApiOperation(value = "Получение QuestionDto по TagId", tags = {"Получение QuestionDto"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "QuestionDto успешно получено"),
+            @ApiResponse(code = 400, message = "QuestionDto с таким TagId не найден"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен")})
+    public ResponseEntity<?> getQuestionDtoByTagId(
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer items,
+            @PathVariable Long id) {
+        Map<String, Object> props = new HashMap<>();
+        props.put("id", id);
+        PaginationData data = new PaginationData(page, items, QuestionDtoDaoWithoutAnswersImpl.class.getSimpleName(), props);
+
+        if (questionDtoService.getPageDto(data).getItemsOnPage() == 0) {
+            return new ResponseEntity<>("Тега с ID " + id + " не существует!", HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(questionDtoService.getPageDto(data), HttpStatus.OK);
+    }
+
+
 
     @PostMapping("/{id}/bookmark")
     @ApiOperation(value = "Добавление вопроcа в закладки текущего аутентифицированного пользователя")
