@@ -1070,7 +1070,8 @@ public class TestQuestionResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.totalPageCount", Is.is(1)))
                 .andExpect(jsonPath("$.totalResultCount", Is.is(resultList.size())))
                 .andExpect(jsonPath("$.items[0].id", Is.is(resultList.get(0).getId().intValue())))
-                .andExpect(jsonPath("$.items[1].id", Is.is(resultList.get(1).getId().intValue())));
+                .andExpect(jsonPath("$.items[1].id", Is.is(resultList.get(1).getId().intValue())))
+                .andExpect(jsonPath("$.items[2].id", Is.is(resultList.get(2).getId().intValue())));
 
         query = em.createQuery("SELECT DISTINCT q" +
                 " FROM Question q" +
