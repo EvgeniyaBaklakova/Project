@@ -30,18 +30,15 @@ public class UserDtoDaoImpl implements UserDtoDao {
     }
 
     @Override
-    public UserProfileDto getUserProfile(Long id) {
+    public UserProfileDto getUserProfile(long id) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.UserProfileDto" +
-                "(u.id, (SELECT SUM(r.count) FROM Reputation r WHERE r.author.id = u.id), " +
+                "(u.id, CAST((SELECT SUM(r.count) FROM Reputation r WHERE r.author.id = u.id) AS java.lang.Long), " +
 
-                "(SELECT COUNT(a.id) AS countAnswer FROM Answer a WHERE a.question.id = q.id), " +
-                "(SELECT COUNT(qextra.id) AS countQuestion FROM Question qextra WHERE qextra.user.id = q.id), " +
+                "(SELECT COUNT(a.id) AS countAnswer FROM Answer a WHERE a.user.id = u.id), " +
+                "(SELECT COUNT(q.id) AS countQuestion FROM Question q WHERE q.user.id = u.id), " +
+                "(SELECT COUNT(qv.question.id) FROM QuestionViewed qv WHERE qv.user.id = u.id)) " +
 
-                "(SELECT COUNT(a.id) FROM Answer a WHERE a.question.id = " +
-                    "(SELECT COUNT(qv.question.id) FROM QuestionViewed qv ))) " +
-                "FROM Question q " +
-                "LEFT JOIN User u ON u.id = q.user.id " +
-                "WHERE u.id = :id";
+                "FROM User u WHERE u.id = :id";
 
         return entityManager.createQuery(hql, UserProfileDto.class).setParameter("id", id).getSingleResult();
     }

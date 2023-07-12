@@ -14,13 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 public class UserProfileDto {
     private Long id;
-    private Integer reputation;
+    private Long reputation;
     private Long countAnswer;
     private Long countQuestion;
     private Long countView;
     private List<FavoriteUserTagDto> favoriteUserTagDtoList;
 
-    public UserProfileDto(Long id, Integer reputation, Long countAnswer, Long countQuestion, Long countView) {
+    public UserProfileDto(Long id, Long reputation, Long countAnswer, Long countQuestion, Long countView) {
         this.id = id;
         this.reputation = reputation;
         this.countAnswer = countAnswer;

@@ -12,9 +12,9 @@ import java.util.Comparator;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FavoriteUserTagDto {
-    Integer tagId;
-    String name;
-    Long countMessage;
+    private Integer tagId;
+    private String name;
+    private Long countMessage;
 
     public static final Comparator<FavoriteUserTagDto>
             COMPARE_BY_COUNT_MESSAGE = (x, y) -> (int)(y.getCountMessage() - x.getCountMessage());
