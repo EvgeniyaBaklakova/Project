@@ -36,7 +36,10 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
                 "(SELECT COUNT(a.id) AS countAnswer FROM Answer a WHERE a.user.id = u.id), " +
                 "(SELECT COUNT(q.id) AS countQuestion FROM Question q WHERE q.user.id = u.id), " +
-                "(SELECT COUNT(qv.question.id) FROM QuestionViewed qv WHERE qv.user.id = u.id)) " +
+                "(SELECT COUNT(qv.id) FROM QuestionViewed qv " +
+                    "JOIN Question q ON qv.question.id = q.id " +
+                    "JOIN Answer a ON a.question.id = q.id " +
+                    "WHERE qv.user.id = u.id)) " +
 
                 "FROM User u WHERE u.id = :id";
 

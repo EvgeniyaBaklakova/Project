@@ -159,12 +159,17 @@ public class TestProfileUserResourceController extends AbstractTestApi {
         this.mvc.perform(get("/api/user/profile").
                         header(AUTHORIZATION, getToken("test102@mail.ru", "password")))
                 .andDo(print())
+                .andExpect(status().isForbidden());
+
+        this.mvc.perform(get("/api/user/profile").
+                        header(AUTHORIZATION, getToken("test103@mail.ru", "password")))
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", Is.is(102)))
-                .andExpect(jsonPath("$.reputation", Is.is(5)))
-                .andExpect(jsonPath("$.countAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.id", Is.is(103)))
+                .andExpect(jsonPath("$.reputation", Matchers.nullValue()))
+                .andExpect(jsonPath("$.countAnswer", Is.is(1)))
                 .andExpect(jsonPath("$.countQuestion", Is.is(1)))
-                .andExpect(jsonPath("$.countView", Is.is(1)));
+                .andExpect(jsonPath("$.countView", Is.is(2)));
     }
 }
