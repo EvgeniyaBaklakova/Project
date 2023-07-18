@@ -6,7 +6,6 @@ import com.javamentor.qa.platform.models.dto.tag.FavoriteUserTagDto;
 import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
-import com.javamentor.qa.platform.models.entity.question.IgnoredTag;
 import com.javamentor.qa.platform.models.entity.question.TagQuestion;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -94,8 +93,8 @@ public class TagDtoDaoImpl implements TagDtoDao {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.FavoriteUserTagDto(" +
                 "t.id, t.name, " +
 
-                "(SELECT COUNT(q.id) AS countQuestion FROM t.questions q) + " +
-                "(SELECT (SELECT COUNT(a.id) FROM q.answers a) AS countAnswer FROM t.questions q)) " +
+                "(SELECT COUNT(q.id) AS countMessage FROM t.questions q) + " +
+                "(SELECT(SELECT COUNT(a.id) FROM q.answers a) AS countMessage FROM t.questions q)) " +
 
                 "FROM Tag t " +
                 "JOIN User u ON u.id = (SELECT q.user.id FROM t.questions q)" +
