@@ -27,4 +27,13 @@ public class UserProfileDto {
         this.countQuestion = countQuestion;
         this.countView = countView;
     }
+
+    public UserProfileDto(UserProfileDto userProfileDto, List<FavoriteUserTagDto> favUserTagDtos) {
+        this.id = userProfileDto.id;
+        this.reputation = userProfileDto.reputation;
+        this.countAnswer = userProfileDto.countAnswer;
+        this.countQuestion = userProfileDto.countQuestion;
+        this.countView = userProfileDto.countView;
+        this.favoriteUserTagDtoList = favUserTagDtos;
+    }
 }

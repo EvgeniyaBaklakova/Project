@@ -43,7 +43,8 @@ public class TagDtoServiceImpl extends PageDtoServiceImpl<TagViewDto> implements
 
     @Override
     public List<FavoriteUserTagDto> getFavoriteUserTags(Integer id) {
-        return tagDtoDao.getFavoriteUserTags(id).stream().sorted().limit(15).collect(Collectors.toList());
+        return tagDtoDao.getFavoriteUserTags(id).stream()
+                .sorted((x, y) -> y.getCountMessage().compareTo(x.getCountMessage()))
+                .limit(15).collect(Collectors.toList());
     }
-
 }

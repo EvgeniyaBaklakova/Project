@@ -91,16 +91,20 @@ public class TagDtoDaoImpl implements TagDtoDao {
     @Override
     public List<FavoriteUserTagDto> getFavoriteUserTags(Integer id) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.FavoriteUserTagDto(" +
-                "t.id, t.name, " +
-
-                "(SELECT COUNT(q.id) AS countMessage FROM t.questions q) + " +
-                "(SELECT(SELECT COUNT(a.id) FROM q.answers a) AS countMessage FROM t.questions q)) " +
+                "CAST(t.id AS java.lang.Integer), t.name, " +
+                "CAST(" +
+                "(" +
+                    "(SELECT COUNT(q.id) AS countMessage FROM t.questions q) + " +
+                    "(SELECT(SELECT COUNT(a.id) FROM q.answers a) AS countMessage FROM t.questions q)" +
+                ")" +
+                "AS java.lang.Long)" +
+                ") " +
 
                 "FROM Tag t " +
                 "JOIN User u ON u.id = (SELECT q.user.id FROM t.questions q)" +
                 "WHERE u.id = :id";
 
-        return entityManager.createQuery(hql, FavoriteUserTagDto.class).setParameter("id", id).getResultList();
+        return entityManager.createQuery(hql, FavoriteUserTagDto.class).setParameter("id", Long.valueOf(id)).getResultList();
     }
 }
 
