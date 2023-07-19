@@ -1,3 +1,6 @@
+TRUNCATE TABLE chat CASCADE;
+TRUNCATE TABLE role CASCADE;
+
 INSERT INTO role (id, name)
 VALUES (111, 'ROLE_USER');
 INSERT INTO role (id, name)
