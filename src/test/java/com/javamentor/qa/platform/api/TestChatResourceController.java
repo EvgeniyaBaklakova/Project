@@ -25,15 +25,20 @@ public class TestChatResourceController extends AbstractTestApi {
 
         this.mvc.perform(get("/api/user/chat/group")
                         .header(AUTHORIZATION, USER_TOKEN)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("id", "3"))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id", Is.is(3)))
-                .andExpect(jsonPath("$.chatName", Is.is("first_chat")))
-                .andExpect(jsonPath("$.lastMessage", Is.is("last_message")))
-                .andExpect(jsonPath("$.image", Is.is("first_image")))
-                .andExpect(jsonPath("$.persistDateTime", Is.is("2000-01-23T00:00:00")));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].id", Is.is(111)))
+                .andExpect(jsonPath("$[0].chatName", Is.is("first_chat")))
+                .andExpect(jsonPath("$[0].lastMessage", Is.is("last_message_111_chat")))
+                .andExpect(jsonPath("$[0].image", Is.is("first_image")))
+                .andExpect(jsonPath("$[0].persistDateTime", Is.is("2000-01-01T00:00:00")))
+                .andExpect(jsonPath("$[1].id", Is.is(112)))
+                .andExpect(jsonPath("$[1].chatName", Is.is("second_chat")))
+                .andExpect(jsonPath("$[1].lastMessage", Is.is("last_message_112_chat")))
+                .andExpect(jsonPath("$[1].image", Is.is("second_image")))
+                .andExpect(jsonPath("$[1].persistDateTime", Is.is("2000-02-01T00:00:00")));
     }
 }
