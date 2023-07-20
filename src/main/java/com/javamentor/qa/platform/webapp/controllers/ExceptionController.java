@@ -41,4 +41,5 @@ public class ExceptionController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body("User with this id not found");
     }
+
 }

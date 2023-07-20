@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface TagService extends ReadWriteService<Tag, Long> {
     List<Tag> tagsToSet(List<Tag> questionTags);
+
+    List<Tag> getTagsByNames(List<String> names);
 }

@@ -1,6 +1,8 @@
+
 package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.AnswerDao;
+import com.javamentor.qa.platform.dao.abstracts.model.QuestionDao;
 import com.javamentor.qa.platform.dao.abstracts.model.ReputationDao;
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 
 @Service
@@ -21,12 +24,14 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long
     private final ReputationDao reputationDao;
     private final AnswerDao answerDao;
     private final UserDao userDao;
+    private final QuestionDao questionDao;
 
-    public ReputationServiceImpl(ReputationDao reputationDao, AnswerDao answerDao, UserDao userDao) {
+    public ReputationServiceImpl(ReputationDao reputationDao, AnswerDao answerDao, UserDao userDao, QuestionDao questionDao) {
         super(reputationDao);
         this.reputationDao = reputationDao;
         this.answerDao = answerDao;
         this.userDao = userDao;
+        this.questionDao = questionDao;
     }
 
     @Override
@@ -59,4 +64,34 @@ public class ReputationServiceImpl extends ReadWriteServiceImpl<Reputation, Long
         reputation.setCount(count);
         reputationDao.update(reputation);
     }
+
+
+    public void createAndPersistReputation(Long questionId, Long senderId, Integer count, ReputationType type) {
+        persist(new Reputation(LocalDateTime.now(), questionDao.getAuthorByQuestionId(questionId),
+                userDao.getById(senderId).get(), count, type, questionDao.getById(questionId).get()));
+    }
+
+    public boolean checkReputationForTypeAndPoints(Reputation reputation, ReputationType type, Integer count) {
+        return (reputation.getType().equals(type) && reputation.getCount().equals(count)) ? true : false;
+    }
+    @Override
+    @Transactional
+    public void addReputation(Long questionId, Long senderId, ReputationType type, Integer count) {
+        Optional<Reputation> optionalReputation = reputationDao.getReputationByUserIdQuestionId(senderId, questionId, questionDao.getAuthorByQuestionId(questionId).getId());
+
+        // проверка Optional на null
+        if (optionalReputation.isPresent()) {
+            Reputation reputation = optionalReputation.get();
+
+            // проверка репутации на количество баллов и тип репутации
+            if (!checkReputationForTypeAndPoints(reputation,type,count)) {
+                reputation.setCount(count);
+                reputation.setType(type);
+                update(reputation);
+                return;
+            }
+        }
+        createAndPersistReputation(questionId,senderId, count, type);
+    }
+
 }
