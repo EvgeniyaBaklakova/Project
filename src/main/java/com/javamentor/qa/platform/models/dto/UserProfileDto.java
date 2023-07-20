@@ -18,7 +18,7 @@ public class UserProfileDto {
     private Long countAnswer;
     private Long countQuestion;
     private Long countView;
-    private List<FavoriteUserTagDto> favoriteUserTagDtoList;
+    private List<FavoriteUserTagDto> tagDtoList;
 
     public UserProfileDto(Long id, Long reputation, Long countAnswer, Long countQuestion, Long countView) {
         this.id = id;
@@ -26,14 +26,5 @@ public class UserProfileDto {
         this.countAnswer = countAnswer;
         this.countQuestion = countQuestion;
         this.countView = countView;
-    }
-
-    public UserProfileDto(UserProfileDto userProfileDto, List<FavoriteUserTagDto> favUserTagDtos) {
-        this.id = userProfileDto.id;
-        this.reputation = userProfileDto.reputation;
-        this.countAnswer = userProfileDto.countAnswer;
-        this.countQuestion = userProfileDto.countQuestion;
-        this.countView = userProfileDto.countView;
-        this.favoriteUserTagDtoList = favUserTagDtos;
     }
 }

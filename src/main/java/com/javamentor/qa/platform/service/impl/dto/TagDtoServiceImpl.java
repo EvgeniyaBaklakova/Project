@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class TagDtoServiceImpl extends PageDtoServiceImpl<TagViewDto> implements TagDtoService {
@@ -43,8 +42,6 @@ public class TagDtoServiceImpl extends PageDtoServiceImpl<TagViewDto> implements
 
     @Override
     public List<FavoriteUserTagDto> getFavoriteUserTags(Integer id) {
-        return tagDtoDao.getFavoriteUserTags(id).stream()
-                .sorted((x, y) -> y.getCountMessage().compareTo(x.getCountMessage()))
-                .limit(15).collect(Collectors.toList());
+        return tagDtoDao.getFavoriteUserTags(id);
     }
 }

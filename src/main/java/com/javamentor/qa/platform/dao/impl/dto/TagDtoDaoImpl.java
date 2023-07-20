@@ -97,14 +97,21 @@ public class TagDtoDaoImpl implements TagDtoDao {
                     "(SELECT COUNT(q.id) AS countMessage FROM t.questions q) + " +
                     "(SELECT(SELECT COUNT(a.id) FROM q.answers a) AS countMessage FROM t.questions q)" +
                 ")" +
-                "AS java.lang.Long)" +
+                "AS java.lang.Long) as countMessage" +
                 ") " +
 
                 "FROM Tag t " +
-                "JOIN User u ON u.id = (SELECT q.user.id FROM t.questions q)" +
-                "WHERE u.id = :id";
+                "JOIN User u ON u.id = (SELECT q.user.id FROM t.questions q) " +
+                "WHERE u.id = :id " +
+                "ORDER BY countMessage DESC";
 
-        return entityManager.createQuery(hql, FavoriteUserTagDto.class).setParameter("id", Long.valueOf(id)).getResultList();
+        List<FavoriteUserTagDto> list = entityManager.createQuery(hql, FavoriteUserTagDto.class)
+                .setParameter("id", Long.valueOf(id))
+                .setMaxResults(15).getResultList();
+        for (FavoriteUserTagDto s: list) {
+            System.out.println(s.getTagId());
+        }
+        return list;
     }
 }
 

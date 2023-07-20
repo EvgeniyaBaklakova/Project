@@ -154,7 +154,10 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.reputation", Is.is(4)))
                 .andExpect(jsonPath("$.countAnswer", Is.is(0)))
                 .andExpect(jsonPath("$.countQuestion", Is.is(1)))
-                .andExpect(jsonPath("$.countView", Is.is(1)));
+                .andExpect(jsonPath("$.countView", Is.is(1)))
+                .andExpect(jsonPath("$.tagDtoList[0].tagId", Is.is(102)))
+                .andExpect(jsonPath("$.tagDtoList[0].name", Is.is("name3")))
+                .andExpect(jsonPath("$.tagDtoList[0].countMessage", Is.is(2)));
 
         this.mvc.perform(get("/api/user/profile").
                         header(AUTHORIZATION, getToken("test102@mail.ru", "password")))
@@ -170,6 +173,9 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.reputation", Matchers.nullValue()))
                 .andExpect(jsonPath("$.countAnswer", Is.is(1)))
                 .andExpect(jsonPath("$.countQuestion", Is.is(1)))
-                .andExpect(jsonPath("$.countView", Is.is(2)));
+                .andExpect(jsonPath("$.countView", Is.is(2)))
+                .andExpect(jsonPath("$.tagDtoList[0].tagId", Is.is(106)))
+                .andExpect(jsonPath("$.tagDtoList[0].name", Is.is("name7")))
+                .andExpect(jsonPath("$.tagDtoList[0].countMessage", Is.is(2)));
     }
 }

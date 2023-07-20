@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.UserProfileDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.tag.FavoriteUserTagDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
@@ -75,8 +76,14 @@ public class ProfileUserResourceController {
             @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
     })
     public ResponseEntity<UserProfileDto> getProfile(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(
-                new UserProfileDto(userDtoService.getUserProfile(user.getId()),
-                tagDtoService.getFavoriteUserTags(Math.toIntExact(user.getId()))));
+        UserProfileDto upd = userDtoService.getUserProfile(user.getId());
+        upd.setTagDtoList(tagDtoService.getFavoriteUserTags(Math.toIntExact(user.getId())));
+        System.out.println("-------------------------\n\n");
+        for (FavoriteUserTagDto s: upd.getTagDtoList()) {
+            System.out.println(
+                    s.getTagId());
+        }
+        System.out.println("\n\n--------------------------");
+        return ResponseEntity.ok(upd);
     }
 }
