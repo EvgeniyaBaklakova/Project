@@ -24,9 +24,10 @@ public class ChatResourceController {
         this.groupChatDtoService = groupChatDtoService;
     }
 
-    @ApiOperation(value = "Получение всех групповых чатов")
     @GetMapping("/group")
+    @ApiOperation(value = "Получение всех групповых чатов")
     public ResponseEntity<List<GroupChatDto>> getGroupChatDto(@AuthenticationPrincipal User user) {
-        return new ResponseEntity<>(groupChatDtoService.getAllGroupChatDtoByUserId(user), HttpStatus.OK);
+        List<GroupChatDto> result = groupChatDtoService.getAllGroupChatDtoByUserId(user.getId());
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

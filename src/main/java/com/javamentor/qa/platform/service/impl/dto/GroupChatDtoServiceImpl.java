@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.service.impl.dto;
 
 import com.javamentor.qa.platform.dao.abstracts.dto.GroupChatDtoDao;
 import com.javamentor.qa.platform.models.dto.chat.GroupChatDto;
-import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.GroupChatDtoService;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +16,7 @@ public class GroupChatDtoServiceImpl implements GroupChatDtoService {
     }
 
     @Override
-    public List<GroupChatDto> getAllGroupChatDtoByUserId(User user) {
-        return groupChatDtoDao.getByUser(user);
+    public List<GroupChatDto> getAllGroupChatDtoByUserId(Long id) {
+        return groupChatDtoDao.getByUserId(id);
     }
 }
