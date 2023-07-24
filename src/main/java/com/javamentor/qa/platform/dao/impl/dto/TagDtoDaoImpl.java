@@ -105,13 +105,9 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 "WHERE u.id = :id " +
                 "ORDER BY countMessage DESC";
 
-        List<FavoriteUserTagDto> list = entityManager.createQuery(hql, FavoriteUserTagDto.class)
+        return entityManager.createQuery(hql, FavoriteUserTagDto.class)
                 .setParameter("id", Long.valueOf(id))
                 .setMaxResults(15).getResultList();
-        for (FavoriteUserTagDto s: list) {
-            System.out.println(s.getTagId());
-        }
-        return list;
     }
 }
 
