@@ -3,12 +3,14 @@ package com.javamentor.qa.platform.dao.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.UserDtoDao;
 import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.UserProfileDto;
+import com.javamentor.qa.platform.models.dto.tag.FavoriteUserTagDto;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -43,6 +45,30 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
                 "FROM User u WHERE u.id = :id";
 
-        return entityManager.createQuery(hql, UserProfileDto.class).setParameter("id", id).getSingleResult();
+        UserProfileDto upd = entityManager.createQuery(hql, UserProfileDto.class).setParameter("id", id)
+                .getSingleResult();
+        upd.setTagDtoList(getFavoriteUserTags(id));
+        return upd;
+    }
+
+    private List<FavoriteUserTagDto> getFavoriteUserTags(Long id) {
+        String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.FavoriteUserTagDto(" +
+                "CAST(t.id AS java.lang.Integer), t.name, " +
+                "CAST(" +
+                "(" +
+                "(SELECT COUNT(q.id) AS countMessage FROM t.questions q) + " +
+                "(SELECT(SELECT COUNT(a.id) FROM q.answers a) AS countMessage FROM t.questions q)" +
+                ")" +
+                "AS java.lang.Long) as countMessage" +
+                ") " +
+
+                "FROM Tag t " +
+                "JOIN User u ON u.id = (SELECT q.user.id FROM t.questions q) " +
+                "WHERE u.id = :id " +
+                "ORDER BY countMessage DESC";
+
+        return entityManager.createQuery(hql, FavoriteUserTagDto.class)
+                .setParameter("id", id)
+                .setMaxResults(15).getResultList();
     }
 }

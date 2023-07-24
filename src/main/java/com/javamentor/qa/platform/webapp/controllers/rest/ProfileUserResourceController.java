@@ -1,16 +1,10 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.models.dto.UserProfileDto;
-import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
-import com.javamentor.qa.platform.models.dto.tag.FavoriteUserTagDto;
+import com.javamentor.qa.platform.models.dto.*;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.TagDtoService;
-import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.*;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,16 +17,13 @@ import java.util.List;
 public class ProfileUserResourceController {
 
     private final UserDtoService userDtoService;
-    private final TagDtoService tagDtoService;
     private final AnswerService answerService;
     private final QuestionDtoService questionDtoService;
 
     public ProfileUserResourceController(UserDtoService userDtoService
-            , TagDtoService tagDtoService
             , AnswerService answerService
             , QuestionDtoService questionDtoService) {
         this.userDtoService = userDtoService;
-        this.tagDtoService = tagDtoService;
         this.answerService = answerService;
         this.questionDtoService = questionDtoService;
     }
@@ -76,14 +67,6 @@ public class ProfileUserResourceController {
             @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
     })
     public ResponseEntity<UserProfileDto> getProfile(@AuthenticationPrincipal User user) {
-        UserProfileDto upd = userDtoService.getUserProfile(user.getId());
-        upd.setTagDtoList(tagDtoService.getFavoriteUserTags(Math.toIntExact(user.getId())));
-        System.out.println("-------------------------\n\n");
-        for (FavoriteUserTagDto s: upd.getTagDtoList()) {
-            System.out.println(
-                    s.getTagId());
-        }
-        System.out.println("\n\n--------------------------");
-        return ResponseEntity.ok(upd);
+        return ResponseEntity.ok(userDtoService.getUserProfile(user.getId()));
     }
 }

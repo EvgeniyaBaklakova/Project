@@ -13,6 +13,4 @@ public interface TagDtoService extends PageDtoService<TagViewDto> {
     Optional<TagDto> getTrackedTag(Long userId, Long tagId);
 
     List<IgnoredTagsDto> getIgnoredTags(Long userId);
-
-    List<FavoriteUserTagDto> getFavoriteUserTags(Integer id);
 }

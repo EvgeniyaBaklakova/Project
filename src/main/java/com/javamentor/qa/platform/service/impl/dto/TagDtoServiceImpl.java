@@ -39,9 +39,4 @@ public class TagDtoServiceImpl extends PageDtoServiceImpl<TagViewDto> implements
     public List<IgnoredTagsDto> getIgnoredTags(Long userId) {
         return tagDtoDao.getIgnoredTags(userId);
     }
-
-    @Override
-    public List<FavoriteUserTagDto> getFavoriteUserTags(Integer id) {
-        return tagDtoDao.getFavoriteUserTags(id);
-    }
 }
