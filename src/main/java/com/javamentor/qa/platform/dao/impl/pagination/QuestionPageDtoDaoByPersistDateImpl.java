@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.dao.impl.pagination;
 
-import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
 import com.javamentor.qa.platform.dao.impl.pagination.transformers.QuestionDtoResultTransformer;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
@@ -10,10 +9,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
-import java.util.Map;
 
-@Repository("QuestionPageDtoDaoAllImpl")
-public class QuestionPageDtoDaoAllImpl implements PageDtoDao<QuestionDto> {
+@Repository("QuestionPageDtoDaoByPersistDateImpl")
+public class QuestionPageDtoDaoByPersistDateImpl extends QuestionPageDtoDaoAllImpl {
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -54,7 +52,9 @@ public class QuestionPageDtoDaoAllImpl implements PageDtoDao<QuestionDto> {
                                         "qt.name IN (:tt)) AND q.id NOT IN (SELECT q.id " +
                                                                             "FROM Question q " +
                                                                             "JOIN q.tags AS qt " +
-                                                                            "WHERE qt.name IN (:it))";
+                                                                            "WHERE qt.name IN (:it))" +
+                        "GROUP BY q.id, q.user.fullName, q.user.imageLink " +
+                        "ORDER BY q.persistDateTime DESC";
 
         Query query = entityManager.createQuery(hql)
                 .setFirstResult(offset)
@@ -65,27 +65,5 @@ public class QuestionPageDtoDaoAllImpl implements PageDtoDao<QuestionDto> {
                 .setResultTransformer(new QuestionDtoResultTransformer());
 
         return query.getResultList();
-    }
-
-    @Override
-    public Long getTotalResultCount(Map<String, Object> properties) {
-        String hql = "SELECT COUNT(q.id) FROM Question q " +
-                 "WHERE q.id IN (SELECT q.id " +
-                                "FROM Question q " +
-                                "JOIN q.tags AS qt " +
-                                "WHERE :tt IS NULL OR qt.name IN (:tt)) " +
-                                "AND q.id NOT IN (SELECT q.id " +
-                                                 "FROM Question q " +
-                                                 "JOIN q.tags AS qt " +
-                                                 "WHERE qt.name IN (:it))";
-
-        List<String> trackedTag = (List<String>) properties.get("trackedTag");
-        List<String> ignoredTag = (List<String>) properties.get("ignoredTag");
-
-        Query query = entityManager.createQuery(hql)
-                .setParameter("tt", trackedTag)
-                .setParameter("it", ignoredTag);
-
-        return (Long) query.getSingleResult();
     }
 }

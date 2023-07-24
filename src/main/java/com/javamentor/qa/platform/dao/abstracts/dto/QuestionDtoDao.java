@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface QuestionDtoDao {
+
      Optional<QuestionDto> getQuestionDtoById(Long id);
      List<UserProfileQuestionDto> getUserQuestions(Long id);
      List<UserProfileQuestionDto> getUserDeleteQuestions(Long id);
