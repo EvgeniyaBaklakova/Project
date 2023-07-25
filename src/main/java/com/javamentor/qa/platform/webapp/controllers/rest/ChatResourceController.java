@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.chat.ChatDto;
 import com.javamentor.qa.platform.models.dto.chat.GroupChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.GroupChatDtoService;
@@ -8,9 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,6 +21,14 @@ public class ChatResourceController {
 
     public ChatResourceController(GroupChatDtoService groupChatDtoService) {
         this.groupChatDtoService = groupChatDtoService;
+    }
+
+    @GetMapping
+    @ApiOperation(value = "Поиск чатов по имени")
+    public ResponseEntity<List<ChatDto>> getChatDtoByChatName(@RequestParam String chatName,
+                                                              @AuthenticationPrincipal User user) {
+        List<ChatDto> result = groupChatDtoService.getChatDtoByChatName(chatName, user);
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/group")
