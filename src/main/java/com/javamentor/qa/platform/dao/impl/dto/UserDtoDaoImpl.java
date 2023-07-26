@@ -53,13 +53,12 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
     private List<FavoriteUserTagDto> getFavoriteUserTags(Long id) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.FavoriteUserTagDto(" +
-                "CAST(t.id AS java.lang.Integer), t.name, " +
-                "CAST(" +
+                "t.id, t.name, " +
                 "(" +
                 "(SELECT COUNT(q.id) AS countMessage FROM t.questions q) + " +
                 "(SELECT(SELECT COUNT(a.id) FROM q.answers a) AS countMessage FROM t.questions q)" +
-                ")" +
-                "AS java.lang.Long) as countMessage" +
+                ") " +
+                "AS countMessage" +
                 ") " +
 
                 "FROM Tag t " +

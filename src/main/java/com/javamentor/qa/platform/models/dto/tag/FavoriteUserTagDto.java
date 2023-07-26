@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FavoriteUserTagDto {
-    private Integer tagId;
+    private Long tagId;
     private String name;
     private Long countMessage;
 }
