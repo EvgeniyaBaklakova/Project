@@ -11,6 +11,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -139,5 +140,24 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    @ApiOperation(value = "Проверка на добавление в групповой чат пользователя")
+    @Sql(scripts = "/script/TestChatResourceController/TestAddUserGroupChat/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestChatResourceController/TestAddUserGroupChat/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void tryAddUserToChat() throws Exception {
+
+        String USER_TOKEN = getToken("email101@mail.com", "200");
+        String requestBody = "101";
+
+        this.mvc.perform(post("/api/user/chat/group/110/join")
+                        .content(requestBody)
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 }
