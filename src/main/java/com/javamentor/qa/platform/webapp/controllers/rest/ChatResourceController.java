@@ -9,7 +9,10 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -27,14 +30,14 @@ public class ChatResourceController {
     @ApiOperation(value = "Поиск чатов по имени")
     public ResponseEntity<List<ChatDto>> getChatDtoByChatName(@RequestParam String chatName,
                                                               @AuthenticationPrincipal User user) {
-        List<ChatDto> result = groupChatDtoService.getChatDtoByChatName(chatName, user);
+        List<ChatDto> result = groupChatDtoService.getChatDtoByChatName(chatName, user.getId());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/group")
     @ApiOperation(value = "Получение всех групповых чатов")
     public ResponseEntity<List<GroupChatDto>> getGroupChatDto(@AuthenticationPrincipal User user) {
-        List<GroupChatDto> result = groupChatDtoService.getAllGroupChatDtoByUserId(user.getId());
+        List<GroupChatDto> result = groupChatDtoService.getGroupChatDtoByUserId(user.getId());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

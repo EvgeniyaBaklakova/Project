@@ -3,16 +3,11 @@ package com.javamentor.qa.platform.dao.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.GroupChatDtoDao;
 import com.javamentor.qa.platform.models.dto.chat.ChatDto;
 import com.javamentor.qa.platform.models.dto.chat.GroupChatDto;
-import com.javamentor.qa.platform.models.entity.user.User;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Repository
 public class GroupChatDtoDaoImpl implements GroupChatDtoDao {
@@ -20,10 +15,10 @@ public class GroupChatDtoDaoImpl implements GroupChatDtoDao {
     private EntityManager entityManager;
 
     @Override
-    public List<GroupChatDto> getByUserId(Long id) {
+    public List<GroupChatDto> getGroupChatDtoByUserId(Long id) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.chat.GroupChatDto" +
-                "(c.id, c.title, (SELECT m.message FROM Message m where m.chat.id = c.id and m.persistDate = " +
-                "(select max(m.persistDate) from m where m.chat.id = c.id)), g.image, c.persistDate)" +
+                "(c.id, c.title, (SELECT m.message FROM Message m WHERE m.chat.id = c.id AND m.persistDate = " +
+                "(SELECT MAX(m.persistDate) FROM m WHERE m.chat.id = c.id)), g.image, c.persistDate)" +
                 "FROM GroupChat g " +
                 "JOIN g.chat c " +
                 "JOIN g.users u " +
@@ -35,45 +30,42 @@ public class GroupChatDtoDaoImpl implements GroupChatDtoDao {
     }
 
     @Override
-    public List<ChatDto> getChatDtoByChatName(String chatName, User user) {
-        String hqlSingle = "select new com.javamentor.qa.platform.models.dto.chat.ChatDto" +
+    public List<ChatDto> getChatDtoSingleByChatName(String chatName, Long id) {
+        String hqlSingle = "SELECT NEW com.javamentor.qa.platform.models.dto.chat.ChatDto" +
                 "(c.id, " +
-                "(select u.nickname from User u where u.nickname = :chatName), " +
-                "(select u.imageLink from User u where u.nickname = :chatName), " +
-                "(select m.message from Message m where m.chat.id = c.id and m.persistDate = " +
-                "(select max(m.persistDate) from m where m.chat.id = c.id)), " +
-                "(select max(m.persistDate) from Message m where m.chat.id = c.id))" +
-                "from SingleChat s " +
-                "join s.chat c " +
-                "where (s.userOne.id = :id or s.useTwo.id = :id) " +
-                "and (s.useTwo.nickname = :chatName or s.userOne.nickname = :chatName)";
+                "(SELECT u.nickname from User u WHERE u.nickname = :chatName), " +
+                "(SELECT u.imageLink from User u WHERE u.nickname = :chatName), " +
+                "(SELECT m.message from Message m WHERE m.chat.id = c.id AND m.persistDate = " +
+                "(SELECT MAX(m.persistDate) FROM m WHERE m.chat.id = c.id)), " +
+                "(SELECT MAX(m.persistDate) FROM Message m WHERE m.chat.id = c.id))" +
+                "FROM SingleChat s " +
+                "JOIN s.chat c " +
+                "WHERE (SELECT u.nickname FROM User u WHERE u.id = :id) <> :chatName " +
+                "AND (s.useTwo.nickname = :chatName OR s.userOne.nickname = :chatName) " +
+                "AND (s.userOne.id = :id OR s.useTwo.id = :id)";
 
-        List<ChatDto> singleChatList = (Objects.equals(user.getNickname(), chatName)) ? new ArrayList<>() :
-                entityManager.createQuery(hqlSingle, ChatDto.class)
-                        .setParameter("id", user.getId())
-                        .setParameter("chatName", chatName)
-                        .getResultList();
-
-        String hqlGroup = "select new com.javamentor.qa.platform.models.dto.chat.ChatDto" +
-                "(c.id, c.title, g.image, " +
-                "(select m.message from Message m where m.chat.id = c.id and m.persistDate = " +
-                "(select max(m.persistDate) from m where m.chat.id = c.id)), " +
-                "(select max(m.persistDate) from Message m where m.chat.id = c.id))" +
-                "from GroupChat g " +
-                "join g.chat c " +
-                "join g.users u " +
-                "where u.id = :id " +
-                "and g.chat.title = :chatName";
-
-        List<ChatDto> groupChatList = entityManager.createQuery(hqlGroup, ChatDto.class)
-                .setParameter("id", user.getId())
+        return entityManager.createQuery(hqlSingle, ChatDto.class)
+                .setParameter("id", id)
                 .setParameter("chatName", chatName)
                 .getResultList();
+    }
 
-        List<ChatDto> result = new ArrayList<>();
-        result.addAll(singleChatList);
-        result.addAll(groupChatList);
+    @Override
+    public List<ChatDto> getChatDtoGroupByChatName(String chatName, Long id) {
+        String hqlGroup = "SELECT NEW com.javamentor.qa.platform.models.dto.chat.ChatDto" +
+                "(c.id, c.title, g.image, " +
+                "(SELECT m.message FROM Message m WHERE m.chat.id = c.id AND m.persistDate = " +
+                "(SELECT MAX(m.persistDate) FROM m WHERE m.chat.id = c.id)), " +
+                "(SELECT MAX(m.persistDate) FROM Message m WHERE m.chat.id = c.id))" +
+                "FROM GroupChat g " +
+                "JOIN g.chat c " +
+                "JOIN g.users u " +
+                "WHERE u.id = :id " +
+                "AND g.chat.title = :chatName";
 
-        return result.stream().sorted(Comparator.comparing(ChatDto::getPersistDateTimeLastMessage)).collect(Collectors.toList());
+        return entityManager.createQuery(hqlGroup, ChatDto.class)
+                .setParameter("id", id)
+                .setParameter("chatName", chatName)
+                .getResultList();
     }
 }
