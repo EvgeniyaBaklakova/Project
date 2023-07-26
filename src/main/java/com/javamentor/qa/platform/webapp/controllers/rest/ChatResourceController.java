@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.models.dto.chat.ChatDto;
 import com.javamentor.qa.platform.models.dto.chat.GroupChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.GroupChatDtoService;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -24,10 +26,18 @@ public class ChatResourceController {
         this.groupChatDtoService = groupChatDtoService;
     }
 
+    @GetMapping
+    @ApiOperation(value = "Поиск чатов по имени")
+    public ResponseEntity<List<ChatDto>> getChatDtoByChatName(@RequestParam String chatName,
+                                                              @AuthenticationPrincipal User user) {
+        List<ChatDto> result = groupChatDtoService.getChatDtoByChatName(chatName, user.getId());
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
     @GetMapping("/group")
     @ApiOperation(value = "Получение всех групповых чатов")
     public ResponseEntity<List<GroupChatDto>> getGroupChatDto(@AuthenticationPrincipal User user) {
-        List<GroupChatDto> result = groupChatDtoService.getAllGroupChatDtoByUserId(user.getId());
+        List<GroupChatDto> result = groupChatDtoService.getGroupChatDtoByUserId(user.getId());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
