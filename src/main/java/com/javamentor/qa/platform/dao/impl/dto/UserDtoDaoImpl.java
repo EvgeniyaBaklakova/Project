@@ -45,13 +45,12 @@ public class UserDtoDaoImpl implements UserDtoDao {
 
                 "FROM User u WHERE u.id = :id";
 
-        UserProfileDto upd = entityManager.createQuery(hql, UserProfileDto.class).setParameter("id", id)
-                .getSingleResult();
-        upd.setTagDtoList(getFavoriteUserTags(id));
-        return upd;
+        return entityManager.createQuery(hql, UserProfileDto.class)
+                .setParameter("id", id).getSingleResult();
     }
 
-    private List<FavoriteUserTagDto> getFavoriteUserTags(Long id) {
+    @Override
+    public List<FavoriteUserTagDto> getFavoriteUserTags(long id) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.FavoriteUserTagDto(" +
                 "t.id, t.name, " +
                 "(" +

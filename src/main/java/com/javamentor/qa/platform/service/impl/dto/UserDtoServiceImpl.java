@@ -30,12 +30,13 @@ public class UserDtoServiceImpl extends PageDtoServiceImpl<UserDto> implements U
 
     @Override
     public UserProfileDto getUserProfile(Long id) {
-        return userDtoDao.getUserProfile(id);
+        UserProfileDto upd = userDtoDao.getUserProfile(id);
+        upd.setTagDtoList(userDtoDao.getFavoriteUserTags(id));
+        return upd;
     }
 
     @Override
     public PageDto<UserDto> getPageDto(PaginationData properties) {
-        var pageDto = super.getPageDto(properties);
-        return pageDto;
+        return super.getPageDto(properties);
     }
 }
