@@ -208,23 +208,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-
-
-                    <version>9.20.0</version>
-
-
-                <configuration>
-                    <user>email101@mail.com</user>
-                    <password>200</password>
-                    <schemas>
-                        <schema>first_db</schema>
-                    </schemas>
-                </configuration>
-            </plugin>
-
-            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>

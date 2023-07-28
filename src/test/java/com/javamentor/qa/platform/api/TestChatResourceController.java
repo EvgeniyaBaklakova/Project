@@ -6,7 +6,7 @@ import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
-
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class TestChatResourceController extends AbstractTestApi {
+
     @Test
     @Sql(scripts = "/script/TestChatResourceController/TestGetGroupChatDto/Before.sql",
             executionPhase = BEFORE_TEST_METHOD)
@@ -144,20 +145,76 @@ public class TestChatResourceController extends AbstractTestApi {
 
     @Test
     @ApiOperation(value = "Проверка на добавление в групповой чат пользователя")
-    @Sql(scripts = "/script/TestChatResourceController/TestAddUserGroupChat/Before.sql",
+    @Sql(scripts = "/script/TestChatResourceController/TestTryAddUserToChat/Before.sql",
             executionPhase = BEFORE_TEST_METHOD)
-    @Sql(scripts = "/script/TestChatResourceController/TestAddUserGroupChat/After.sql",
+    @Sql(scripts = "/script/TestChatResourceController/TestTryAddUserToChat/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void tryAddUserToChat() throws Exception {
 
         String USER_TOKEN = getToken("email101@mail.com", "200");
-        String requestBody = "101";
 
         this.mvc.perform(post("/api/user/chat/group/110/join")
-                        .content(requestBody)
+                        .content("101")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @Test
+    @ApiOperation(value = "Пользователь существует в групповом чате")
+    @Sql(scripts = "/script/TestChatResourceController/TestUserExistsToGroupChat/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestChatResourceController/TestUserExistsToGroupChat/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void userExistsToGroupChat() throws Exception {
+
+        String USER_TOKEN = getToken("email101@mail.com", "200");
+
+        this.mvc.perform(post("/api/user/chat/group/110/join")
+                        .content("101")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @ApiOperation(value = "Пользователь не найден")
+    @Sql(scripts = "/script/TestChatResourceController/TestUserNotFound/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestChatResourceController/TestUserNotFound/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void userNotFound() throws Exception {
+
+        String USER_TOKEN = getToken("email101@mail.com", "200");
+
+        this.mvc.perform(post("/api/user/chat/group/110/join")
+                        .content("120")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    @ApiOperation(value = "Чат не существует")
+    @Sql(scripts = "/script/TestChatResourceController/TestGroupChatNotFound/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestChatResourceController/TestGroupChatNotFound/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void groupChatNotFound() throws Exception {
+
+        String USER_TOKEN = getToken("email101@mail.com", "200");
+
+        this.mvc.perform(post("/api/user/chat/group/113/join")
+                        .content("101")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+    }
 }
+
+

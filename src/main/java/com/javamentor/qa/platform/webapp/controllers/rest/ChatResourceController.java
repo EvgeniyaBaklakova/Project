@@ -1,6 +1,5 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
-import com.javamentor.qa.platform.dao.abstracts.model.GroupChatDao;
 import com.javamentor.qa.platform.models.dto.chat.ChatDto;
 import com.javamentor.qa.platform.models.dto.chat.GroupChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -22,7 +21,7 @@ public class ChatResourceController {
     private final GroupChatDtoService groupChatDtoService;
     private final GroupChatService groupChatService;
 
-    public ChatResourceController(GroupChatDtoService groupChatDtoService, GroupChatDao groupChatDao, GroupChatService groupChatService) {
+    public ChatResourceController(GroupChatDtoService groupChatDtoService, GroupChatService groupChatService) {
         this.groupChatDtoService = groupChatDtoService;
         this.groupChatService = groupChatService;
     }
@@ -44,7 +43,8 @@ public class ChatResourceController {
 
     @PostMapping("/group/{id}/join")
     @ApiOperation(value = "Добавление пользователя по id в групповой чат")
-    public void addUserToChat(@PathVariable("id") Long groupChatId, @RequestBody Long userId) {
+    public ResponseEntity<HttpStatus> addUserToChat(@PathVariable("id") Long groupChatId, @RequestBody Long userId) {
         groupChatService.addUserByIdToGroupChat(groupChatId, userId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
