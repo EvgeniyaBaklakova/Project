@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
-public class GroupChatDto {
+public class SingleChatDto {
     private Long id;
-    private String chatName;
+    private String name;
     private String image;
     private String lastMessage;
-    private LocalDateTime persistDateTime;
+    private LocalDateTime persistDateTimeLastMessage;
 }
