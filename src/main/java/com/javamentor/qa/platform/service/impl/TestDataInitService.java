@@ -58,7 +58,7 @@ public class TestDataInitService {
                                PasswordEncoder passwordEncoder,
                                BlockChatUserListService blockChatUserListService,
                                GroupBookmarksService groupBookmarksService,
-                               BookMarksService bookMarksService) {
+                               BookMarksService bookMarksService, MessageService messageService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
