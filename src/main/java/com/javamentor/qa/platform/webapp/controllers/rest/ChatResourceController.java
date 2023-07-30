@@ -28,13 +28,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-
-
 @RestController
 @RequestMapping("/api/user/chat")
-@Api(value = "Контроллер для работы с с чатами пользователя", tags = "Chat Controller")
+@Api(value = "Контроллер для работы с чатами пользователя", tags = "Chat Controller")
 public class ChatResourceController {
-//todo
+
     private final MessageDtoService messageDtoService;
     private final ChatDtoService chatDtoService;
 
@@ -83,9 +81,5 @@ public class ChatResourceController {
 
 
         return new ResponseEntity<>(messageDtoService.getPageDto(data), HttpStatus.OK);
-
-
     }
-
-
 }

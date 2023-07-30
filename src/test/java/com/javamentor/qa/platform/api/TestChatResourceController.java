@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class TestChatResourceController extends AbstractTestApi {
+
     @Test
     @ApiOperation(value = "Проверка на возвращение чатов (single и group) по имени. С сортировкой по дате")
     @Sql(scripts = "/script/TestChatResourceController/TestGetChatDtoByName/Before.sql",
