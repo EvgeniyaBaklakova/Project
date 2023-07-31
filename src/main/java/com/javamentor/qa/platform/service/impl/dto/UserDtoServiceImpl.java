@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.service.impl.dto;
 import com.javamentor.qa.platform.dao.abstracts.dto.UserDtoDao;
 import com.javamentor.qa.platform.dao.abstracts.pagination.PageDtoDao;
 import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.UserProfileDto;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
@@ -28,8 +29,14 @@ public class UserDtoServiceImpl extends PageDtoServiceImpl<UserDto> implements U
     }
 
     @Override
+    public UserProfileDto getUserProfile(Long id) {
+        UserProfileDto upd = userDtoDao.getUserProfile(id);
+        upd.setTagDtoList(userDtoDao.getFavoriteUserTags(id));
+        return upd;
+    }
+
+    @Override
     public PageDto<UserDto> getPageDto(PaginationData properties) {
-        var pageDto = super.getPageDto(properties);
-        return pageDto;
+        return super.getPageDto(properties);
     }
 }
