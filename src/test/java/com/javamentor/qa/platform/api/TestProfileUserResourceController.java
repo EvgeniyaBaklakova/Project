@@ -128,4 +128,54 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", Matchers.empty()));
     }
+
+    @Test
+    @Sql(scripts = "/script/TestProfileUserResourceController/Before1.sql", executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/After1.sql", executionPhase = AFTER_TEST_METHOD)
+    public void getUserProfile() throws Exception {
+
+        this.mvc.perform(get("/api/user/profile").
+                        header(AUTHORIZATION, getToken("test100@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", Is.is(100)))
+                .andExpect(jsonPath("$.reputation", Is.is(6)))
+                .andExpect(jsonPath("$.countAnswer", Is.is(2)))
+                .andExpect(jsonPath("$.countQuestion", Is.is(0)))
+                .andExpect(jsonPath("$.countView", Is.is(0)));
+
+        this.mvc.perform(get("/api/user/profile").
+                        header(AUTHORIZATION, getToken("test101@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", Is.is(101)))
+                .andExpect(jsonPath("$.reputation", Is.is(4)))
+                .andExpect(jsonPath("$.countAnswer", Is.is(0)))
+                .andExpect(jsonPath("$.countQuestion", Is.is(1)))
+                .andExpect(jsonPath("$.countView", Is.is(1)))
+                .andExpect(jsonPath("$.tagDtoList[0].tagId", Is.is(102)))
+                .andExpect(jsonPath("$.tagDtoList[0].name", Is.is("name3")))
+                .andExpect(jsonPath("$.tagDtoList[0].countMessage", Is.is(2)));
+
+        this.mvc.perform(get("/api/user/profile").
+                        header(AUTHORIZATION, getToken("test102@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isForbidden());
+
+        this.mvc.perform(get("/api/user/profile").
+                        header(AUTHORIZATION, getToken("test103@mail.ru", "password")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", Is.is(103)))
+                .andExpect(jsonPath("$.reputation", Matchers.nullValue()))
+                .andExpect(jsonPath("$.countAnswer", Is.is(1)))
+                .andExpect(jsonPath("$.countQuestion", Is.is(1)))
+                .andExpect(jsonPath("$.countView", Is.is(2)))
+                .andExpect(jsonPath("$.tagDtoList[0].tagId", Is.is(106)))
+                .andExpect(jsonPath("$.tagDtoList[0].name", Is.is("name7")))
+                .andExpect(jsonPath("$.tagDtoList[0].countMessage", Is.is(2)));
+    }
 }

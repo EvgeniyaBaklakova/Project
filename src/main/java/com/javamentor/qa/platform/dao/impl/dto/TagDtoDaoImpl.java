@@ -11,9 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +28,14 @@ public class TagDtoDaoImpl implements TagDtoDao {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto(t.id, t.name," +
                 "(SELECT COUNT(q.id) FROM Question q JOIN q.tags as qt WHERE qt.id = t.id) as c)" +
                 " FROM Tag t ORDER BY c DESC";
-        return entityManager.createQuery(hql).setMaxResults(10).getResultList();
+        return entityManager.createQuery(hql, RelatedTagsDto.class).setMaxResults(10).getResultList();
     }
 
     @Override
     public Optional<TagDto> getIgnoredTag(Long userId, Long tagId) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.TagDto(i.id, i.name, i.description)" +
                 " FROM IgnoredTag t JOIN t.user u JOIN t.ignoredTag i WHERE u.id =:userId AND i.id = :tagId";
-        TypedQuery<TagDto> query = (TypedQuery<TagDto>) entityManager.createQuery(hql).setParameter("userId", userId).setParameter("tagId", tagId);
+        TypedQuery<TagDto> query = entityManager.createQuery(hql, TagDto.class).setParameter("userId", userId).setParameter("tagId", tagId);
         return SingleResultUtil.getSingleResultOrNull(query);
     }
 
@@ -45,26 +43,25 @@ public class TagDtoDaoImpl implements TagDtoDao {
     public Optional<TagDto> getTrackedTag(Long userId, Long tagId) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.TagDto(i.id, i.name, i.description)" +
                 " FROM TrackedTag t JOIN t.user u JOIN t.trackedTag i WHERE u.id =:userId AND i.id = :tagId";
-        TypedQuery<TagDto> quary = (TypedQuery<TagDto>) entityManager.createQuery(hql).setParameter("userId", userId).setParameter("tagId", tagId);
-        return SingleResultUtil.getSingleResultOrNull(quary);
+        TypedQuery<TagDto> query = entityManager.createQuery(hql, TagDto.class).setParameter("userId", userId).setParameter("tagId", tagId);
+        return SingleResultUtil.getSingleResultOrNull(query);
     }
 
     @Override
     public List<IgnoredTagsDto> getIgnoredTags(Long userId) {
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto(t.id, t.ignoredTag.name)" +
                 "FROM IgnoredTag t WHERE t.user.id = :userId";
-        return entityManager.createQuery(hql).setParameter("userId", userId).getResultList();
+        return entityManager.createQuery(hql, IgnoredTagsDto.class).setParameter("userId", userId).getResultList();
     }
 
     @Override
     public List<TagDto> getTagsByQuestionId(Long id) {
-        Query query = entityManager.createQuery("select new com.javamentor.qa.platform.models.dto.tag.TagDto(" +
-                        "t.id, " +
-                        "t.name, " +
-                        "t.description) " +
-                        "from Tag t join t.questions as tq where tq.id = :id")
-                .setParameter("id", id);
-        return (List<TagDto>) query.getResultList();
+        String hql = "select new com.javamentor.qa.platform.models.dto.tag.TagDto(" +
+                "t.id, " +
+                "t.name, " +
+                "t.description) " +
+                "from Tag t join t.questions as tq where tq.id = :id";
+        return entityManager.createQuery(hql, TagDto.class).setParameter("id", id).getResultList();
     }
 
     public List<TagQuestion> getTagsByQuestionsIds(List<Long> ids) {
@@ -89,6 +86,5 @@ public class TagDtoDaoImpl implements TagDtoDao {
                 }).list();
         return tagQuestions;
     }
-
 }
 
