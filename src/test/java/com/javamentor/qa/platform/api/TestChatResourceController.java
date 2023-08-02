@@ -267,5 +267,43 @@ public class TestChatResourceController extends AbstractTestApi {
 
     }
 
+    @Test
+    @ApiOperation(value = "Получатель сообщения не найден")
+    @Sql(scripts = "/script/TestChatResourceController/TestUserRecipientNotFound/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestChatResourceController/TestUserRecipientNotFound/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void userRecipientNotFound() throws Exception {
 
+        String USER_TOKEN = getToken("email101@mail.com", "200");
+
+        this.mvc.perform(post("/api/user/chat/single")
+                        .param("userId", "3")
+                        .param("message", "Привет")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    @ApiOperation(value = "Создание singleChat и message")
+    @Sql(scripts = "/script/TestChatResourceController/TestCreateSingleChatAndMessage/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestChatResourceController/TestCreateSingleChatAndMessage/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void createSingleChatAndMessage() throws Exception {
+
+        String USER_TOKEN = getToken("email101@mail.com", "200");
+
+        this.mvc.perform(post("/api/user/chat/single")
+                        .param("userId", "2")
+                        .param("message", "Привет")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+    }
 }

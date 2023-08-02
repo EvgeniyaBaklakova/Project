@@ -6,6 +6,7 @@ import com.javamentor.qa.platform.models.dto.chat.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -30,10 +31,12 @@ import java.util.List;
 public class ChatResourceController {
     private final ChatDtoService chatDtoService;
     private final GroupChatService groupChatService;
+    private final SingleChatService singleChatService;
 
-    public ChatResourceController(ChatDtoService chatDtoService, GroupChatService groupChatService) {
+    public ChatResourceController(ChatDtoService chatDtoService, GroupChatService groupChatService, SingleChatService singleChatService) {
         this.chatDtoService = chatDtoService;
         this.groupChatService = groupChatService;
+        this.singleChatService = singleChatService;
     }
 
     @GetMapping
@@ -68,6 +71,12 @@ public class ChatResourceController {
             @ApiResponse(code = 404, message = "Пользователь или чат не найдены!")})
     public ResponseEntity<HttpStatus> addUserToChat(@PathVariable("id") Long groupChatId, @RequestBody Long userId) {
         groupChatService.addUserByIdToGroupChat(groupChatId, userId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/single")
+    public ResponseEntity<HttpStatus> createSingleChat(@RequestParam Long userId, @RequestParam String message, @AuthenticationPrincipal User userSender) {
+        singleChatService.createSingleChat(userId, message, userSender);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
