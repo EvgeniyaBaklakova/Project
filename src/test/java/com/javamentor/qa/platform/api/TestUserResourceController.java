@@ -271,7 +271,7 @@ public class TestUserResourceController extends AbstractTestApi {
     public void changePasswordIsOk() throws Exception {
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"newPass\": \"test\"}")
+                        .content("{\"oldPassword\" : \"123\", \"newPassword\" : \"Test123!\"}")
                         .header(AUTHORIZATION, getToken("test101@mail.ru", "123")))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -286,7 +286,7 @@ public class TestUserResourceController extends AbstractTestApi {
     public void changePasswordIsForbidden() throws Exception {
     this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
             .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"newPass\": \"test\"}")
+                        .content("{\"oldPassword\" : \"123\", \"newPassword\" : \"Test123!\"}")
                         .header(AUTHORIZATION, getToken("test103@mail.ru", "123")))
             .andDo(print())
             .andExpect(status().isForbidden());
@@ -303,7 +303,7 @@ public class TestUserResourceController extends AbstractTestApi {
 
         this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"newPass\": \"test\"}")
+                        .content("{\"oldPassword\" : \"123\", \"newPassword\" : \"test\"}")
                         .header(AUTHORIZATION, USER_TOKEN))
                 .andDo(print())
                 .andExpect(status().is4xxClientError());

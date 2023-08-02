@@ -2,7 +2,9 @@ package com.javamentor.qa.platform.service.impl;
 
 import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
-import com.javamentor.qa.platform.models.entity.chat.*;
+import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.chat.Message;
+import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
@@ -10,7 +12,19 @@ import com.javamentor.qa.platform.models.entity.user.BlockChatUserList;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.UserChatPin;
-import com.javamentor.qa.platform.service.abstracts.model.*;
+import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.RoleService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
+import com.javamentor.qa.platform.service.abstracts.model.TagService;
+import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
+import com.javamentor.qa.platform.service.abstracts.model.UserChatPinService;
+import com.javamentor.qa.platform.service.abstracts.model.BlockChatUserListService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarksService;
+import com.javamentor.qa.platform.service.abstracts.model.BookMarksService;
+import com.javamentor.qa.platform.service.abstracts.model.MessageService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -204,7 +218,6 @@ public class TestDataInitService {
             }
         }
         singleChatService.persistAll(singleChatList);
-
 
         List<GroupChat> groupChatList = new ArrayList<>();
 

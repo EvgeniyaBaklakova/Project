@@ -23,7 +23,7 @@ public class MessageDtoDaoByPersistDateImpl implements PageDtoDao<MessageDto> {
 
         int items = properties.getItemsOnPage();
         int offset = (properties.getCurrentPage() - 1) * items;
-        Long chatId = (Long) properties.getProps().get("chat_id");
+        Long chatId = (Long) properties.getProps().get("chatId");
 
 
         String hql = "SELECT NEW com.javamentor.qa.platform.models.dto.MessageDto(m.id, m.message, " +
@@ -33,10 +33,10 @@ public class MessageDtoDaoByPersistDateImpl implements PageDtoDao<MessageDto> {
                 "m.persistDate) FROM Message m " +
                 "JOIN User u ON m.userSender.id = u.id  " +
                 "JOIN SingleChat sc ON m.chat.id = sc.chat.id " +
-                "WHERE m.chat.id=:chat_id";
+                "WHERE m.chat.id=:chatId ORDER BY m.persistDate DESC";
 
         TypedQuery<MessageDto> query = entityManager.createQuery(hql, MessageDto.class)
-                .setParameter("chat_id", chatId)
+                .setParameter("chatId", chatId)
                 .setMaxResults(items)
                 .setFirstResult(offset);
         return query.getResultList();
@@ -47,11 +47,15 @@ public class MessageDtoDaoByPersistDateImpl implements PageDtoDao<MessageDto> {
     @Override
     public Long getTotalResultCount(Map<String, Object> properties) {
 
-        return  entityManager
+        Long chatId = (Long) properties.get("chatId");
+
+        return entityManager
                 .createQuery("SELECT count(m.id) FROM Message m " +
-                        "JOIN User u ON m.userSender.id = u.id " +
-                        "JOIN SingleChat sc ON m.chat.id = sc.chat.id",
+                                "JOIN User u ON m.userSender.id = u.id " +
+                                "JOIN SingleChat sc ON m.chat.id = sc.chat.id " +
+                                "WHERE m.chat.id=:chatId",
                         Long.class)
+                .setParameter("chatId", chatId)
                 .getSingleResult();
     }
 }
