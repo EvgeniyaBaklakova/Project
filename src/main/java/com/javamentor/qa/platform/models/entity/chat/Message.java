@@ -42,7 +42,7 @@ public class Message {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private User userSender;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "chat_id")
     private Chat chat;
 
@@ -52,7 +52,6 @@ public class Message {
         this.userSender = userSender;
         this.chat = chat;
     }
-
 
     @Override
     public boolean equals(Object o) {
