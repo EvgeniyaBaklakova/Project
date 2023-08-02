@@ -5,7 +5,9 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
+import com.javamentor.qa.platform.models.dto.tag.UserProfileTagDto;
 import com.javamentor.qa.platform.models.entity.question.TagQuestion;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -85,6 +87,27 @@ public class TagDtoDaoImpl implements TagDtoDao {
                     }
                 }).list();
         return tagQuestions;
+    }
+
+    @Override
+    public List<UserProfileTagDto> getUserProfileTagDto(Long id) {
+        String hql = "SELECT distinct NEW com.javamentor.qa.platform.models.dto.tag.UserProfileTagDto" +
+                "(t.name, " +
+                "((select count(vqu) from t.questions q join q.voteQuestions vqu where vqu.vote = :voteUp and q.user.id = :id) - " +
+                "(select count(vqd) from t.questions q join q.voteQuestions vqd where vqd.vote = :voteDown and q.user.id = :id)) + " +
+                "((select count(vau) from t.questions q join q.answers a join a.voteAnswers vau where vau.vote = :voteUp and a.user.id = :id) - " +
+                "(select count(vad) from t.questions q join q.answers a join a.voteAnswers vad where vad.vote = :voteDown and a.user.id = :id)), " +
+                "(select count(q) from t.questions q where q.user.id = :id) + " +
+                "(select count(a) from t.questions q join q.answers a where a.user.id = :id))" +
+                "FROM Tag t " +
+                "join t.questions q " +
+                "where q.user.id = :id";
+
+        return entityManager.createQuery(hql, UserProfileTagDto.class)
+                .setParameter("id", id)
+                .setParameter("voteUp", VoteType.UP_VOTE)
+                .setParameter("voteDown", VoteType.DOWN_VOTE)
+                .getResultList();
     }
 }
 
