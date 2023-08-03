@@ -14,8 +14,10 @@ import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,10 +83,7 @@ public class QuestionDtoServiceImp extends PageDtoServiceImpl<QuestionDto> imple
 
     @Override
     public List<UserProfileTagDto> getUserProfileTagDto(Long id) {
-        return tagDtoDao.getUserProfileTagDto(id)
-                .stream().sorted(Comparator.comparingLong(UserProfileTagDto::getCountAnswerQuestion).reversed())
-                .limit(10)
-                .collect(Collectors.toList());
+        return tagDtoDao.getUserProfileTagDto(id);
     }
 }
 

@@ -91,22 +91,24 @@ public class TagDtoDaoImpl implements TagDtoDao {
 
     @Override
     public List<UserProfileTagDto> getUserProfileTagDto(Long id) {
-        String hql = "SELECT distinct NEW com.javamentor.qa.platform.models.dto.tag.UserProfileTagDto" +
+        String hql = "SELECT DISTINCT NEW com.javamentor.qa.platform.models.dto.tag.UserProfileTagDto" +
                 "(t.name, " +
-                "((select count(vqu) from t.questions q join q.voteQuestions vqu where vqu.vote = :voteUp and q.user.id = :id) - " +
-                "(select count(vqd) from t.questions q join q.voteQuestions vqd where vqd.vote = :voteDown and q.user.id = :id)) + " +
-                "((select count(vau) from t.questions q join q.answers a join a.voteAnswers vau where vau.vote = :voteUp and a.user.id = :id) - " +
-                "(select count(vad) from t.questions q join q.answers a join a.voteAnswers vad where vad.vote = :voteDown and a.user.id = :id)), " +
-                "(select count(q) from t.questions q where q.user.id = :id) + " +
-                "(select count(a) from t.questions q join q.answers a where a.user.id = :id))" +
+                "((SELECT COUNT(vqu) FROM t.questions q JOIN q.voteQuestions vqu WHERE vqu.vote = :voteUp AND q.user.id = :id) - " +
+                "(SELECT COUNT(vqd) FROM t.questions q JOIN q.voteQuestions vqd WHERE vqd.vote = :voteDown AND q.user.id = :id)) + " +
+                "((SELECT COUNT(vau) FROM t.questions q JOIN q.answers a JOIN a.voteAnswers vau WHERE vau.vote = :voteUp AND a.user.id = :id) - " +
+                "(SELECT COUNT(vad) FROM t.questions q JOIN q.answers a JOIN a.voteAnswers vad WHERE vad.vote = :voteDown AND a.user.id = :id)), " +
+                "((SELECT COUNT(q) FROM t.questions q WHERE q.user.id = :id) + " +
+                "(SELECT COUNT(a) FROM t.questions q JOIN q.answers a WHERE a.user.id = :id)) AS cnt) " +
                 "FROM Tag t " +
-                "join t.questions q " +
-                "where q.user.id = :id";
+                "JOIN t.questions q " +
+                "WHERE q.user.id = :id " +
+                "ORDER BY cnt DESC";
 
         return entityManager.createQuery(hql, UserProfileTagDto.class)
                 .setParameter("id", id)
                 .setParameter("voteUp", VoteType.UP_VOTE)
                 .setParameter("voteDown", VoteType.DOWN_VOTE)
+                .setMaxResults(10)
                 .getResultList();
     }
 }
