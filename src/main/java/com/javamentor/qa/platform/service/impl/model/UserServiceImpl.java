@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.exception.UserNotFoundException;
-import com.javamentor.qa.platform.models.dto.user.UserEditPasswordDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +24,10 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
 
     @Transactional
     @Override
-    public void changePassword(Long id, UserEditPasswordDto userEditPasswordDto) {
+    public void changePassword(Long id, String newPassword) {
         User user = getById(id)
                 .orElseThrow(() -> new UserNotFoundException("User with id: " + id +  " not found"));
-        user.setPassword(passwordEncoder.encode(userEditPasswordDto.getNewPassword()));
+        user.setPassword(passwordEncoder.encode(newPassword));
         update(user);
     }
 

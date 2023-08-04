@@ -5,7 +5,6 @@ import com.javamentor.qa.platform.dao.impl.pagination.UserPageDtoDaoByPersistDat
 import com.javamentor.qa.platform.dao.impl.pagination.UserPageDtoDaoByVoteImpl;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.user.UserDto;
-import com.javamentor.qa.platform.models.dto.user.UserEditPasswordDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
@@ -16,7 +15,6 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.validation.Valid;
 import java.util.Map;
 
 
@@ -37,12 +34,10 @@ public class UserResourceController {
 
     private final UserDtoService userDtoService;
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
 
-    public UserResourceController(UserDtoService userDtoService, UserService userService, PasswordEncoder passwordEncoder) {
+    public UserResourceController(UserDtoService userDtoService, UserService userService) {
         this.userDtoService = userDtoService;
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping("/new")
@@ -96,24 +91,16 @@ public class UserResourceController {
     @ApiOperation(value = "Осуществляет смену пароля пользователя, переданного в теле запроса в не зашифрованном виде")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Пароль успешно изменен"),
-            @ApiResponse(code = 400, message = "Пароль не соответствует требованиям"),
             @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
             @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен"),
             @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
     })
     @PostMapping("/edit/pass")
-    public ResponseEntity<?> changePassword(@Valid @RequestBody UserEditPasswordDto userEditPasswordDto) {
-
-
+    public ResponseEntity<Map<String,String>> changePassword(@RequestBody String newPass) {
         User user = (User) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
-
-        if (!passwordEncoder.matches(userEditPasswordDto.getOldPassword(), user.getPassword())) {
-            return ResponseEntity.badRequest().body("Старый пароль введен неверно");
-        }
-
-            userService.changePassword(user.getId(), userEditPasswordDto);
-
+        userService.changePassword(user.getId(), newPass);
         return new ResponseEntity<>(Map.of("status", "success"), HttpStatus.OK);
     }
+
 }
