@@ -4,4 +4,6 @@ import com.javamentor.qa.platform.models.entity.chat.GroupChat;
 
 public interface GroupChatService extends ReadWriteService<GroupChat, Long> {
 
+    void addUserByIdToGroupChat(Long groupChatId, Long userId);
+
 }
