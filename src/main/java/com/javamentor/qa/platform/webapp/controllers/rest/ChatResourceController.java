@@ -1,8 +1,11 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.impl.pagination.MessageDtoDaoByPersistDateImpl;
 import com.javamentor.qa.platform.models.dto.chat.ChatDto;
+import com.javamentor.qa.platform.models.dto.chat.CreateSingleChatDto;
 import com.javamentor.qa.platform.models.dto.chat.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.chat.SingleChatDto;
+import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
@@ -36,7 +39,7 @@ public class ChatResourceController {
     private final GroupChatService groupChatService;
     private final SingleChatService singleChatService;
 
-    public ChatResourceController(ChatDtoService chatDtoService, GroupChatService groupChatService
+    public ChatResourceController(ChatDtoService chatDtoService, GroupChatService groupChatService,
                                   MessageDtoService messageDtoService, SingleChatService singleChatService) {
         this.chatDtoService = chatDtoService;
         this.groupChatService = groupChatService;
