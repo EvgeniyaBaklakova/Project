@@ -12,7 +12,7 @@ VALUES (101, 'Its me', 'Saint-Petersburg', 'email101@mail.com', 'Alex Vasiliev',
         'No link', 'No link', 'Dragonfly',
         '$2a$12$T7v5H.rrJpHxINU6W09McOqhWLC1b6WObgr9GmKR3df22DlQ67sj6', now(), 111),
 
-       (2, 'Its me', 'Saint-Petersburg', 'email102@mail.com', 'Alex Vasiliev', 'No link', false, true, now(), 'No link',
+       (102, 'Its me', 'Saint-Petersburg', 'email102@mail.com', 'Alex Vasiliev', 'No link', false, true, now(), 'No link',
         'No link', 'No link', 'Dragonfly',
         '$2a$12$H3mSgAzuJ/PcFQbD8G5QeOFkaevQ.q.rqvpFjuawVt26oxW8atJFm', now(), 111);
 

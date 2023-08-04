@@ -1,11 +1,15 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import com.javamentor.qa.platform.models.dto.chat.CreateSingleChatDto;
 import io.swagger.annotations.ApiOperation;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+
+import java.lang.reflect.MalformedParameterizedTypeException;
+import java.util.Arrays;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
@@ -278,8 +282,7 @@ public class TestChatResourceController extends AbstractTestApi {
         String USER_TOKEN = getToken("email101@mail.com", "200");
 
         this.mvc.perform(post("/api/user/chat/single")
-                        .param("userId", "3")
-                        .param("message", "Привет")
+                        .content("{\"userId\" : \"104\", \"message\" : \"привет\"}")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -298,8 +301,7 @@ public class TestChatResourceController extends AbstractTestApi {
         String USER_TOKEN = getToken("email101@mail.com", "200");
 
         this.mvc.perform(post("/api/user/chat/single")
-                        .param("userId", "2")
-                        .param("message", "Привет")
+                        .content("{\"userId\" : \"102\", \"message\" : \"привет\"}")
                         .header(AUTHORIZATION, USER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())

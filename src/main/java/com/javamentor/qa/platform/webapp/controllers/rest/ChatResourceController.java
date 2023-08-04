@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.chat.ChatDto;
+import com.javamentor.qa.platform.models.dto.chat.CreateSingleChatDto;
 import com.javamentor.qa.platform.models.dto.chat.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.chat.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
@@ -75,8 +76,8 @@ public class ChatResourceController {
     }
 
     @PostMapping("/single")
-    public ResponseEntity<HttpStatus> createSingleChat(@RequestParam Long userId, @RequestParam String message, @AuthenticationPrincipal User userSender) {
-        singleChatService.createSingleChat(userId, message, userSender);
+    public ResponseEntity<HttpStatus> createSingleChat(@RequestBody CreateSingleChatDto createSingleChatDto, @AuthenticationPrincipal User userSender) {
+        singleChatService.createSingleChat(createSingleChatDto, userSender);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
