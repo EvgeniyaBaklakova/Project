@@ -1,11 +1,11 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.chat.ChatDto;
-import com.javamentor.qa.platform.models.dto.chat.CreateSingleChatDto;
 import com.javamentor.qa.platform.models.dto.chat.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.chat.SingleChatDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import io.swagger.annotations.Api;
@@ -22,7 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-
+import java.util.HashMap;
+import java.util.Map;
 
 import java.util.List;
 
@@ -30,13 +31,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/user/chat")
 public class ChatResourceController {
+    private final MessageDtoService messageDtoService;
     private final ChatDtoService chatDtoService;
     private final GroupChatService groupChatService;
     private final SingleChatService singleChatService;
 
-    public ChatResourceController(ChatDtoService chatDtoService, GroupChatService groupChatService, SingleChatService singleChatService) {
+    public ChatResourceController(ChatDtoService chatDtoService, GroupChatService groupChatService
+                                  MessageDtoService messageDtoService, SingleChatService singleChatService) {
         this.chatDtoService = chatDtoService;
         this.groupChatService = groupChatService;
+        this.messageDtoService = messageDtoService;
         this.singleChatService = singleChatService;
     }
 
@@ -73,6 +77,25 @@ public class ChatResourceController {
     public ResponseEntity<HttpStatus> addUserToChat(@PathVariable("id") Long groupChatId, @RequestBody Long userId) {
         groupChatService.addUserByIdToGroupChat(groupChatId, userId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("{chatId}/single/message")
+    @ApiOperation(value = "Получение всех MessageDto из SingleChat")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Success"),
+            @ApiResponse(code = 400, message = "MessageDto не найдены")
+    })
+    public ResponseEntity<?> getMessageDtoByChatId(@RequestParam(defaultValue = "1") Integer page,
+                                                   @RequestParam(required = false, defaultValue = "10") Integer items,
+                                                   @PathVariable("chatId") Long chatId) {
+
+        Map<String, Object> props = new HashMap<>();
+        props.put("chatId", chatId);
+        PaginationData data = new PaginationData(page, items,
+                MessageDtoDaoByPersistDateImpl.class.getSimpleName(), props);
+
+
+        return new ResponseEntity<>(messageDtoService.getPageDto(data), HttpStatus.OK);
     }
 
     @PostMapping("/single")

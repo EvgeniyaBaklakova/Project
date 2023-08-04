@@ -3,6 +3,7 @@ package com.javamentor.qa.platform.service.impl;
 import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.chat.GroupChat;
+import com.javamentor.qa.platform.models.entity.chat.Message;
 import com.javamentor.qa.platform.models.entity.chat.SingleChat;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
@@ -11,17 +12,19 @@ import com.javamentor.qa.platform.models.entity.user.BlockChatUserList;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.UserChatPin;
-import com.javamentor.qa.platform.service.abstracts.model.BlockChatUserListService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.RoleService;
 import com.javamentor.qa.platform.service.abstracts.model.UserService;
+import com.javamentor.qa.platform.service.abstracts.model.RoleService;
+import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
 import com.javamentor.qa.platform.service.abstracts.model.TagService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
 import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import com.javamentor.qa.platform.service.abstracts.model.UserChatPinService;
+import com.javamentor.qa.platform.service.abstracts.model.BlockChatUserListService;
 import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarksService;
 import com.javamentor.qa.platform.service.abstracts.model.BookMarksService;
+import com.javamentor.qa.platform.service.abstracts.model.MessageService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -51,6 +54,8 @@ public class TestDataInitService {
     private final GroupBookmarksService groupBookmarksService;
     private final BookMarksService bookMarksService;
 
+    private final MessageService messageService;
+
     private final Role ROLE_USER = new Role("ROLE_USER");
     private final Role ROLE_ADMIN = new Role("ROLE_ADMIN");
 
@@ -67,7 +72,7 @@ public class TestDataInitService {
                                PasswordEncoder passwordEncoder,
                                BlockChatUserListService blockChatUserListService,
                                GroupBookmarksService groupBookmarksService,
-                               BookMarksService bookMarksService) {
+                               BookMarksService bookMarksService, MessageService messageService) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -80,6 +85,7 @@ public class TestDataInitService {
         this.blockChatUserListService = blockChatUserListService;
         this.groupBookmarksService = groupBookmarksService;
         this.bookMarksService = bookMarksService;
+        this.messageService = messageService;
     }
 
     public void initRoles() {
@@ -189,6 +195,7 @@ public class TestDataInitService {
         answerService.persistAll(answer2);
     }
 
+
     public void initChat() {
         List<SingleChat> singleChatList = new ArrayList<>();
         List<User> users = userService.getAll();
@@ -211,7 +218,6 @@ public class TestDataInitService {
             }
         }
         singleChatService.persistAll(singleChatList);
-
 
         List<GroupChat> groupChatList = new ArrayList<>();
 
@@ -240,6 +246,27 @@ public class TestDataInitService {
         groupChatService.persistAll(groupChatList);
 
     }
+
+    @Transactional
+    public void initMessage() {
+        List<SingleChat> singleChats = singleChatService.getAll();
+        List<Message> messageList = new ArrayList<>();
+
+        for (int i = 0; i < singleChats.size() / 2; i++) {
+
+            Message message = new Message();
+            message.setLastRedactionDate(LocalDateTime.now(Clock.systemDefaultZone()));
+            message.setMessage("Message" + i);
+            message.setPersistDate(LocalDateTime.now(Clock.systemDefaultZone()));
+            message.setChat(singleChats.get(i).getChat());
+            message.setUserSender(singleChats.get(i).getUserOne());
+            messageList.add(message);
+        }
+
+        messageService.persistAll(messageList);
+
+    }
+
 
     @Transactional
     public void initUserChatPin() {
