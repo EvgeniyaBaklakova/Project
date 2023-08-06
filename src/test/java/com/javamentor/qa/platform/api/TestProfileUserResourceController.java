@@ -13,9 +13,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class TestProfileUserResourceController extends AbstractTestApi {
 
@@ -237,5 +235,170 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    @ApiOperation(value = "Проверка на возвращение страницы по умолчанию (PageDto<UserProfileCommentDto>), " +
+            "с пагинацией и сортировкой по дате")
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileCommentDto/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileCommentDto/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void getUserProfileCommentDtoDefaultPage() throws Exception {
+
+        String USER_TOKEN = getToken("test101@mail.ru", "123");
+
+        this.mvc.perform(get("/api/user/profile/comment")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("totalPageCount", Is.is(3)))
+                .andExpect(jsonPath("totalResultCount", Is.is(23)))
+
+                .andExpect(jsonPath("items[0].id", Is.is(429)))
+                .andExpect(jsonPath("items[0].comment", Is.is("any answer text")))
+                .andExpect(jsonPath("items[0].persistDate", Is.is("2000-02-09T00:00:00")))
+                .andExpect(jsonPath("items[0].questionId").isEmpty())
+                .andExpect(jsonPath("items[0].answerId", Is.is(309)))
+                .andExpect(jsonPath("items[0].commentType", Is.is("ANSWER")))
+
+                .andExpect(jsonPath("items[1].id", Is.is(428)))
+                .andExpect(jsonPath("items[1].comment", Is.is("any answer text")))
+                .andExpect(jsonPath("items[1].persistDate", Is.is("2000-02-08T00:00:00")))
+                .andExpect(jsonPath("items[1].questionId").isEmpty())
+                .andExpect(jsonPath("items[1].answerId", Is.is(308)))
+                .andExpect(jsonPath("items[1].commentType", Is.is("ANSWER")))
+
+                .andExpect(jsonPath("items[2].id", Is.is(427)))
+                .andExpect(jsonPath("items[2].comment", Is.is("any answer text")))
+                .andExpect(jsonPath("items[2].persistDate", Is.is("2000-02-07T00:00:00")))
+                .andExpect(jsonPath("items[2].questionId").isEmpty())
+                .andExpect(jsonPath("items[2].answerId", Is.is(307)))
+                .andExpect(jsonPath("items[2].commentType", Is.is("ANSWER")))
+
+                .andExpect(jsonPath("items[3].id", Is.is(426)))
+                .andExpect(jsonPath("items[3].comment", Is.is("any answer text")))
+                .andExpect(jsonPath("items[3].persistDate", Is.is("2000-02-06T00:00:00")))
+                .andExpect(jsonPath("items[3].questionId").isEmpty())
+                .andExpect(jsonPath("items[3].answerId", Is.is(306)))
+                .andExpect(jsonPath("items[3].commentType", Is.is("ANSWER")))
+
+                .andExpect(jsonPath("items[4].id", Is.is(425)))
+                .andExpect(jsonPath("items[4].comment", Is.is("any answer text")))
+                .andExpect(jsonPath("items[4].persistDate", Is.is("2000-02-05T00:00:00")))
+                .andExpect(jsonPath("items[4].questionId").isEmpty())
+                .andExpect(jsonPath("items[4].answerId", Is.is(305)))
+                .andExpect(jsonPath("items[4].commentType", Is.is("ANSWER")))
+
+                .andExpect(jsonPath("items[5].id", Is.is(424)))
+                .andExpect(jsonPath("items[5].comment", Is.is("any answer text")))
+                .andExpect(jsonPath("items[5].persistDate", Is.is("2000-02-04T00:00:00")))
+                .andExpect(jsonPath("items[5].questionId").isEmpty())
+                .andExpect(jsonPath("items[5].answerId", Is.is(304)))
+                .andExpect(jsonPath("items[5].commentType", Is.is("ANSWER")))
+
+                .andExpect(jsonPath("items[6].id", Is.is(423)))
+                .andExpect(jsonPath("items[6].comment", Is.is("any answer text")))
+                .andExpect(jsonPath("items[6].persistDate", Is.is("2000-02-03T00:00:00")))
+                .andExpect(jsonPath("items[6].questionId").isEmpty())
+                .andExpect(jsonPath("items[6].answerId", Is.is(303)))
+                .andExpect(jsonPath("items[6].commentType", Is.is("ANSWER")))
+
+                .andExpect(jsonPath("items[7].id", Is.is(422)))
+                .andExpect(jsonPath("items[7].comment", Is.is("any answer text")))
+                .andExpect(jsonPath("items[7].persistDate", Is.is("2000-02-02T00:00:00")))
+                .andExpect(jsonPath("items[7].questionId").isEmpty())
+                .andExpect(jsonPath("items[7].answerId", Is.is(302)))
+                .andExpect(jsonPath("items[7].commentType", Is.is("ANSWER")))
+
+                .andExpect(jsonPath("items[8].id", Is.is(421)))
+                .andExpect(jsonPath("items[8].comment", Is.is("any answer text")))
+                .andExpect(jsonPath("items[8].persistDate", Is.is("2000-02-01T00:00:00")))
+                .andExpect(jsonPath("items[8].questionId").isEmpty())
+                .andExpect(jsonPath("items[8].answerId", Is.is(301)))
+                .andExpect(jsonPath("items[8].commentType", Is.is("ANSWER")))
+
+                .andExpect(jsonPath("items[9].id", Is.is(414)))
+                .andExpect(jsonPath("items[9].comment", Is.is("any question text")))
+                .andExpect(jsonPath("items[9].persistDate", Is.is("2000-01-14T00:00:00")))
+                .andExpect(jsonPath("items[9].questionId", Is.is(214)))
+                .andExpect(jsonPath("items[9].answerId").isEmpty())
+                .andExpect(jsonPath("items[9].commentType", Is.is("QUESTION")))
+
+                .andExpect(jsonPath("items.length()", Is.is(10)));
+    }
+
+    @Test
+    @ApiOperation(value = "Проверка на возвращение последней страницы (PageDto<UserProfileCommentDto>), " +
+            "с пагинацией и сортировкой по дате")
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileCommentDto/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileCommentDto/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void getUserProfileCommentDtoLastPage() throws Exception {
+
+        String USER_TOKEN = getToken("test101@mail.ru", "123");
+
+        this.mvc.perform(get("/api/user/profile/comment")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .param("currentPage", "3")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("currentPageNumber", Is.is(3)))
+                .andExpect(jsonPath("totalPageCount", Is.is(3)))
+                .andExpect(jsonPath("totalResultCount", Is.is(23)))
+
+                .andExpect(jsonPath("items[0].id", Is.is(403)))
+                .andExpect(jsonPath("items[0].comment", Is.is("any question text")))
+                .andExpect(jsonPath("items[0].persistDate", Is.is("2000-01-03T00:00:00")))
+                .andExpect(jsonPath("items[0].questionId", Is.is(203)))
+                .andExpect(jsonPath("items[0].answerId").isEmpty())
+                .andExpect(jsonPath("items[0].commentType", Is.is("QUESTION")))
+
+                .andExpect(jsonPath("items[1].id", Is.is(402)))
+                .andExpect(jsonPath("items[1].comment", Is.is("any question text")))
+                .andExpect(jsonPath("items[1].persistDate", Is.is("2000-01-02T00:00:00")))
+                .andExpect(jsonPath("items[1].questionId", Is.is(202)))
+                .andExpect(jsonPath("items[1].answerId").isEmpty())
+                .andExpect(jsonPath("items[1].commentType", Is.is("QUESTION")))
+
+                .andExpect(jsonPath("items[2].id", Is.is(401)))
+                .andExpect(jsonPath("items[2].comment", Is.is("any question text")))
+                .andExpect(jsonPath("items[2].persistDate", Is.is("2000-01-01T00:00:00")))
+                .andExpect(jsonPath("items[2].questionId", Is.is(201)))
+                .andExpect(jsonPath("items[2].answerId").isEmpty())
+                .andExpect(jsonPath("items[2].commentType", Is.is("QUESTION")))
+
+                .andExpect(jsonPath("items.length()", Is.is(3)));
+    }
+
+    @Test
+    @ApiOperation(value = "Проверка на возвращение пустого PageDto<UserProfileCommentDto>")
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileCommentDtoEmpty/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileCommentDtoEmpty/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void getUserProfileCommentDtoEmpty() throws Exception {
+
+        String USER_TOKEN = getToken("test101@mail.ru", "123");
+
+        this.mvc.perform(get("/api/user/profile/comment")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("currentPageNumber", Is.is(1)))
+                .andExpect(jsonPath("totalPageCount", Is.is(0)))
+                .andExpect(jsonPath("totalResultCount", Is.is(0)))
+                .andExpect(jsonPath("items").isEmpty());
     }
 }
