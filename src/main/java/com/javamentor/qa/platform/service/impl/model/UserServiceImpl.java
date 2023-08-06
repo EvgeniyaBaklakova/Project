@@ -31,6 +31,7 @@ public class UserServiceImpl extends ReadWriteServiceImpl<User, Long> implements
         update(user);
     }
 
+
     @Override
     public Optional<User> getByEmail(String email) {
         return userDao.getUserByEmail(email);
