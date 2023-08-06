@@ -96,6 +96,7 @@ public class ProfileUserResourceController {
     }
 
     @GetMapping("/comment")
+    @ApiOperation(value = "Возвращает все комментарии авторизованного пользователя с пагинацией и сортировкой по дате")
     public ResponseEntity<PageDto<UserProfileCommentDto>> getUserProfileCommentDto(
             @AuthenticationPrincipal User user,
             @RequestParam(defaultValue = "1") Integer currentPage,
