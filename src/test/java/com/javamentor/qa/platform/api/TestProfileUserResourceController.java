@@ -219,6 +219,26 @@ public class TestProfileUserResourceController extends AbstractTestApi {
     }
 
     @Test
+    @ApiOperation(value = "Проверка на возвращение List<UserProfileTagDto> " +
+            "в котором у авторизованного пользователя нет ни вопросов ни ответов")
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileTagDtoWithoutQuestionsAndAnswers/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileTagDtoWithoutQuestionsAndAnswers/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void getUserProfileTagDtoWithoutQuestionsAndAnswers() throws Exception {
+
+        String USER_TOKEN = getToken("test101@mail.ru", "123");
+
+        this.mvc.perform(get("/api/user/profile/tag")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
     @ApiOperation(value = "Проверка на возвращение пустого List<UserProfileTagDto>")
     @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileTagDtoEmpty/Before.sql",
             executionPhase = BEFORE_TEST_METHOD)
