@@ -8,7 +8,7 @@ import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.tag.UserProfileTagDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.user.User;
-import com.javamentor.qa.platform.service.abstracts.dto.CommentDtoService;
+import com.javamentor.qa.platform.service.abstracts.dto.UserProfileCommentDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
@@ -34,16 +34,16 @@ public class ProfileUserResourceController {
     private final UserDtoService userDtoService;
     private final AnswerService answerService;
     private final QuestionDtoService questionDtoService;
-    private final CommentDtoService commentDtoService;
+    private final UserProfileCommentDtoService userProfileCommentDtoService;
 
     public ProfileUserResourceController(UserDtoService userDtoService
             , AnswerService answerService
             , QuestionDtoService questionDtoService
-            , CommentDtoService commentDtoService) {
+            , UserProfileCommentDtoService userProfileCommentDtoService) {
         this.userDtoService = userDtoService;
         this.answerService = answerService;
         this.questionDtoService = questionDtoService;
-        this.commentDtoService = commentDtoService;
+        this.userProfileCommentDtoService = userProfileCommentDtoService;
     }
 
     @ApiOperation(value = "Возвращает список всех вопросов аутентифицированного пользователя")
@@ -106,6 +106,6 @@ public class ProfileUserResourceController {
         props.put("userId", user.getId());
 
         PaginationData date = new PaginationData(currentPage, items, CommentPageDtoDaoImpl.class.getSimpleName(), props);
-        return new ResponseEntity<>(commentDtoService.getPageDto(date), HttpStatus.OK);
+        return new ResponseEntity<>(userProfileCommentDtoService.getPageDto(date), HttpStatus.OK);
     }
 }

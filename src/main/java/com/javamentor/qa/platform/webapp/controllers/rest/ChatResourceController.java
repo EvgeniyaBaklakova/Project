@@ -1,17 +1,25 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.impl.pagination.MessageDtoDaoByPersistDateImpl;
 import com.javamentor.qa.platform.models.dto.chat.ChatDto;
 import com.javamentor.qa.platform.models.dto.chat.GroupChatDto;
 import com.javamentor.qa.platform.models.dto.chat.SingleChatDto;
+import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.ChatDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.MessageDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;

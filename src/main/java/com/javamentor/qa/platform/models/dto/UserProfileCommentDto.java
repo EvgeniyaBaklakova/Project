@@ -9,10 +9,10 @@ import java.time.LocalDateTime;
 @Getter
 @AllArgsConstructor
 public class UserProfileCommentDto {
-    Long id;
-    String comment;
-    LocalDateTime persistDate;
-    Long questionId;
-    Long answerId;
-    CommentType commentType;
+    private Long id;
+    private String comment;
+    private LocalDateTime persistDate;
+    private Long questionId;
+    private Long answerId;
+    private CommentType commentType;
 }

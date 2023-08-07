@@ -2,5 +2,5 @@ package com.javamentor.qa.platform.service.abstracts.dto;
 
 import com.javamentor.qa.platform.models.dto.UserProfileCommentDto;
 
-public interface CommentDtoService extends PageDtoService<UserProfileCommentDto> {
+public interface UserProfileCommentDtoService extends PageDtoService<UserProfileCommentDto> {
 }
