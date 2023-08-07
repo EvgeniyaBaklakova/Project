@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import io.swagger.annotations.ApiOperation;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
@@ -177,5 +178,84 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.tagDtoList[0].tagId", Is.is(106)))
                 .andExpect(jsonPath("$.tagDtoList[0].name", Is.is("name7")))
                 .andExpect(jsonPath("$.tagDtoList[0].countMessage", Is.is(2)));
+    }
+
+    @Test
+    @ApiOperation(
+            value = "Проверка на возвращение List<UserProfileTagDto>" +
+
+                    "tagName - имя тега отслеживаемого пользователем" +
+                    "countVoteTag - количество голосов над всеми вопросами и ответами пользователя (положительные минус отрицательные)" +
+                    "countAnswerQuestion - количество всех вопросов и ответов пользователя, под отслеживаемым тегом" +
+
+                    "Количество возвращаемых тегов 10, сортировка по полю countAnswerQuestion"
+    )
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileTagDto/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileTagDto/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void getUserProfileTagDto() throws Exception {
+
+        String USER_TOKEN = getToken("test101@mail.ru", "123");
+
+        this.mvc.perform(get("/api/user/profile/tag")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+
+                .andExpect(jsonPath("$[0].tagName", Is.is("java")))
+                .andExpect(jsonPath("$[0].countVoteTag", Is.is(3)))
+                .andExpect(jsonPath("$[0].countAnswerQuestion", Is.is(5)))
+
+                .andExpect(jsonPath("$[1].tagName", Is.is("twelfth")))
+                .andExpect(jsonPath("$[1].countVoteTag", Is.is(2)))
+                .andExpect(jsonPath("$[1].countAnswerQuestion", Is.is(3)))
+
+                .andExpect(jsonPath("$[2].tagName", Is.is("spring")))
+                .andExpect(jsonPath("$[2].countVoteTag", Is.is(-4)))
+                .andExpect(jsonPath("$[2].countAnswerQuestion", Is.is(2)))
+
+                .andExpect(jsonPath("$.length()", Is.is(10)));
+    }
+
+    @Test
+    @ApiOperation(value = "Проверка на возвращение List<UserProfileTagDto> " +
+            "в котором у авторизованного пользователя нет ни вопросов ни ответов")
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileTagDtoWithoutQuestionsAndAnswers/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileTagDtoWithoutQuestionsAndAnswers/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void getUserProfileTagDtoWithoutQuestionsAndAnswers() throws Exception {
+
+        String USER_TOKEN = getToken("test101@mail.ru", "123");
+
+        this.mvc.perform(get("/api/user/profile/tag")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    @ApiOperation(value = "Проверка на возвращение пустого List<UserProfileTagDto>")
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileTagDtoEmpty/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetUserProfileTagDtoEmpty/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void getUserProfileTagDtoEmpty() throws Exception {
+
+        String USER_TOKEN = getToken("test101@mail.ru", "123");
+
+        this.mvc.perform(get("/api/user/profile/tag")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isEmpty());
     }
 }

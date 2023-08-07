@@ -7,17 +7,17 @@ import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.question.QuestionDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
+import com.javamentor.qa.platform.models.dto.tag.UserProfileTagDto;
 import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
 import com.javamentor.qa.platform.models.entity.question.TagQuestion;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,5 +81,9 @@ public class QuestionDtoServiceImp extends PageDtoServiceImpl<QuestionDto> imple
         return pageDto;
     }
 
+    @Override
+    public List<UserProfileTagDto> getUserProfileTagDto(Long id) {
+        return tagDtoDao.getUserProfileTagDto(id);
+    }
 }
 

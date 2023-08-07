@@ -5,7 +5,9 @@ import com.javamentor.qa.platform.dao.util.SingleResultUtil;
 import com.javamentor.qa.platform.models.dto.tag.IgnoredTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.RelatedTagsDto;
 import com.javamentor.qa.platform.models.dto.tag.TagDto;
+import com.javamentor.qa.platform.models.dto.tag.UserProfileTagDto;
 import com.javamentor.qa.platform.models.entity.question.TagQuestion;
+import com.javamentor.qa.platform.models.entity.question.answer.VoteType;
 import org.hibernate.transform.ResultTransformer;
 import org.springframework.stereotype.Repository;
 
@@ -85,6 +87,29 @@ public class TagDtoDaoImpl implements TagDtoDao {
                     }
                 }).list();
         return tagQuestions;
+    }
+
+    @Override
+    public List<UserProfileTagDto> getUserProfileTagDto(Long id) {
+        String hql = "SELECT DISTINCT NEW com.javamentor.qa.platform.models.dto.tag.UserProfileTagDto" +
+                "(t.name, " +
+                "((SELECT COUNT(vqu) FROM t.questions q JOIN q.voteQuestions vqu WHERE vqu.vote = :voteUp AND q.user.id = :id) - " +
+                "(SELECT COUNT(vqd) FROM t.questions q JOIN q.voteQuestions vqd WHERE vqd.vote = :voteDown AND q.user.id = :id)) + " +
+                "((SELECT COUNT(vau) FROM t.questions q JOIN q.answers a JOIN a.voteAnswers vau WHERE vau.vote = :voteUp AND a.user.id = :id) - " +
+                "(SELECT COUNT(vad) FROM t.questions q JOIN q.answers a JOIN a.voteAnswers vad WHERE vad.vote = :voteDown AND a.user.id = :id)), " +
+                "((SELECT COUNT(q) FROM t.questions q WHERE q.user.id = :id) + " +
+                "(SELECT COUNT(a) FROM t.questions q JOIN q.answers a WHERE a.user.id = :id)) AS cnt) " +
+                "FROM Tag t " +
+                "JOIN t.questions q " +
+                "WHERE q.user.id = :id " +
+                "ORDER BY cnt DESC";
+
+        return entityManager.createQuery(hql, UserProfileTagDto.class)
+                .setParameter("id", id)
+                .setParameter("voteUp", VoteType.UP_VOTE)
+                .setParameter("voteDown", VoteType.DOWN_VOTE)
+                .setMaxResults(10)
+                .getResultList();
     }
 }
 

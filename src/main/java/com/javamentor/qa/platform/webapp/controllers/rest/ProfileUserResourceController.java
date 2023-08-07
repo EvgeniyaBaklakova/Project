@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.UserProfileDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.dto.tag.UserProfileTagDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
@@ -74,5 +75,12 @@ public class ProfileUserResourceController {
     })
     public ResponseEntity<UserProfileDto> getProfile(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(userDtoService.getUserProfile(user.getId()));
+    }
+
+    @GetMapping("/tag")
+    @ApiOperation(value = "Возвращает отслеживаемые теги пользователя, общее количество его вопросов и ответов, голоса под вопросами и ответами")
+    public ResponseEntity<List<UserProfileTagDto>> getUserProfileTagDto(@AuthenticationPrincipal User user) {
+        List<UserProfileTagDto> result = questionDtoService.getUserProfileTagDto(user.getId());
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }
