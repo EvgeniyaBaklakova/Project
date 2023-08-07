@@ -284,12 +284,12 @@ public class TestUserResourceController extends AbstractTestApi {
     @Sql(scripts = "/script/TestUserResourceController/After.sql",
             executionPhase = AFTER_TEST_METHOD)
     public void changePasswordIsForbidden() throws Exception {
-    this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
-            .contentType(MediaType.APPLICATION_JSON)
+        this.mvc.perform(MockMvcRequestBuilders.post("/api/user/edit/pass")
+                        .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"newPass\": \"test\"}")
                         .header(AUTHORIZATION, getToken("test103@mail.ru", "123")))
-            .andDo(print())
-            .andExpect(status().isForbidden());
+                .andDo(print())
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -323,4 +323,5 @@ public class TestUserResourceController extends AbstractTestApi {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string(emptyString()));
     }
+
 }

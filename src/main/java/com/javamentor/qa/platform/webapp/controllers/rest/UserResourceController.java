@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
-
+@Validated
 public class UserResourceController {
 
     private final UserDtoService userDtoService;
@@ -98,7 +99,8 @@ public class UserResourceController {
     public ResponseEntity<Map<String,String>> changePassword(@RequestBody String newPass) {
         User user = (User) SecurityContextHolder.getContext()
                 .getAuthentication().getPrincipal();
-            userService.changePassword(user.getId(), newPass);
+        userService.changePassword(user.getId(), newPass);
         return new ResponseEntity<>(Map.of("status", "success"), HttpStatus.OK);
     }
+
 }

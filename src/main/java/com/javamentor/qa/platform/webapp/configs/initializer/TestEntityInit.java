@@ -26,6 +26,7 @@ public class TestEntityInit implements CommandLineRunner {
         testDataInitService.initQuestion();
         testDataInitService.initAnswer();
         testDataInitService.initChat();
+        testDataInitService.initMessage();
         testDataInitService.initUserChatPin();
         testDataInitService.initBlockChatUserList();
         testDataInitService.initBookmarks();
