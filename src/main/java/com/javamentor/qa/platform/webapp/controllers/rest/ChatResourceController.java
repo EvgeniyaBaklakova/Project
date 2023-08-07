@@ -102,8 +102,8 @@ public class ChatResourceController {
     }
 
     @PostMapping("/single")
-    public ResponseEntity<HttpStatus> createSingleChat(@RequestBody CreateSingleChatDto createSingleChatDto, @AuthenticationPrincipal User userSender) {
-        singleChatService.createSingleChat(createSingleChatDto, userSender);
+    public ResponseEntity<HttpStatus> createSingleChat(@RequestBody CreateSingleChatDto createSingleChatDto, @AuthenticationPrincipal User authUser) {
+        singleChatService.createSingleChat(createSingleChatDto, authUser);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

@@ -6,7 +6,7 @@ import com.javamentor.qa.platform.models.entity.user.User;
 
 public interface SingleChatService extends ReadWriteService<SingleChat, Long> {
 
-    void createSingleChat(CreateSingleChatDto createSingleChatDto, User userSender);
+    void createSingleChat(CreateSingleChatDto createSingleChatDto, User authUser);
 
 }
 
