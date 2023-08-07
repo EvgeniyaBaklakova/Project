@@ -1,13 +1,15 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import com.javamentor.qa.platform.models.dto.chat.CreateSingleChatDto;
 import io.swagger.annotations.ApiOperation;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import java.lang.reflect.MalformedParameterizedTypeException;
+import java.util.Arrays;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
@@ -423,6 +425,44 @@ public class TestChatResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.totalResultCount", Is.is(15)))
                 .andExpect(jsonPath("$.items", hasSize(2)));
 
+
+    }
+
+    @Test
+    @ApiOperation(value = "Получатель сообщения не найден")
+    @Sql(scripts = "/script/TestChatResourceController/TestUserRecipientNotFound/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestChatResourceController/TestUserRecipientNotFound/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void userRecipientNotFound() throws Exception {
+
+        String USER_TOKEN = getToken("email101@mail.com", "200");
+
+        this.mvc.perform(post("/api/user/chat/single")
+                        .content("{\"userId\" : \"104\", \"message\" : \"привет\"}")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    @ApiOperation(value = "Создание singleChat и message")
+    @Sql(scripts = "/script/TestChatResourceController/TestCreateSingleChatAndMessage/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestChatResourceController/TestCreateSingleChatAndMessage/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void createSingleChatAndMessage() throws Exception {
+
+        String USER_TOKEN = getToken("email101@mail.com", "200");
+
+        this.mvc.perform(post("/api/user/chat/single")
+                        .content("{\"userId\" : \"102\", \"message\" : \"привет\"}")
+                        .header(AUTHORIZATION, USER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
 
     }
 
