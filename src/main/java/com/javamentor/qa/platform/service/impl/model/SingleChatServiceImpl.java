@@ -32,16 +32,16 @@ public class SingleChatServiceImpl extends ReadWriteServiceImpl<SingleChat, Long
 
     @Override
     @Transactional
-    public void createSingleChat(CreateSingleChatDto createSingleChatDto, User userSender) {
+    public void createSingleChat(CreateSingleChatDto createSingleChatDto, User authUser) {
         User userTwo = userDao.getById(createSingleChatDto.getUserId())
                 .orElseThrow(() -> new UserNotFoundException());
         String message = createSingleChatDto.getMessage();
         SingleChat singleChat = new SingleChat();
         singleChat.setUseTwo(userTwo);
-        singleChat.setUserOne(userSender);
+        singleChat.setUserOne(authUser);
         singleChatDao.persist(singleChat);
-        Message message1 = new Message(message, userSender, singleChat.getChat());
-        messageDao.persist(message1);
+        Message newMessage = new Message(message, authUser, singleChat.getChat());
+        messageDao.persist(newMessage);
 
     }
 }
