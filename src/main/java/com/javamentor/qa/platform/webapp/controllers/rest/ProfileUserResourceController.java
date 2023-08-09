@@ -2,7 +2,6 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.UserProfileDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
-import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.dto.tag.UserProfileTagDto;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
