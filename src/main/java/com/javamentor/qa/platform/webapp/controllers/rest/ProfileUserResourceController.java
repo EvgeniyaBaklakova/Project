@@ -2,10 +2,12 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.models.dto.UserProfileDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
+import com.javamentor.qa.platform.models.entity.GroupBookmark;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarksService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -25,13 +27,15 @@ public class ProfileUserResourceController {
     private final UserDtoService userDtoService;
     private final AnswerService answerService;
     private final QuestionDtoService questionDtoService;
+    private final GroupBookmarksService groupBookmarksService;
 
     public ProfileUserResourceController(UserDtoService userDtoService
             , AnswerService answerService
-            , QuestionDtoService questionDtoService) {
+            , QuestionDtoService questionDtoService, GroupBookmarksService groupBookmarksService) {
         this.userDtoService = userDtoService;
         this.answerService = answerService;
         this.questionDtoService = questionDtoService;
+        this.groupBookmarksService = groupBookmarksService;
     }
 
     @ApiOperation(value = "Возвращает список всех вопросов аутентифицированного пользователя")
@@ -74,5 +78,17 @@ public class ProfileUserResourceController {
     })
     public ResponseEntity<UserProfileDto> getProfile(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(userDtoService.getUserProfile(user.getId()));
+    }
+
+    @GetMapping("/bookmark/group")
+    @ApiOperation(value = "Получение наименований групп BookMarks пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Информация была успешно получена"),
+            @ApiResponse(code = 401, message = "Вы не авторизованы для просмотра ресурса"),
+            @ApiResponse(code = 403, message = "Доступ к ресурсу, к которому вы пытались обратиться, запрещен"),
+            @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
+    })
+    public ResponseEntity<List<String>> getBookMarkGroup(@AuthenticationPrincipal User authUser) {
+        return ResponseEntity.ok(groupBookmarksService.getGroupBookMarkByName());
     }
 }

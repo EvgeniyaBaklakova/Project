@@ -1,6 +1,7 @@
 package com.javamentor.qa.platform.api;
 
 import com.javamentor.qa.platform.AbstractTestApi;
+import io.swagger.annotations.ApiOperation;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
@@ -177,5 +178,35 @@ public class TestProfileUserResourceController extends AbstractTestApi {
                 .andExpect(jsonPath("$.tagDtoList[0].tagId", Is.is(106)))
                 .andExpect(jsonPath("$.tagDtoList[0].name", Is.is("name7")))
                 .andExpect(jsonPath("$.tagDtoList[0].countMessage", Is.is(2)));
+    }
+
+    @Test
+    @ApiOperation(value = "Проверка получения наименований групп BookMarks пользователя")
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetGroupBookMarkByName/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGetGroupBookMarkByName/After.sql", executionPhase = AFTER_TEST_METHOD)
+    public void tryGetGroupBookMarkByName() throws Exception {
+
+        this.mvc.perform(get("/api/user/profile/bookmark/group").
+                        header(AUTHORIZATION, getToken("email101@mail.com", "200")))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    @ApiOperation(value = "Проверка получения пустого массива")
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGroupBookMarkNotFound/Before.sql",
+            executionPhase = BEFORE_TEST_METHOD)
+    @Sql(scripts = "/script/TestProfileUserResourceController/TestGroupBookMarkNotFound/After.sql",
+            executionPhase = AFTER_TEST_METHOD)
+    public void groupBookMarkNotFound() throws Exception {
+
+        this.mvc.perform(get("/api/user/profile/bookmark/group").
+                        header(AUTHORIZATION, getToken("email101@mail.com", "200")))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
     }
 }
