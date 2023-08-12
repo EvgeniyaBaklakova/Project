@@ -2,11 +2,12 @@ package com.javamentor.qa.platform.service.impl.model;
 
 import com.javamentor.qa.platform.dao.abstracts.model.GroupBookmarksDao;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
+import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarksService;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+
 
 @Service
 public class GroupBookmarksServiceImpl extends ReadWriteServiceImpl<GroupBookmark, Long> implements GroupBookmarksService {
@@ -18,16 +19,9 @@ public class GroupBookmarksServiceImpl extends ReadWriteServiceImpl<GroupBookmar
         this.groupBookmarksDao = groupBookmarksDao;
     }
 
-    @Transactional
-    @Override
-    public List<String> getGroupBookMarkByName() {
 
-        List<String> titles = new ArrayList<>();
-        List<GroupBookmark> bookmarks = groupBookmarksDao.getAll();
-        for (GroupBookmark bookmark : bookmarks) {
-            String title = bookmark.getTitle();
-            titles.add(title);
-        }
-        return titles;
+    @Override
+    public List<String> getGroupBookMarkByName(User authUser) {
+        return groupBookmarksDao.getGroupBookMarkByName(authUser);
     }
 }

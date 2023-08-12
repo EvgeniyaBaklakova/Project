@@ -1,5 +1,8 @@
 TRUNCATE TABLE user_entity CASCADE;
 TRUNCATE TABLE role CASCADE;
+TRUNCATE TABLE question CASCADE;
+TRUNCATE TABLE bookmarks CASCADE;
+TRUNCATE TABLE group_bookmark CASCADE;
 
 
 INSERT INTO role (id, name)
@@ -15,6 +18,12 @@ VALUES (101, 'Its me', 'Saint-Petersburg', 'email101@mail.com', 'Alex Vasiliev',
        (102, 'Its me', 'Saint-Petersburg', 'email102@mail.com', 'Alex Vasiliev', 'No link', false, true, now(), 'No link',
         'No link', 'No link', 'Dragonfly',
         '$2a$12$H3mSgAzuJ/PcFQbD8G5QeOFkaevQ.q.rqvpFjuawVt26oxW8atJFm', now(), 111);
+
+INSERT INTO question (id, description, is_deleted, last_redaction_date, persist_date, title, user_id)
+VALUES (101, 'Question', false, DATE(now()), DATE(now()), 'Title', 101);
+
+INSERT INTO bookmarks (id, question_id, user_id)
+VALUES (1, 101,101);
 
 INSERT INTO group_bookmark (id, title)
 VALUES (1, 'Title1'),

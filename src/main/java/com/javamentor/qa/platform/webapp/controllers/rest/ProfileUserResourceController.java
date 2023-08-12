@@ -1,5 +1,6 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
+import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.models.dto.UserProfileDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.tag.UserProfileTagDto;
@@ -96,6 +97,6 @@ public class ProfileUserResourceController {
             @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
     })
     public ResponseEntity<List<String>> getBookMarkGroup(@AuthenticationPrincipal User authUser) {
-        return ResponseEntity.ok(groupBookmarksService.getGroupBookMarkByName());
+        return ResponseEntity.ok(groupBookmarksService.getGroupBookMarkByName(authUser));
     }
 }
