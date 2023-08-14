@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface GroupBookmarksService extends ReadWriteService<GroupBookmark, Long> {
 
-    List<String> getGroupBookMarkByName(User authUser);
+    List<String> getGroupBookMarkByName(Long authUserId);
 
 }

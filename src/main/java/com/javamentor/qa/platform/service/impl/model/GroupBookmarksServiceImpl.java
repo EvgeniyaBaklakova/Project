@@ -21,7 +21,7 @@ public class GroupBookmarksServiceImpl extends ReadWriteServiceImpl<GroupBookmar
 
 
     @Override
-    public List<String> getGroupBookMarkByName(User authUser) {
-        return groupBookmarksDao.getGroupBookMarkByName(authUser);
+    public List<String> getGroupBookMarkByName(Long authUserId) {
+        return groupBookmarksDao.getGroupBookMarkByName(authUserId);
     }
 }

@@ -2,6 +2,7 @@ package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
 import com.javamentor.qa.platform.dao.impl.pagination.CommentPageDtoDaoImpl;
+import com.javamentor.qa.platform.exception.UserNotFoundException;
 import com.javamentor.qa.platform.models.dto.PageDto;
 import com.javamentor.qa.platform.models.dto.UserProfileCommentDto;
 import com.javamentor.qa.platform.models.dto.UserProfileDto;
@@ -37,14 +38,18 @@ public class ProfileUserResourceController {
     private final QuestionDtoService questionDtoService;
     private final UserProfileCommentDtoService userProfileCommentDtoService;
     private final GroupBookmarksService groupBookmarksService;
+
+    private final UserDao userDao;
     public ProfileUserResourceController(UserDtoService userDtoService
             , AnswerService answerService
             , QuestionDtoService questionDtoService
-            , UserProfileCommentDtoService userProfileCommentDtoService,GroupBookmarksService groupBookmarksService) {
+            , UserProfileCommentDtoService userProfileCommentDtoService, GroupBookmarksService groupBookmarksService, GroupBookmarksService groupBookmarksService1, UserDao userDao) {
         this.userDtoService = userDtoService;
         this.answerService = answerService;
         this.questionDtoService = questionDtoService;
         this.userProfileCommentDtoService = userProfileCommentDtoService;
+        this.groupBookmarksService = groupBookmarksService1;
+        this.userDao = userDao;
     }
 
     @ApiOperation(value = "Возвращает список всех вопросов аутентифицированного пользователя")
@@ -119,6 +124,7 @@ public class ProfileUserResourceController {
             @ApiResponse(code = 404, message = "Ресурс, к которому вы пытались обратиться, не найден")
     })
     public ResponseEntity<List<String>> getBookMarkGroup(@AuthenticationPrincipal User authUser) {
-        return ResponseEntity.ok(groupBookmarksService.getGroupBookMarkByName(authUser));
+        Long authUserId = userDao.getById(authUser.getId()).orElseThrow().getId();
+        return ResponseEntity.ok(groupBookmarksService.getGroupBookMarkByName(authUserId));
     }
 }

@@ -6,5 +6,5 @@ import com.javamentor.qa.platform.models.entity.user.User;
 import java.util.List;
 
 public interface GroupBookmarksDao extends ReadWriteDao<GroupBookmark, Long> {
-    List<String> getGroupBookMarkByName(User authUser);
+    List<String> getGroupBookMarkByName(Long authUserId);
 }

@@ -15,8 +15,8 @@ public class GroupBookmarksDaoImpl extends ReadWriteDaoImpl<GroupBookmark, Long>
     @PersistenceContext
     private EntityManager entityManager;
 
-    public List<String> getGroupBookMarkByName(User authUser) {
-        return (List<String>) entityManager.createQuery("SELECT g.title FROM GroupBookmark g join g.bookMarks b where b.user = :authUser")
-                .setParameter("authUser", authUser).getResultList();
+    public List<String> getGroupBookMarkByName(Long authUserId) {
+        return (List<String>) entityManager.createQuery("SELECT g.title FROM GroupBookmark g join g.bookMarks b where b.user.id = :authUserId")
+                .setParameter("authUserId", authUserId).getResultList();
     }
 }
