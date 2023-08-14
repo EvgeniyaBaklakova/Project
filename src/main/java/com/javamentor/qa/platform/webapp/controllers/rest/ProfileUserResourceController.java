@@ -1,14 +1,19 @@
 package com.javamentor.qa.platform.webapp.controllers.rest;
 
 import com.javamentor.qa.platform.dao.abstracts.model.UserDao;
+import com.javamentor.qa.platform.dao.impl.pagination.CommentPageDtoDaoImpl;
+import com.javamentor.qa.platform.models.dto.PageDto;
+import com.javamentor.qa.platform.models.dto.UserProfileCommentDto;
 import com.javamentor.qa.platform.models.dto.UserProfileDto;
 import com.javamentor.qa.platform.models.dto.UserProfileQuestionDto;
 import com.javamentor.qa.platform.models.dto.tag.UserProfileTagDto;
+import com.javamentor.qa.platform.models.entity.pagination.PaginationData;
+import com.javamentor.qa.platform.service.abstracts.dto.UserProfileCommentDtoService;
+import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarksService;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.service.abstracts.dto.QuestionDtoService;
 import com.javamentor.qa.platform.service.abstracts.dto.UserDtoService;
 import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarksService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -17,9 +22,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user/profile")
@@ -28,15 +35,16 @@ public class ProfileUserResourceController {
     private final UserDtoService userDtoService;
     private final AnswerService answerService;
     private final QuestionDtoService questionDtoService;
+    private final UserProfileCommentDtoService userProfileCommentDtoService;
     private final GroupBookmarksService groupBookmarksService;
-
     public ProfileUserResourceController(UserDtoService userDtoService
             , AnswerService answerService
-            , QuestionDtoService questionDtoService, GroupBookmarksService groupBookmarksService) {
+            , QuestionDtoService questionDtoService
+            , UserProfileCommentDtoService userProfileCommentDtoService,GroupBookmarksService groupBookmarksService) {
         this.userDtoService = userDtoService;
         this.answerService = answerService;
         this.questionDtoService = questionDtoService;
-        this.groupBookmarksService = groupBookmarksService;
+        this.userProfileCommentDtoService = userProfileCommentDtoService;
     }
 
     @ApiOperation(value = "Возвращает список всех вопросов аутентифицированного пользователя")
@@ -86,6 +94,20 @@ public class ProfileUserResourceController {
     public ResponseEntity<List<UserProfileTagDto>> getUserProfileTagDto(@AuthenticationPrincipal User user) {
         List<UserProfileTagDto> result = questionDtoService.getUserProfileTagDto(user.getId());
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/comment")
+    @ApiOperation(value = "Возвращает все комментарии авторизованного пользователя с пагинацией и сортировкой по дате")
+    public ResponseEntity<PageDto<UserProfileCommentDto>> getUserProfileCommentDto(
+            @AuthenticationPrincipal User user,
+            @RequestParam(defaultValue = "1") Integer currentPage,
+            @RequestParam(defaultValue = "10") Integer items
+    ) {
+        Map<String, Object> props = new HashMap<>();
+        props.put("userId", user.getId());
+
+        PaginationData date = new PaginationData(currentPage, items, CommentPageDtoDaoImpl.class.getSimpleName(), props);
+        return new ResponseEntity<>(userProfileCommentDtoService.getPageDto(date), HttpStatus.OK);
     }
 
     @GetMapping("/bookmark/group")
