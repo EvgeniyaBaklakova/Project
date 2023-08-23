@@ -1,10 +1,9 @@
 package com.javamentor.qa.platform.service.impl;
 
+import com.javamentor.qa.platform.dao.abstracts.model.ChatDao;
 import com.javamentor.qa.platform.models.entity.BookMarks;
 import com.javamentor.qa.platform.models.entity.GroupBookmark;
-import com.javamentor.qa.platform.models.entity.chat.GroupChat;
-import com.javamentor.qa.platform.models.entity.chat.Message;
-import com.javamentor.qa.platform.models.entity.chat.SingleChat;
+import com.javamentor.qa.platform.models.entity.chat.*;
 import com.javamentor.qa.platform.models.entity.question.Question;
 import com.javamentor.qa.platform.models.entity.question.Tag;
 import com.javamentor.qa.platform.models.entity.question.answer.Answer;
@@ -12,18 +11,7 @@ import com.javamentor.qa.platform.models.entity.user.BlockChatUserList;
 import com.javamentor.qa.platform.models.entity.user.Role;
 import com.javamentor.qa.platform.models.entity.user.User;
 import com.javamentor.qa.platform.models.entity.user.UserChatPin;
-import com.javamentor.qa.platform.service.abstracts.model.UserService;
-import com.javamentor.qa.platform.service.abstracts.model.RoleService;
-import com.javamentor.qa.platform.service.abstracts.model.QuestionService;
-import com.javamentor.qa.platform.service.abstracts.model.TagService;
-import com.javamentor.qa.platform.service.abstracts.model.AnswerService;
-import com.javamentor.qa.platform.service.abstracts.model.SingleChatService;
-import com.javamentor.qa.platform.service.abstracts.model.GroupChatService;
-import com.javamentor.qa.platform.service.abstracts.model.UserChatPinService;
-import com.javamentor.qa.platform.service.abstracts.model.BlockChatUserListService;
-import com.javamentor.qa.platform.service.abstracts.model.GroupBookmarksService;
-import com.javamentor.qa.platform.service.abstracts.model.BookMarksService;
-import com.javamentor.qa.platform.service.abstracts.model.MessageService;
+import com.javamentor.qa.platform.service.abstracts.model.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,11 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class TestDataInitService {
@@ -55,6 +39,8 @@ public class TestDataInitService {
     private final BookMarksService bookMarksService;
 
     private final MessageService messageService;
+    private final MessageStarService messageStarService;
+    private final ChatDao chatDao;
 
     private final Role ROLE_USER = new Role("ROLE_USER");
     private final Role ROLE_ADMIN = new Role("ROLE_ADMIN");
@@ -72,7 +58,10 @@ public class TestDataInitService {
                                PasswordEncoder passwordEncoder,
                                BlockChatUserListService blockChatUserListService,
                                GroupBookmarksService groupBookmarksService,
-                               BookMarksService bookMarksService, MessageService messageService) {
+                               BookMarksService bookMarksService,
+                               MessageService messageService,
+                               MessageStarService messageStarService,
+                               ChatDao chatDao) {
         this.roleService = roleService;
         this.userService = userService;
         this.questionService = questionService;
@@ -86,6 +75,8 @@ public class TestDataInitService {
         this.groupBookmarksService = groupBookmarksService;
         this.bookMarksService = bookMarksService;
         this.messageService = messageService;
+        this.messageStarService = messageStarService;
+        this.chatDao = chatDao;
     }
 
     public void initRoles() {
@@ -230,7 +221,7 @@ public class TestDataInitService {
             }
             groupChat.setUsers(group);
             groupChat.setImage(
-                "https://variety.com/wp-content/uploads/2021/07/Rick-Astley-Never-Gonna-Give-You-Up.png");
+                    "https://variety.com/wp-content/uploads/2021/07/Rick-Astley-Never-Gonna-Give-You-Up.png");
             groupChat.setIsGlobal(false);
             groupChatList.add(groupChat);
         }
@@ -346,4 +337,42 @@ public class TestDataInitService {
             groupBookmarksService.persistAll(groupBookmark);
         }
     }
+
+    @Transactional
+    public void initMessageStar() {
+        List<User> userList = userService.getAll();
+        List<Message> allMessages = messageService.getAll();
+        Random random = new Random();
+        for (int i = 0; i < userList.size(); i++) {
+            User userMessageStar = userList.get(random.nextInt(userList.size()));
+            List<MessageStar> messageStarList = new ArrayList<>();
+            for (int j = 1; j <= 3; j++) {
+                Message message = allMessages.get(random.nextInt(allMessages.size()));
+               /* boolean existUserInGroupChat = groupChats.stream()
+                            .filter(groupChat -> groupChat.getChat().equals(message.getChat()))
+                            .anyMatch(groupChat -> groupChat.getUsers().contains(userMessageStar));
+                boolean existUserInSingleChat = singleChats.stream()
+                            .filter(singleChat -> singleChat.getChat().getId().equals(message.getChat().getId()))
+                            .anyMatch(singleChat -> singleChat.getUserOne().equals(userMessageStar)
+                                    || singleChat.getUseTwo().equals(userMessageStar));*/
+                Long userId = userMessageStar.getId();
+                    if (chatDao.existUserInGroupChat(userMessageStar) || chatDao.existUserInSinglChat(userId)) {
+
+                        MessageStar messageStar = new MessageStar();
+                        messageStar.setUser(userMessageStar);
+                        messageStar.setMessage(message);
+                        messageStar.setPersistDate(LocalDateTime.now());
+                        messageStarList.add(messageStar);
+                    }
+                }
+                if (!messageStarList.isEmpty()) {
+                    messageStarService.persistAll(messageStarList);
+                }
+        }
+    }
+
 }
+
+
+
+
