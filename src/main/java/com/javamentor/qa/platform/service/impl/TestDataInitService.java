@@ -356,7 +356,8 @@ public class TestDataInitService {
                             .anyMatch(singleChat -> singleChat.getUserOne().equals(userMessageStar)
                                     || singleChat.getUseTwo().equals(userMessageStar));*/
                 Long userId = userMessageStar.getId();
-                    if (chatDao.existUserInGroupChat(userMessageStar) || chatDao.existUserInSinglChat(userId)) {
+                Long messageId = message.getId();
+                    if (chatDao.existUser(userId, messageId)) {
 
                         MessageStar messageStar = new MessageStar();
                         messageStar.setUser(userMessageStar);
